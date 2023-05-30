@@ -1,0 +1,59 @@
+/**
+here your global styles
+**/
+
+@import '~node_modules/bootstrap/scss/bootstrap';
+
+.subitems-nav-menu {
+	background: none;
+	width: 100%;
+	display: flex;
+	border: none;
+}
+
+.btn_clean {
+	background: none;
+	width: 100%;
+	display: flex;
+	border: none;
+}
+
+.vertical-hidden {
+	animation: hideSidebar 0.5s forwards;
+}
+
+.vertical-collpsed {
+	animation: showSidebar 0.5s forwards;
+}
+
+.content-margin {
+	margin-left: 270px;
+}
+
+@media (max-width: 767.98px) {
+	.content-margin {
+		margin-left: 0;
+	}
+}
+
+@keyframes hideSidebar {
+	0% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateX(-100%);
+	}
+}
+
+@keyframes showSidebar {
+	0% {
+		opacity: 0;
+		transform: translateX(-100%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
