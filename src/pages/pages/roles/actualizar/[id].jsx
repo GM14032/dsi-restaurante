@@ -96,6 +96,9 @@ const Actualizar = ({
     enableReinitialize: true,
     validationSchema: ValidationRole,
   });
+  function handleEnableCheckboxChange(event) {
+    setIsChecked(event.target.checked);
+  }
   useEffect(() => {
     const initialValues = {
       name: roles.name,
@@ -234,6 +237,34 @@ const Actualizar = ({
                                 placeholder="Ingrese la descripcion"
                                 handleChange={handleChange}
                               />
+                            </Col>
+                          </Row>
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="enable"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Estado
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                              <div className="form-check form-check-success mb-3">
+                                <Input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  id="enable"
+                                  defaultChecked={isChecked}
+                                  onChange={handleEnableCheckboxChange}
+                                />
+                                <Label
+                                  className="form-check-label"
+                                  htmlFor="enable"
+                                >
+                                  {isChecked ? "Activo" : "Inactivo"}
+                                </Label>
+                              </div>
                             </Col>
                           </Row>
                           <Row className="mb-3">
