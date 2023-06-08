@@ -1,0 +1,24 @@
+import * as Yup from "yup";
+
+ const  ValidationUser = Yup.object({
+  name: Yup.string().required("Por favor ingrese el nombre"),
+  lastname: Yup.string().required("Por favor ingrese el apellido"),
+  email: Yup.string()
+    .email("Por favor ingrese un correo electrónico válido")
+    .required("Por favor ingrese el email"),
+  phone: Yup.string().required("Por favor ingrese el telefono"),
+  username: Yup.string().required("Por favor ingrese el usuario"),
+  password: Yup.string().required("Por favor ingrese una contraseña"),
+  rol: Yup.string()
+    .required("Por favor seleccione un rol")
+    .min(1, "Por favor seleccione un rol"),
+});
+
+const ValidationRole = Yup.object({
+  name: Yup.string().required("Por favor ingrese el nombre"),
+  description: Yup.string().required("Por favor ingrese la descripcion"),
+});
+export {
+  ValidationUser,
+  ValidationRole
+}

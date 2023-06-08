@@ -1,7 +1,9 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import InputMask from "react-input-mask";
-
+import { ValidationUser } from "../../../constant/validations";
+import { RenderInput } from "../../../Components/Common/RenderInput";
+import { ToastEffect } from "../../../Components/Common/ToastEffect";
 import {
   Col,
   Container,
@@ -16,10 +18,8 @@ import {
 } from "reactstrap";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
 import Layout from "@/Layouts";
-import * as Yup from "yup";
 import { Formik, useFormik, Field } from "formik";
 import dynamic from "next/dynamic";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 export async function getServerSideProps() {
   try {
@@ -38,13 +38,16 @@ export async function getServerSideProps() {
 }
 const CrearUsuarios = ({ data, error }) => {
   const router = useRouter();
-  const [name, setNombre] = useState("");
-  const [lastname, setApellido] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setTelefono] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [rol, setRole] = useState("");
+  const initialState = {
+    name: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    username: "",
+    password: "",
+    rol: "",
+  };
+  const [formState, setFormState] = useState(initialState);
   const [errorCreate, setError] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [submitClicked, setSubmitClicked] = useState(false);
@@ -53,8 +56,7 @@ const CrearUsuarios = ({ data, error }) => {
     if (Object.keys(valid).length > 0) {
       return;
     }
-  
-    const role = data.filter((item) => item.id === parseInt(rol))[0];
+    const role = data.filter((item) => item.id === parseInt(formState.rol))[0];
     const response = await fetch(
       process.env.NEXT_PUBLIC_API_URL + "/users/register",
       {
@@ -63,20 +65,20 @@ const CrearUsuarios = ({ data, error }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
-          lastname,
-          email,
-          phone,
-          username,
-          password,
+          name: formState.name,
+          lastname: formState.lastname,
+          email: formState.email,
+          phone: formState.phone,
+          username: formState.username,
+          password: formState.password,
           role,
         }),
       }
     );
     if (response.ok) {
       router.push({
-        pathname: '/pages/usuarios',
-        query: { mensaje: 'Usuario creado con éxito!!!' }
+        pathname: "/pages/usuarios",
+        query: { mensaje: "Usuario creado con éxito!!!" },
       });
     } else {
       const errorBody = await response.json();
@@ -86,45 +88,21 @@ const CrearUsuarios = ({ data, error }) => {
       setMensaje("Error al crear el usuario: " + errorBody.message);
     }
   };
+  const handleChange = (event) => {
+    validation.handleChange(event);
+    const { name, value } = event.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const validation = useFormik({
     enableReinitialize: true,
-    initialValues: {
-      name: "",
-      lastname: "",
-      email: "",
-      phone: "",
-      username: "",
-      password: "",
-      rol: "",
-    },
-    validationSchema: Yup.object({
-      name: Yup.string().required("Por favor ingrese el nombre"),
-      lastname: Yup.string().required("Por favor ingrese el apellido"),
-      email: Yup.string().email("Por favor ingrese un correo electrónico válido").required("Por favor ingrese el email"),
-      phone: Yup.string().required("Por favor ingrese el telefono"),
-      username: Yup.string().required("Por favor ingrese el usuario"),
-      password: Yup.string().required("Por favor ingrese la contraseña"),
-      rol: Yup.string()
-        .required("Por favor seleccione un rol")
-        .min(1, "Por favor seleccione un rol"),
-    }),
+    initialValues: initialState,
+    validationSchema: ValidationUser,
   });
-  useEffect(() => {
-    if (submitClicked) {
-      if (errorCreate) {
-        toast(mensaje, {
-          position: "top-right",
-          hideProgressBar: false,
-          className: `bg-warning text-white`,
-          progress: undefined,
-          toastId: "",
 
-        });
-      }   
-      setSubmitClicked(false);
-    }
-  }, [errorCreate, mensaje, submitClicked]);
   return (
     <Layout title="Crear usuario">
       <Container fluid>
@@ -139,19 +117,14 @@ const CrearUsuarios = ({ data, error }) => {
                 <Card>
                   <CardBody>
                     <div className="live-preview">
-                    {error ? (
-                        <>
-                          {toast(error, {
-                            position: "top-right",
-                            hideProgressBar: false,
-                            className: "bg-danger text-white",
-                            progress: undefined,
-                            toastId: "",
-                          })}
-                          <ToastContainer autoClose={2000} limit={1} />
-                        </>
-                      ) : null}
-                      
+                    <ToastEffect
+                            submitClicked={true}
+                            errorCreate={error}
+                            mensaje={error}
+                            setSubmitClicked={setSubmitClicked}
+                            className="danger"
+                          />
+
                       <Formik>
                         <Form
                           className="needs-validation"
@@ -161,10 +134,14 @@ const CrearUsuarios = ({ data, error }) => {
                             return false;
                           }}
                         >
-                            <>
-                              <ToastContainer autoClose={2000} limit={1} />
-                            </>
-                        
+                          <ToastEffect
+                            submitClicked={submitClicked}
+                            errorCreate={errorCreate}
+                            mensaje={mensaje}
+                            setSubmitClicked={setSubmitClicked}
+                            className="warning"
+                          />
+
                           <Row className="mb-3">
                             <Col lg={2}>
                               <Label
@@ -176,34 +153,13 @@ const CrearUsuarios = ({ data, error }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
+                              <RenderInput
                                 type="text"
-                                className="form-control"
-                                id="name"
-                                onChange={(event) => {
-                                  validation.handleChange(event);
-                                  setNombre(event.target.value);
-                                }}
+                                validation={validation}
+                                fieldName="name"
                                 placeholder="Ingrese el nombre"
-                                onBlur={validation.handleBlur}
-                                value={validation.values.name || ""}
-                                invalid={
-                                  validation.touched.name &&
-                                  validation.errors.name
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.name &&
-                                  !validation.errors.name
-                                }
+                                handleChange={handleChange}
                               />
-                              {validation.touched.name &&
-                              validation.errors.name ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.name}
-                                </FormFeedback>
-                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -217,35 +173,13 @@ const CrearUsuarios = ({ data, error }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
-                                name="lastname"
-                                placeholder="Ingrese el apellido"
+                              <RenderInput
                                 type="text"
-                                className="form-control"
-                                id="lastname"
-                                onChange={(event) => {
-                                  validation.handleChange(event);
-                                  setApellido(event.target.value);
-                                }}
-                                onBlur={validation.handleBlur}
-                                value={validation.values.lastname || ""}
-                                invalid={
-                                  validation.touched.lastname &&
-                                  validation.errors.lastname
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.lastname &&
-                                  !validation.errors.lastname
-                                }
+                                validation={validation}
+                                fieldName="lastname"
+                                placeholder="Ingrese el apellido"
+                                handleChange={handleChange}
                               />
-                              {validation.touched.lastname &&
-                              validation.errors.lastname ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.lastname}
-                                </FormFeedback>
-                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -259,34 +193,13 @@ const CrearUsuarios = ({ data, error }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
+                              <RenderInput
                                 type="email"
-                                className="form-control"
-                                id="email"
-                                onChange={(event) => {
-                                  validation.handleChange(event);
-                                  setEmail(event.target.value);
-                                }}
+                                validation={validation}
+                                fieldName="email"
                                 placeholder="Ingrese el email"
-                                onBlur={validation.handleBlur}
-                                value={validation.values.email || ""}
-                                invalid={
-                                  validation.touched.email &&
-                                  validation.errors.email
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.email &&
-                                  !validation.errors.email
-                                }
+                                handleChange={handleChange}
                               />
-                              {validation.touched.email &&
-                              validation.errors.email ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.email}
-                                </FormFeedback>
-                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -304,15 +217,13 @@ const CrearUsuarios = ({ data, error }) => {
                                 mask="(999) 9999-9999"
                                 onBlur={validation.handleBlur}
                                 value={validation.values.phone || ""}
-                                onChange={(event) => {
-                                  validation.handleChange(event);
-                                  setTelefono(event.target.value);
-                                }}
+                                onChange={handleChange}
                               >
                                 {(inputProps) => (
                                   <Input
                                     {...inputProps}
                                     type="text"
+                                    name="phone"
                                     className="form-control"
                                     id="phone"
                                     placeholder="(503) 7456-7890"
@@ -328,11 +239,11 @@ const CrearUsuarios = ({ data, error }) => {
                                 )}
                               </InputMask>
                               {validation.touched.phone &&
-                            validation.errors.phone ? (
-                              <FormFeedback type="invalid">
-                                {validation.errors.phone}
-                              </FormFeedback>
-                            ) : null}
+                              validation.errors.phone ? (
+                                <FormFeedback type="invalid">
+                                  {validation.errors.phone}
+                                </FormFeedback>
+                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -346,34 +257,13 @@ const CrearUsuarios = ({ data, error }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
+                              <RenderInput
                                 type="text"
-                                className="form-control"
-                                id="username"
-                                onChange={(event) => {
-                                  validation.handleChange(event);
-                                  setUsername(event.target.value);
-                                }}
+                                validation={validation}
+                                fieldName="username"
                                 placeholder="Ingrese el username"
-                                onBlur={validation.handleBlur}
-                                value={validation.values.username || ""}
-                                invalid={
-                                  validation.touched.username &&
-                                  validation.errors.username
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.username &&
-                                  !validation.errors.username
-                                }
+                                handleChange={handleChange}
                               />
-                              {validation.touched.username &&
-                              validation.errors.username ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.username}
-                                </FormFeedback>
-                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -387,35 +277,13 @@ const CrearUsuarios = ({ data, error }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
+                              <RenderInput
                                 type="password"
-                                className="form-control"
-                                id="password"
-                                onChange={(event) => {
-                                  validation.handleChange(event);
-                                  setPassword(event.target.value);
-                                }}
+                                validation={validation}
+                                fieldName="password"
                                 placeholder="Ingrese la contraseña"
-                                onBlur={validation.handleBlur}
-                                value={validation.values.password || ""}
-                                invalid={
-                                  validation.touched.password &&
-                                  validation.errors.password
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.password &&
-                                  !validation.errors.password
-                                }
+                                handleChange={handleChange}
                               />
-                              {validation.touched.password &&
-                              validation.errors.password ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.password}
-                                </FormFeedback>
-                              ) : null}
-                             
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -442,11 +310,8 @@ const CrearUsuarios = ({ data, error }) => {
                                 }`}
                                 id="rol"
                                 name="rol"
-                                onChange={(event) => {
-                                  validation.handleChange(event);
-                                  setRole(event.target.value);
-                                }}
-                                value={rol}
+                                onChange={handleChange}
+                                value={formState.rol}
                               >
                                 <option value="">Select your Status </option>
                                 {data?.map((role) => (

@@ -54,7 +54,6 @@ import dynamic from "next/dynamic";
 const Actualizar = ({ roles, usuario, id ,errors }) => {
   const [isChecked, setIsChecked] = useState(usuario?.enable ? true : false);
   const router = useRouter();
-  const [error, setError] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [values, setValues] = useState({
     name: "",
@@ -138,7 +137,7 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
       email: usuario?.email,
       phone: usuario?.phone,
       username: usuario?.username,
-      rol: usuario?.role.name,
+      rol: usuario?.role?.name,
     };
     setValues(initialValues);
     validation.setValues(initialValues);
