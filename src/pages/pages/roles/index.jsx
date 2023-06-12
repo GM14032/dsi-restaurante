@@ -16,7 +16,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
- function Roles() {
+function Roles() {
   const router = useRouter();
   const mensaje = router.query.mensaje || '';
   const [decoded, setDecoded] = useState();

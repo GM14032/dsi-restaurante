@@ -16,14 +16,13 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import "react-toastify/dist/ReactToastify.css";
 import DataTable from "react-data-table-component";
-import { ValidationRole } from "../../../constant/validations";
 import { ToastEffect } from "../../../Components/Common/ToastEffect";
 import { RenderInput } from "../../../Components/Common/RenderInput";
+import { postRequest,getAll } from "@/api";
+import { ValidationRole } from "@/constant/validations";
 export async function getServerSideProps() {
   try {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + "/permissions/"
-    ).catch((error) => console.error(error));
+    const response = await getAll("permissions");
     const permisosJson = await response.json();
 
     const permission = permisosJson.reduce((acc, permission) => {
@@ -53,14 +52,14 @@ const CrearRoles = ({ permisos, permisosJson, error }) => {
   const [submitClicked, setSubmitClicked] = useState(false);
   const initialState= { name: "", description: "",};
   const [formState, setFormState] = useState(initialState);
-
+  const [selectedRows, setSelectedRows] = useState([]);
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: initialState,
     validationSchema: ValidationRole,
   });
 
-  const [selectedRows, setSelectedRows] = useState([]);
+
   const handleCheckboxChange = (event, row) => {
     const checked = event.target.checked;
     if (checked) {
@@ -84,20 +83,11 @@ const CrearRoles = ({ permisos, permisosJson, error }) => {
     if (Object.keys(valid).length > 0) {
       return;
     }
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + "/roles/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name:formState.name,
-          description:formState.description,
-          permissions,
-        }),
-      }
-    );
+    const response = await postRequest( {
+      name:formState.name,
+      description:formState.description,
+      permissions,
+    },"roles");
     if (response.ok) {
       router.push({
         pathname: "/pages/roles",

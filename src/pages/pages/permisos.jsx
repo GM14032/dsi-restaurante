@@ -1,7 +1,7 @@
 import React from "react";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import { Grid, _ } from 'gridjs-react';
-
+import { getAll  } from "@/api";
 import {
 	Col,
 	Container,
@@ -9,17 +9,13 @@ import {
 	Card,
 	CardBody,
 	CardHeader,
-	TabPane,
-	Table,
   } from "reactstrap";
 import Layout from "@/Layouts";
 import dynamic from "next/dynamic";
 export async function getServerSideProps() {
-  const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"/permissions/").catch(
-    (error) => console.error(error)
-  );
+	const response = await getAll("permissions");
+ 
   const data = await response.json();
-  console.log(data)
   return {
     props: { data },
   };
@@ -55,16 +51,6 @@ const Permisos = ({ data }) => {
 						minWidth: "150px",
 						id: "table",
 					  },
-					{
-						name:'Estado',
-						id:'enable',
-						formatter: (cell) => _(<span
-							className={`badge badge-soft-${
-							  cell ? "success" : "danger"
-							} fs-13`}
-						  >{cell ? 'Activo' : 'Inactivo'}</span>),
-						
-					}
 					
 				]}
 				search={true}

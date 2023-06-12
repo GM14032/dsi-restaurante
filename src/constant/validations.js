@@ -8,7 +8,16 @@ import * as Yup from "yup";
     .required("Por favor ingrese el email"),
   phone: Yup.string().required("Por favor ingrese el telefono"),
   username: Yup.string().required("Por favor ingrese el usuario"),
-  password: Yup.string().required("Por favor ingrese una contraseña"),
+  password: Yup.string().test(
+    "required",
+    "Por favor ingrese una contraseña",
+    function (value) {
+      if (this.parent.isUpdate) {
+        return true;
+      }
+      return !!value;
+    }
+  ),
   rol: Yup.string()
     .required("Por favor seleccione un rol")
     .min(1, "Por favor seleccione un rol"),

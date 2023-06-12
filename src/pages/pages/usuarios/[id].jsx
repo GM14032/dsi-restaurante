@@ -14,31 +14,31 @@ import {
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
 import Link from "next/link";
 import dynamic from "next/dynamic";
- function Mostrar() {
-  const router = useRouter();
-  const { id } = router.query;
-  const [data, setData] = useState([]);
+import { getById } from "@/api";
+export async function getServerSideProps({ params }) {
+  const { id } = params;
+  let errors = {};
+let data=null
+  const responseUsuario = await getById(id,"users");
+  if (!responseUsuario.ok) {
+	return {
+		props: {},
+		notFound: true,
+	  };		
+  }  
+ 
+  if (responseUsuario.ok) {
+    data = await responseUsuario.json();
+  }  else {
+    errors.usuario = "Error al cargar el usuario";
+  }
 
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/find/${id}`
-      ).catch((error) => console.error(error));
-      if (
-        response.ok) {
-        const data = await response.json();
-        setData(data);
-      } else {
-        const errorBody = response.json();
-        console.log(errorBody);
-      }
-    }
-    if (id) {
-      fetchData();
-    }
-  }, [id]);
+  return {
+    props: { data, errors },
+  };
+}
 
-  console.log(data);
+ function Mostrar({data}) {
   return (
     <Layout title="Mostrar usuarios">
       <Container fluid>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/Layouts";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastEffect } from "../../../../Components/Common/ToastEffect";
 import "react-toastify/dist/ReactToastify.css";
 import InputMask from "react-input-mask";
+import { ValidationUser } from "../../../../constant/validations";
+import { RenderInput } from "../../../../Components/Common/RenderInput";
 import {
   Col,
   Container,
@@ -17,26 +19,28 @@ import {
   FormFeedback,
 } from "reactstrap";
 import BreadCrumb from "../../../../Components/Common/BreadCrumb";
+import { putRequest,getById,getAll } from "@/api";
+import { Formik, useFormik, Field } from "formik";
+import dynamic from "next/dynamic";
+
 export async function getServerSideProps({ params }) {
   const { id } = params;
-
-  const responseRoles = await fetch(
-    process.env.NEXT_PUBLIC_API_URL + "/roles/"
-  ).catch((error) => console.error(error));
-  const roles = await responseRoles.json();
-
-  const responseUsuario = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/users/find/${id}`
-  ).catch((error) => console.error(error));
-
   let usuario = null;
   let errors = {};
 
+  const responseUsuario = await getById(id,"users");
+  if (!responseUsuario.ok) {
+	return {
+		props: {},
+		notFound: true,
+	  };		
+  }  
+  const responseRoles = await getAll("roles");
+  const roles = await responseRoles.json();
+ 
   if (responseUsuario.ok) {
-    usuario = await responseUsuario.json();
-  } else if (responseUsuario.status === 404) {
-    errors.usuario = "Usuario no encontrado";
-  } else {
+    usuario = await responseUsuario.json("roles");
+  }  else {
     errors.usuario = "Error al cargar el usuario";
   }
 
@@ -48,88 +52,53 @@ export async function getServerSideProps({ params }) {
     props: { roles, usuario, id, errors },
   };
 }
-import * as Yup from "yup";
-import { Formik, useFormik, Field } from "formik";
-import dynamic from "next/dynamic";
+
 const Actualizar = ({ roles, usuario, id ,errors }) => {
   const [isChecked, setIsChecked] = useState(usuario?.enable ? true : false);
   const router = useRouter();
   const [mensaje, setMensaje] = useState("");
-  const [values, setValues] = useState({
+  const initialState = {
     name: "",
     lastname: "",
     email: "",
     phone: "",
     username: "",
     password: "",
-  });
+    isUpdate: true,
+  };
+  const [values, setValues] = useState(initialState);
   const [rol, setSelectedRole] = useState(usuario?.role?.id);
+  const [errorCreate, setError] = useState(false);
+  const [submitClicked, setSubmitClicked] = useState(false);
   function handleCheckboxChange(event) {
     setIsChecked(event.target.checked);
   }
+
   const handleSubmit = async () => {
-    const valid = await validation.validateForm();
-    console.log(valid);
-    if (Object.keys(valid).length > 0) {
-      return;
-    }
+    if (!validation.isValid) return;
     const role = roles.filter((item) => item.id === parseInt(rol))[0];
 
-    
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/update/${id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: values.name,
+    const response = await putRequest(id, {
+      name: values.name,
           lastname: values.lastname,
           email: values.email,
           phone: values.phone,
           username: values.username,
           password: values.password,
+          enable:isChecked,
           role,
-        }),
-      }
-    );
+    },"users");
     if (response.ok) {
       router.push({
         pathname: '/pages/usuarios',
         query: { mensaje: 'Usuario actualizado con éxito!!!' }
       });
-      const res = await response.json();
-      console.log(res);
     } else {
       const errorBody = await response.json();
       console.log(errorBody);
      setMensaje("Error al actualizar el usuario: " + errorBody.message);
     }
   };
-  const validation = useFormik({
-    enableReinitialize: true,
-    initialValues: {
-      name: "",
-      lastname: "",
-      email: "",
-      phone: "",
-      username: "",
-      rol: "",
-    },
-    validationSchema: Yup.object({
-      name: Yup.string().required("Por favor ingrese el nombre"),
-      lastname: Yup.string().required("Por favor ingrese el apellido"),
-      email: Yup.string().email("Por favor ingrese un correo electrónico válido").required("Por favor ingrese el email"),
-      phone: Yup.string().required("Por favor ingrese el telefono"),
-      username: Yup.string().required("Por favor ingrese el usuario"),
-      rol: Yup.string()
-        .required("Por favor seleccione un rol")
-        .min(1, "Por favor seleccione un rol"),
-    }),
-  });
- 
-
   useEffect(() => {
     const initialValues = {
       name: usuario?.name,
@@ -138,15 +107,25 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
       phone: usuario?.phone,
       username: usuario?.username,
       rol: usuario?.role?.name,
+      isUpdate: true,
     };
     setValues(initialValues);
-    validation.setValues(initialValues);
+    
   }, []);
-  const handleChange = (fieldName) => (event) => {
+  const validation = useFormik({
+    enableReinitialize: true,
+    validationSchema: ValidationUser,
+    initialValues: values,
+  });
+ 
+ 
+  const handleChange = (event) => {
+    const fieldName = event.target.name;
+    const value = event.target.value;
     validation.handleChange(event);
     setValues({
       ...values,
-      [fieldName]: event.target.value,
+      [fieldName]: value,
     });
   };
   useEffect(() => {
@@ -172,19 +151,7 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                 <Card>
                   <CardBody>
                     <div className="live-preview">
-                    {mensaje ? (
-                        <>
-                          {toast(mensaje, {
-                            position: "top-right",
-                            hideProgressBar: false,
-                            className: "bg-danger text-white",
-                            progress: undefined,
-                            toastId: "",
-                          })}
-                          <ToastContainer autoClose={2000} limit={1} />
-                        </>
-
-                      ) : null}
+                   
                       <Formik>
                         <Form
                           className="needs-validation"
@@ -194,6 +161,13 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                             return false;
                           }}
                         >
+                            <ToastEffect
+                            submitClicked={submitClicked}
+                            errorCreate={errorCreate}
+                            mensaje={mensaje}
+                            setSubmitClicked={setSubmitClicked}
+                            className="warning"
+                          />
                           <Row className="mb-3">
                             <Col lg={2}>
                               <Label
@@ -205,31 +179,13 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
+                            <RenderInput
                                 type="text"
-                                className="form-control"
-                                id="name"
-                                onChange={handleChange("name")}
+                                validation={validation}
+                                fieldName="name"
                                 placeholder="Ingrese el nombre"
-                                onBlur={validation.handleBlur}
-                                value={values.name}
-                                invalid={
-                                  validation.touched.name &&
-                                  validation.errors.name
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.name &&
-                                  !validation.errors.name
-                                }
+                                handleChange={handleChange}
                               />
-                              {validation.touched.name &&
-                              validation.errors.name ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.name}
-                                </FormFeedback>
-                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -243,31 +199,13 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
-                                placeholder="Ingrese el apellido"
+                            <RenderInput
                                 type="text"
-                                className="form-control"
-                                id="lastname"
-                                onChange={handleChange("lastname")}
-                                onBlur={validation.handleBlur}
-                                value={values.lastname}
-                                invalid={
-                                  validation.touched.lastname &&
-                                  validation.errors.lastname
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.lastname &&
-                                  !validation.errors.lastname
-                                }
+                                validation={validation}
+                                fieldName="lastname"
+                                placeholder="Ingrese el apellido"
+                                handleChange={handleChange}
                               />
-                              {validation.touched.lastname &&
-                              validation.errors.lastname ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.lastname}
-                                </FormFeedback>
-                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -281,31 +219,13 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
+                            <RenderInput
                                 type="email"
-                                className="form-control"
-                                id="email"
-                                onChange={handleChange("email")}
+                                validation={validation}
+                                fieldName="email"
                                 placeholder="Ingrese el email"
-                                onBlur={validation.handleBlur}
-                                value={values.email}
-                                invalid={
-                                  validation.touched.email &&
-                                  validation.errors.email
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.email &&
-                                  !validation.errors.email
-                                }
+                                handleChange={handleChange}
                               />
-                              {validation.touched.email &&
-                              validation.errors.email ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.email}
-                                </FormFeedback>
-                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -319,19 +239,17 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <InputMask
+                            <InputMask
                                 mask="(999) 9999-9999"
                                 onBlur={validation.handleBlur}
-                                value={values.phone}
-                                onChange={(event) => {
-                                  validation.handleChange(event);
-                                  setTelefono(event.target.value);
-                                }}
+                                value={validation.values?.phone || ""}
+                                onChange={handleChange}
                               >
                                 {(inputProps) => (
                                   <Input
                                     {...inputProps}
                                     type="text"
+                                    name="phone"
                                     className="form-control"
                                     id="phone"
                                     placeholder="(503) 7456-7890"
@@ -347,11 +265,11 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                                 )}
                               </InputMask>
                               {validation.touched.phone &&
-                            validation.errors.phone ? (
-                              <FormFeedback type="invalid">
-                                {validation.errors.phone}
-                              </FormFeedback>
-                            ) : null}
+                              validation.errors.phone ? (
+                                <FormFeedback type="invalid">
+                                  {validation.errors.phone}
+                                </FormFeedback>
+                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -365,31 +283,13 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Input
+                              <RenderInput
                                 type="text"
-                                className="form-control"
-                                id="username"
-                                onChange={handleChange("username")}
+                                validation={validation}
+                                fieldName="username"
                                 placeholder="Ingrese el username"
-                                onBlur={validation.handleBlur}
-                                value={values.username}
-                                invalid={
-                                  validation.touched.username &&
-                                  validation.errors.username
-                                    ? true
-                                    : false
-                                }
-                                valid={
-                                  validation.touched.username &&
-                                  !validation.errors.username
-                                }
+                                handleChange={handleChange}
                               />
-                              {validation.touched.username &&
-                              validation.errors.username ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.username}
-                                </FormFeedback>
-                              ) : null}
                             </Col>
                           </Row>
                           <Row className="mb-3">
@@ -407,7 +307,7 @@ const Actualizar = ({ roles, usuario, id ,errors }) => {
                                 type="password"
                                 className="form-control"
                                 id="password"
-                                onChange={handleChange("password")}
+                                onChange={handleChange}
                                 placeholder="Ingrese la contraseña"
                                 value={values.password}
                                

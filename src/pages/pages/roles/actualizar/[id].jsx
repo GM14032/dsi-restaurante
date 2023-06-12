@@ -9,96 +9,70 @@ import {
   CardBody,
   CardHeader,
   Label,
-  Input,
   Form,
-  FormFeedback,
+  Input,
 } from "reactstrap";
-import DualListBox from "react-dual-listbox";
-import BreadCrumb from "../../../../Components/Common/BreadCrumb";
+import BreadCrumb from "@/Components/Common/BreadCrumb";
 import { Formik, useFormik } from "formik";
 import dynamic from "next/dynamic";
-import { ValidationRole } from "../../../../constant/validations";
-import { RenderInput } from "../../../../Components/Common/RenderInput";
+import { ValidationRole } from "@/constant/validations";
+import { RenderInput } from "@/Components/Common/RenderInput";
 import DataTable from "react-data-table-component";
+import { ToastEffect } from "../../../../Components/Common/ToastEffect";
+import { putRequest,getById, getAll } from "@/api";
 export async function getServerSideProps({ params }) {
-  const { id } = params;
-  const responsePermissions = await fetch(
-    process.env.NEXT_PUBLIC_API_URL + "/permissions/"
-  ).catch((error) => console.error(error));
-  const allPermissions = await responsePermissions.json();
-
-  const responseRole = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/roles/${id}`
-  ).catch((error) => console.error(error));
+  const { id } = params; 
+  let allPermissions = null;
+  let permission = null;
+  let error=null
+  const responseRole = await getById(id,"roles");
+  if (!responseRole.ok) {
+	return {
+		props: {},
+		notFound: true,
+	  };		
+  }  
   const roles = await responseRole.json();
-  const permission = {};
-
-  allPermissions.forEach(permissions => {
-    const { table } = permissions;
-    if (!permission[table]) {
-      permission[table] = [];
-    }
-    permission[table].push(permissions);
-  });
-  
-console.log(permission)
-  //const permissionRole = roles.permissions.map((permiso) => permiso.name);
-  const permissionRole = roles.permissions
+  const responsePermissions = await getAll("permissions");
+ 
+  if (responsePermissions.ok) {
+     allPermissions = await responsePermissions.json();
+     permission = {};
+    allPermissions.forEach((permissions) => {
+      const { table } = permissions;
+      if (!permission[table]) {
+        permission[table] = [];
+      }
+      permission[table].push(permissions);
+    });
+  }else{
+    const errorBody = await response.json();
+error="Error al obtener permisos: " + errorBody.message;
+  }
+ 
   return {
-    props: { roles, permission, id, permissionRole, allPermissions },
+    props: { roles, permission, id, allPermissions },
   };
 }
-
 const Actualizar = ({
   roles,
   permission,
-  permissionRole,
+  error,
   id,
   allPermissions,
 }) => {
   const router = useRouter();
   const [values, setValues] = useState({ name: "", description: "" });
-  const [selectedFilter, setSelectedFilter] = useState(permissionRole);
   const [isChecked, setIsChecked] = useState(roles.enable ? true : false);
- 
-  const [selectedRows, setSelectedRows] = useState([]);
-
-  const handleSubmit = async () => {
-    const permissions = permissionJson.filter((obj) =>
-      selectedFilter.includes(obj.name)
-    );
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/roles/${id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: values.name,
-          description: values.description,
-          enable: values.enable,
-          permissions,
-        }),
-      }
-    );
-    if (response.ok) {
-      router.push("/pages/roles");
-      const res = await response.json();
-      console.log(res);
-    } else {
-      const errorBody = await response.json();
-      console.log(errorBody);
-    }
-  };
+  const [selectedRows, setSelectedRows] = useState(roles.permissions);
+  const [errorUpdate, setError] = useState(false);
+  const [mensaje, setMensaje] = useState("");
+  const [submitClicked, setSubmitClicked] = useState(false);
+  
   const validation = useFormik({
     enableReinitialize: true,
     validationSchema: ValidationRole,
   });
-  function handleEnableCheckboxChange(event) {
-    setIsChecked(event.target.checked);
-  }
   useEffect(() => {
     const initialValues = {
       name: roles.name,
@@ -107,23 +81,63 @@ const Actualizar = ({
     setValues(initialValues);
     validation.setValues(initialValues);
   }, []);
-  const handleChange = (fieldName) => (event) => {
+
+  const handleSubmit = async () => {
+    if (!validation.isValid) return;
+    console.log(isChecked)
+    const response = await putRequest(id, {
+      name: values.name,
+      description: values.description,
+      enable: isChecked,
+      permissions: selectedRows,
+    },"roles");
+    if (response.ok) {
+      router.push({
+        pathname: '/pages/roles',
+        query: { mensaje: 'Rol actualizado con éxito!!!' }
+      });
+    } else {
+      const errorBody = await response.json();
+      console.log(errorBody);
+      setError(true);
+      setSubmitClicked(true);
+     setMensaje("Error al actualizar el rol: " + errorBody.message);
+    }
+  };
+
+  const handleChange = (event) => {
+    const fieldName = event.target.name;
+    const value = event.target.value;
     validation.handleChange(event);
     setValues({
       ...values,
-      [fieldName]: event.target.value,
+      [fieldName]: value,
     });
   };
 
-    const handleCheckboxChange = (event, row) => {
-      if (!selectedRows.some(selectedRow => selectedRow.id === row.id)) {
-        setSelectedRows([...selectedRows, row]);
-        console.log("true")
-      } else {
-        setSelectedRows(selectedRows.filter(selectedRow => selectedRow.id !== row.id));
-        console.log("false")
-      }
-    };
+  /**
+   *
+   * @param {string} row: nombre de la tabla
+   * @param {string} action: nombre de la accion 'READ', 'WRITE', 'DELETE'
+   */
+  const handleCheckboxChange = (row, action) => {
+    const selected = allPermissions.find(
+      (obj) => obj.table === row && obj.group === action
+    );
+    if (!selected) return; // si no existe el permiso no hace nada
+    const isChecked = !selectedRows.some(
+      (selectedRow) => selectedRow.table === row && selectedRow.group === action
+    );
+    if (isChecked) {
+      // si no encontramos el permiso en el array de permisos seleccionados, lo agregamos
+      setSelectedRows([...selectedRows, selected]);
+    } else {
+      // si lo encontramos, lo eliminamos
+      setSelectedRows(
+        selectedRows.filter((selectedRow) => selectedRow.id !== selected.id)
+      );
+    }
+  };
   const columns = [
     {
       name: <span className="font-weight-bold fs-13">Nombre</span>,
@@ -139,8 +153,13 @@ const Actualizar = ({
           id="READ"
           name="READ"
           value="option1"
-          onChange={(event) => handleCheckboxChange(event, row)}
-          checked={selectedRows.some(r=> r.id === row.id)}
+          disabled={
+            !allPermissions.some((r) => r.table === row && r.group === "READ")
+          }
+          onChange={(_) => handleCheckboxChange(row, "READ")}
+          checked={selectedRows.some(
+            (r) => r.table === row && r.group === "READ"
+          )}
         />
       ),
     },
@@ -153,8 +172,13 @@ const Actualizar = ({
           id="WRITE"
           name="WRITE"
           value="option1"
-          onChange={(event) => handleCheckboxChange(event, row)}
-          checked={selectedRows.some(r=> r.id === row.id)}
+          disabled={
+            !allPermissions.some((r) => r.table === row && r.group === "WRITE")
+          }
+          onChange={(_) => handleCheckboxChange(row, "WRITE")}
+          checked={selectedRows.some(
+            (r) => r.table === row && r.group === "WRITE"
+          )}
         />
       ),
     },
@@ -167,14 +191,21 @@ const Actualizar = ({
           id="DELETE"
           name="DELETE"
           value="option1"
-          onChange={(event) => handleCheckboxChange(event, row)}
-          checked={permissionRole.some(permission => permission.group === "DELETE" && permission.table === row)}
-     
+          disabled={
+            !allPermissions.some((r) => r.table === row && r.group === "DELETE")
+          }
+          onChange={(_) => handleCheckboxChange(row, "DELETE")}
+          checked={selectedRows.some(
+            (r) => r.table === row && r.group === "DELETE"
+          )}
         />
       ),
     },
   ];
-  
+
+  function handleEnableCheckboxChange(event) {
+    setIsChecked(event.target.checked);
+  }
 
   return (
     <Layout title="Actualizar rol">
@@ -190,7 +221,14 @@ const Actualizar = ({
                 <Card>
                   <CardBody>
                     <div className="live-preview">
-                      <Formik>
+                    <ToastEffect
+                            submitClicked={true}
+                            errorCreate={error}
+                            mensaje={error}
+                            setSubmitClicked={setSubmitClicked}
+                            className="danger"
+                          />
+                      <Formik validationSchema={ValidationRole}>
                         <Form
                           className="needs-validation"
                           onSubmit={(e) => {
@@ -199,6 +237,13 @@ const Actualizar = ({
                             return false;
                           }}
                         >
+                          <ToastEffect
+                            submitClicked={submitClicked}
+                            errorCreate={errorUpdate}
+                            mensaje={mensaje}
+                            setSubmitClicked={setSubmitClicked}
+                            className="warning"
+                          />
                           <Row className="mb-3">
                             <Col lg={2}>
                               <Label
@@ -222,7 +267,7 @@ const Actualizar = ({
                           <Row className="mb-3">
                             <Col lg={2}>
                               <Label
-                                htmlFor="lastname"
+                                htmlFor="description"
                                 className="form-label"
                                 style={{ marginLeft: "80px" }}
                               >
@@ -278,7 +323,7 @@ const Actualizar = ({
                               </Label>
                             </Col>
                             <Col lg={9} md={6}>
-                            <DataTable
+                              <DataTable
                                 columns={columns}
                                 data={Object.keys(permission)}
                                 pagination
@@ -318,4 +363,7 @@ const Actualizar = ({
     </Layout>
   );
 };
+
+
+
 export default dynamic(() => Promise.resolve(Actualizar), { ssr: false });

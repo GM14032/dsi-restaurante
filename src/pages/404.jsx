@@ -10,27 +10,31 @@ import Image from 'next/image';
 
 const Basic404 = () => {
 	return (
-		<ParticlesAuth title='404 Error Basic | Velzon - React Admin & Dashboard Template'>
+		<ParticlesAuth title='404 Error'>
 			<div className='auth-page-content'>
 				<Container>
 					<Row>
 						<Col lg={12}>
-							<div className='text-center pt-4'>
+						<div className='text-center mt-sm-5 pt-4 mb-4'> 	
 								<div className=''>
 									<Image
 										src={error}
 										alt=''
-										className='error-basic-img move-animation'
+										height='230'
+										className='move-animation'
 									/>
 								</div>
+								<div className='mb-5'>
+								<h1 className='display-2 coming-soon-text'>404</h1>
+								</div>
 								<div className='mt-n4'>
-									<h1 className='display-1 fw-medium'>404</h1>
-									<h3 className='text-uppercase'>Sorry, Page not Found 😭</h3>
+								
+									<h3 className='text-uppercase'>Lo siento, La pagina no fue encontrada 😭</h3>
 									<p className='text-muted mb-4'>
-										The page you are looking for not available!
+									La página que buscas no está disponible o el recurso no existe!
 									</p>
-									<Link href='/dashboard' className='btn btn-secondary'>
-										<i className='mdi mdi-home me-1'></i>Back to home
+									<Link href='/' className='btn btn-secondary'>
+										<i className='mdi mdi-home me-1'></i>Regresar a home
 									</Link>
 								</div>
 							</div>

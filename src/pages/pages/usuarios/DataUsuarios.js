@@ -4,7 +4,7 @@ import { Button, Modal, ModalBody, ModalHeader } from "reactstrap";
 import { DefaultModalExample } from "../../../Components/ui-common/UiModalCode";
 import Link from "next/link";
 import decode from "jwt-decode";
-
+import { putRequest,getAll  } from "@/api";
 const TableUsuarios = () => {
   const [users, setUsers] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -13,7 +13,7 @@ const TableUsuarios = () => {
   const [decoded, setDecoded] = useState();
   const [hasPermission, setHasPermission] = useState({deleteUser: false, updateUser: false});
   const fetchUsers = async () => {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"/users");
+    const response = await getAll("users");
     const data = await response.json();
     setUsers(data);
   };
@@ -44,18 +44,10 @@ const TableUsuarios = () => {
       var enable = true;
       const id = selectedUser.id;
       if (selectedUser.enable) enable = false;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/update/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            enable: enable,
-          }),
-        }
-      );
+      const response = await putRequest(id, {
+        enable: enable,
+      },"users");
+     
       if (response.ok) {
         setmodal_standard(false);
         fetchUsers();

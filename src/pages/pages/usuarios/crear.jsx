@@ -21,11 +21,12 @@ import Layout from "@/Layouts";
 import { Formik, useFormik, Field } from "formik";
 import dynamic from "next/dynamic";
 import "react-toastify/dist/ReactToastify.css";
+import { postRequest,getAll } from "@/api";
 export async function getServerSideProps() {
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/roles/");
-    const data = await response.json();
-    console.log(data);
+    const response = await getAll("roles");
+  const data = await response.json();
+  
     return {
       props: { data },
     };
@@ -57,24 +58,15 @@ const CrearUsuarios = ({ data, error }) => {
       return;
     }
     const role = data.filter((item) => item.id === parseInt(formState.rol))[0];
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + "/users/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formState.name,
-          lastname: formState.lastname,
-          email: formState.email,
-          phone: formState.phone,
-          username: formState.username,
-          password: formState.password,
-          role,
-        }),
-      }
-    );
+    const response = await postRequest( {
+      name: formState.name,
+      lastname: formState.lastname,
+      email: formState.email,
+      phone: formState.phone,
+      username: formState.username,
+      password: formState.password,
+      role,
+    },"users");
     if (response.ok) {
       router.push({
         pathname: "/pages/usuarios",

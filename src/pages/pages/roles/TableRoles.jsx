@@ -5,18 +5,23 @@ import { Button, Modal, ModalBody, ModalHeader } from "reactstrap";
 import { DefaultModalExample } from "../../../Components/ui-common/UiModalCode";
 import Link from 'next/link';
 import decode from "jwt-decode";
+import { putRequest,getAll } from "@/api";
 const TableRoles = () => {
   const [roles, setRoles] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
   const [modal_standard, setmodal_standard] = useState(false);
-  const router = useRouter();
   const [decoded, setDecoded] = useState();
   const [hasPermission, setHasPermission] = useState({deleteRol: false, updateRol: false});
   const fetchRoles = async () => {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL+"/roles/");
-    const data = await response.json();
-    setRoles(data);
+    try {
+      const responseRoles = await getAll("roles");
+  const data = await responseRoles.json();
+      setRoles(data);
+    } catch (error) {
+      console.log(error)
+    }
+   
   };
 
   useEffect(() => {
@@ -46,18 +51,10 @@ const TableRoles = () => {
       var enable = true;
       const id = selectedRole.id;
       if (selectedRole.enable) enable = false;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/roles/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            enable: enable,
-          }),
-        }
-      );
+      const response = await putRequest(id, {
+        enable: enable,
+      },"roles");
+    
       if (response.ok) {
         const body = response.json();
         console.log(body);

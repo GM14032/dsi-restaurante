@@ -34,7 +34,7 @@ const ParticlesAuth = ({ children, title, content = '' }) => {
 							<div className='col-lg-12'>
 								<div className='text-center'>
 									<p className='mb-0 text-muted'>
-										&copy; {new Date().getFullYear()} DSI
+										&copy; {new Date().getFullYear()} DSI 
 									</p>
 								</div>
 							</div>
