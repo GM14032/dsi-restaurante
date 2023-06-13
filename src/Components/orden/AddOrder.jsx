@@ -1,9 +1,8 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
-const AddOrder = ({ products = [], addValue = () => {} }) => {
-	const ref = useRef();
+const AddOrder = ({ products = [], addValue = () => {}, error = '' }) => {
 	const onChange = (_, value) => {
 		if (value) {
 			addValue({ ...value, quantity: 1, total: value.price });
@@ -11,7 +10,7 @@ const AddOrder = ({ products = [], addValue = () => {} }) => {
 	};
 
 	return (
-		<div className='autocomplete-order' ref={ref}>
+		<div className='autocomplete-order'>
 			<Autocomplete
 				disablePortal
 				id='orden'
@@ -25,6 +24,7 @@ const AddOrder = ({ products = [], addValue = () => {} }) => {
 				sx={{ width: 300 }}
 				renderInput={(params) => <TextField {...params} label='Orden' />}
 			/>
+			<span>{error}</span>
 		</div>
 	);
 };

@@ -60,9 +60,15 @@ here your global styles
 
 .autocomplete-order {
 	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
 	.MuiAutocomplete-root {
 		width: 100%;
+	}
+	span {
+		color: #f7666e;
+		margin-top: 0.25rem;
+		font-size: 0.875em;
 	}
 	button {
 		padding: 0;
@@ -121,5 +127,26 @@ here your global styles
 	margin-top: 20px;
 	div > a {
 		margin-right: 16px;
+	}
+}
+.order-data-form {
+	margin-top: 16px;
+	margin-bottom: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.order-form-group {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	.order-form-label {
+		display: flex;
+		width: 20%;
+	}
+	.order-form-input {
+		width: 80%;
+		display: flex;
+		flex-direction: column;
 	}
 }

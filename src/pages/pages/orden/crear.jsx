@@ -1,15 +1,23 @@
 import Layout from '@/Layouts';
-import React, { useState } from 'react';
+import React from 'react';
 import BreadCrumb from '@/Components/Common/BreadCrumb';
-import { Card, CardBody, CardHeader, Col, Container, Row } from 'reactstrap';
+import {
+	Card,
+	CardBody,
+	CardHeader,
+	Col,
+	Container,
+	Label,
+	Row,
+} from 'reactstrap';
 import 'react-toastify/dist/ReactToastify.css';
 import { getAll } from '@/api';
 import dynamic from 'next/dynamic';
 import AddOrder from '@/Components/orden/AddOrder';
-import { getDollarFormat } from '@/utils/format';
 import Link from 'next/link';
 import useFormOrder from '@/hooks/useFormOrder';
 import OrderForm from '@/Components/orden/OrderForm';
+import { RenderInput } from '@/Components/Common/RenderInput';
 
 const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 	const {
@@ -18,7 +26,10 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 		getProductsThatAreNotInOrderDetails,
 		handleQuantity,
 		orderDetails,
+		validation,
+		error: errorOrder,
 		removeOrderDetail,
+		handleChange,
 	} = useFormOrder(products);
 
 	return (
@@ -34,14 +45,67 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 							<CardBody className='card-body'>
 								<Card>
 									<CardBody>
+										<div className='order-data-form'>
+											<div className='order-form-group'>
+												<Label
+													htmlFor='description'
+													className='order-form-label'
+												>
+													Categoria:
+												</Label>
+												<div className='order-form-input'>
+													<RenderInput
+														type='text'
+														validation={validation}
+														fieldName='category'
+														placeholder='Ingrese la categoria'
+														handleChange={handleChange}
+													/>
+												</div>
+											</div>
+											<div className='order-form-group'>
+												<Label
+													htmlFor='description'
+													className='order-form-label'
+												>
+													Descripcion:
+												</Label>
+												<div className='order-form-input'>
+													<RenderInput
+														type='text'
+														validation={validation}
+														fieldName='description'
+														placeholder='Ingrese la descripcion'
+														handleChange={handleChange}
+													/>
+												</div>
+											</div>
+											<div className='order-form-group'>
+												<Label htmlFor='table' className='order-form-label'>
+													Mesa:
+												</Label>
+												<div className='order-form-input'>
+													<RenderInput
+														type='text'
+														validation={validation}
+														fieldName='table'
+														placeholder='Ingrese el numero de mesa'
+														handleChange={handleChange}
+													/>
+												</div>
+											</div>
+										</div>
 										<AddOrder
 											products={getProductsThatAreNotInOrderDetails()}
 											addValue={addOrderDetail}
+											error={errorOrder}
 										/>
 										<OrderForm
 											handleQuantity={handleQuantity}
 											orderDetails={orderDetails}
 											removeOrderDetail={removeOrderDetail}
+											validation={validation}
+											handleChange={handleChange}
 										/>
 										<Col lg={11} className='buttons-order-form'>
 											<div className='text-end'>
