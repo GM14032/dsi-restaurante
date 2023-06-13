@@ -57,3 +57,69 @@ here your global styles
 		transform: translateX(0);
 	}
 }
+
+.autocomplete-order {
+	display: flex;
+	justify-content: space-between;
+	.MuiAutocomplete-root {
+		width: 100%;
+	}
+	button {
+		padding: 0;
+		width: 50px;
+		i {
+			font-size: 2rem;
+		}
+	}
+}
+
+.order-form-total {
+	background-color: #eee;
+	border-radius: 8px;
+	padding: 8px 20px;
+	display: grid;
+	grid-template-columns: 5fr 2fr;
+	align-items: center;
+	margin-top: 16px;
+	.order-form-item-total {
+		display: flex;
+		justify-content: flex-end;
+	}
+}
+.order-form {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 16px;
+	.order-form-item {
+		background-color: #eee;
+		border-radius: 8px;
+		padding: 4px 5px;
+		display: grid;
+		grid-template-columns: 5fr 1fr 1fr 1fr;
+		align-items: center;
+		i {
+			margin-right: 4px;
+			cursor: pointer;
+			font-weight: bolder;
+		}
+		.order-form-item-quantity input {
+			outline: none;
+			border: none;
+			width: 125px;
+			border-radius: 5px;
+			padding: 5px 10px;
+		}
+		.order-form-item-total {
+			display: flex;
+			justify-content: flex-end;
+		}
+	}
+}
+
+.buttons-order-form {
+	margin-top: 20px;
+	div > a {
+		margin-right: 16px;
+	}
+}
