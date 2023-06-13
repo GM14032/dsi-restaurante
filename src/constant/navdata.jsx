@@ -50,4 +50,23 @@ export const menuItems = [
 		icon: 'mdi mdi-badge-account-horizontal',
 		link: '/pages/permisos',
 },
+{
+	id: 'Orden',
+	label: 'Gestion de ordenes',
+	icon: 'mdi mdi-file-table-box-multiple',
+	subItems: [
+		{
+			id: 'Orden',
+			label: 'Ver Ordenes',
+			link: '/pages/orden',
+			parentId: 'Orden',
+		},
+		{
+			id: 'Orden',
+			label: 'Agregar Orden',
+			link: '/pages/orden/crear',
+			parentId: 'Orden',
+		},
+	],
+},
 ];

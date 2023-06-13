@@ -51,7 +51,7 @@ export default function login() {
   });
 
   const handleSubmit = async (username, password) => {
-    const response = await fetch("http://localhost:8082/auth/token/", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_LOGIN_URL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

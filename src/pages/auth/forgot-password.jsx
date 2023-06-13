@@ -35,7 +35,7 @@ const ForgetPasswordPage = (props) => {
     },
   });
   const handleSubmit = async (email ) => {
-	const response = await fetch("http://localhost:8082/api/reset-password", {
+	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reset-password`, {
 	method: 'POST',
 	headers: {
 	  'Content-Type': 'application/json'

@@ -5,18 +5,18 @@ import { DefaultModalExample } from "../../../Components/ui-common/UiModalCode";
 import Link from 'next/link';
 import decode from "jwt-decode";
 import { putRequest,getAll } from "@/api";
-const TableRoles = () => {
-  const [roles, setRoles] = useState([]);
+const TableOrders = () => {
+  const [orders, setOrders] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [modal_standard, setmodal_standard] = useState(false);
   const [decoded, setDecoded] = useState();
-  const [hasPermission, setHasPermission] = useState({deleteRol: false, updateRol: false});
-  const fetchRoles = async () => {
+  const [hasPermission, setHasPermission] = useState({deleteOrder: false, updateOrder: false});
+  const fetchOrders = async () => {
     try {
-      const responseRoles = await getAll("roles");
-  const data = await responseRoles.json();
-      setRoles(data);
+      const responseOrders = await getAll("orders");
+  const data = await responseOrders.json();
+      setOrders(data);
     } catch (error) {
       console.log(error)
     }
@@ -24,7 +24,7 @@ const TableRoles = () => {
   };
 
   useEffect(() => {
-    fetchRoles();
+    fetchOrders();
     setDataLoaded(true);
   }, []);
   useEffect(() => {
@@ -40,25 +40,25 @@ const TableRoles = () => {
   }, []);
   useEffect(() => {
     if (decoded) {
-      const deleteRol = decoded.permission.includes("DELETE_ROLE");
-      const updateRol = decoded.permission.includes("WRITE_ROLE");
-      setHasPermission({...hasPermission, deleteRol, updateRol});
+      const deleteOrder = decoded.permission.includes("DELETE_ORDER");
+      const updateOrder = decoded.permission.includes("WRITE_ORDER");
+      setHasPermission({...hasPermission, deleteOrder, updateOrder});
     }
   }, [decoded]);
-  const handleInactivateRol = async () => {
-    if (selectedRole) {
+  const handleInactivateOrder = async () => {
+    if (selectedOrder) {
       var enable = true;
-      const id = selectedRole.id;
-      if (selectedRole.enable) enable = false;
+      const id = selectedOrder.id;
+      if (selectedOrder.enable) enable = false;
       const response = await putRequest(id, {
         enable: enable,
-      },"roles");
+      },"Orders");
     
       if (response.ok) {
         const body = response.json();
         console.log(body);
         setmodal_standard(false);
-        fetchRoles();
+        fetchOrders();
       } else {
         const errorBody = response.json();
         console.log(errorBody);
@@ -69,24 +69,34 @@ const TableRoles = () => {
   const columns = useMemo(
     () => [
       {
-        name: <span className="font-weight-bold fs-13">Nombre</span>,
-        selector: (row) => row.name,
+        name: <span className="font-weight-bold fs-13">Numero de Orden</span>,
+        selector: (row) => row.id,
         sortable: true,
       },
       {
-        name: <span className="font-weight-bold fs-13">Descripcion</span>,
-        selector: (row) => row.description,
+        name: <span className="font-weight-bold fs-13">Categoria</span>,
+        selector: (row) => row.category,
         sortable: true,
-      },           
+      },    
+      {
+        name: <span className="font-weight-bold fs-13">Nombre</span>,
+        selector: (row) => row.name,
+        sortable: true,
+      }, 
+      {
+        name: <span className="font-weight-bold fs-13">Cantidad</span>,
+        selector: (row) => row.quantity,
+        sortable: true,
+      },        
       {
         name: <span className="font-weight-bold fs-13">Estado</span>,
         selector: (row) => (
           <span
             className={`badge badge-soft-${
-              row.enable ? "success" : "danger"
+              row.state ? "success" : "danger"
             } fs-13`}
           >
-            {row.enable ? "Activo" : "Inactivo"}
+            {row.state ? "Activo" : "Inactivo"}
           </span>
         ),
         sortable: true,
@@ -96,32 +106,10 @@ const TableRoles = () => {
         selector: (row) => {
           return (
             <div>
-              {hasPermission.deleteRol && (
-                <>
-                  <Button
-                    color={row.enable ? "danger" : "warning"}
-                    className="btn-icon"
-                    title={row.enable ? "Inactivar rol" : "Activar rol"}
-                    onClick={() => {
-                      tog_standard();
-                      setSelectedRole(row);
-                    }}
-                  >
-                    <i
-                      className={`bx bx-${row.enable ? "x" : "plus"}-circle`}
-                    />
-                  </Button>{" "}
-                </>
-              )}{" "}
              
-              <Link href={`/pages/roles/${row.id}`}>
-                <Button color="info" className="btn-icon" title="Ver rol">
-                  <i className="bx bxs-show" />
-                </Button>
-              </Link>{" "}
-                {hasPermission.updateRol && (
+                {hasPermission.updateOrder && (
                   <>
-              <Link href={`/pages/roles/actualizar/${row.id}`}>
+              <Link href={`/pages/Orders/actualizar/${row.id}`}>
               <Button
                 color="success"
                 className="btn-icon"
@@ -149,7 +137,7 @@ const TableRoles = () => {
       <div>
         <DataTable
           columns={columns}
-          data={roles}
+          data={orders}
           pagination
           paginationPerPage={10}
           paginationRowsPerPageOptions={[10, 15, 20]}
@@ -173,14 +161,14 @@ const TableRoles = () => {
               tog_standard();
             }}
           >
-            {selectedRole?.enable ? "Inactivar " : "Activar "}roles
+            {selectedOrder?.enable ? "Inactivar " : "Activar "}Orders
           </ModalHeader>
           <ModalBody>
             <h5 className="fs-15">
-              ¿Desea {selectedRole?.enable ? "inactivar " : "activar "}el
+              ¿Desea {selectedOrder?.enable ? "inactivar " : "activar "}el
               rol{" "}
               <b>
-                {selectedRole?.name}
+                {selectedOrder?.name}
               </b>
               ?
             </h5>
@@ -194,7 +182,7 @@ const TableRoles = () => {
             >
               Cancelar
             </Button>
-            <Button color="primary" onClick={handleInactivateRol}>
+            <Button color="primary" onClick={handleInactivateOrder}>
               Aceptar
             </Button>
           </div>
@@ -204,4 +192,4 @@ const TableRoles = () => {
   );
 };
 
-export { TableRoles };
+export { TableOrders };
