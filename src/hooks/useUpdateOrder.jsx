@@ -53,8 +53,9 @@ const useUpdateOrder = (products = [], order) => {
 				id: `id-${orderDetail.id}`,
 				name: orderDetail.name,
 				price: orderDetail.price,
+				total: orderDetail.price,
 				quantity: 1,
-				product: { id: orderDetail.id },
+				product: { id: orderDetail.id, price: orderDetail.price },
 			},
 		]);
 	};
@@ -78,7 +79,6 @@ const useUpdateOrder = (products = [], order) => {
 			setError('Debe agregar al menos un producto');
 			return;
 		}
-		console.log({ order });
 		const newOrders = {
 			orderDetails: orderDetails.map((od) => {
 				const id = Number.isInteger(+od.id) ? od.id : undefined;
@@ -86,7 +86,7 @@ const useUpdateOrder = (products = [], order) => {
 					...od,
 					id,
 					quantity: od.quantity,
-					total: od.quantity * od.price,
+					total: od.quantity * od.product.price,
 					order: {
 						id: order.id,
 					},

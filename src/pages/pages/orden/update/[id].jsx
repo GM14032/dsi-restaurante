@@ -188,7 +188,6 @@ export async function getServerSideProps({ params: { id } }) {
 			props: { products, orderStates, order },
 		};
 	} catch (error) {
-		console.log(error);
 		return {
 			props: { error: 'Ocurrió un error al obtener los productos' },
 		};

@@ -1,5 +1,5 @@
 import Layout from '@/Layouts';
-import React from 'react';
+import React, { useMemo } from 'react';
 import BreadCrumb from '@/Components/Common/BreadCrumb';
 import {
 	Card,
@@ -15,9 +15,35 @@ import dynamic from 'next/dynamic';
 import { getById } from '@/api';
 import { getDollarFormat } from '@/utils/format';
 import Link from 'next/link';
+import DataTable from 'react-data-table-component';
 
 const ShowOrder = ({ order }) => {
-	console.log(order);
+	console.log({ order });
+	const columns = useMemo(
+		() => [
+			{
+				name: <span className='font-weight-bold fs-13'>Producto</span>,
+				selector: (row) => row.product.name,
+				sortable: true,
+			},
+			{
+				name: <span className='font-weight-bold fs-13'>Precio</span>,
+				selector: (row) => row.product.price,
+				sortable: true,
+			},
+			{
+				name: <span className='font-weight-bold fs-13'>Cantidad</span>,
+				selector: (row) => row.quantity,
+				sortable: true,
+			},
+			{
+				name: <span className='font-weight-bold fs-13'>Total</span>,
+				selector: (row) => getDollarFormat(row.total),
+				sortable: true,
+			},
+		],
+		[]
+	);
 	return (
 		<Layout title='Nueva orden'>
 			<Container fluid>
@@ -75,22 +101,13 @@ const ShowOrder = ({ order }) => {
 											</div>
 										</div>
 										<div className='order-form'>
-											{order?.orderDetails.map((od) => (
-												<div key={od.id} className='order-form-item'>
-													<div className='order-form-item-name'>
-														{od?.product?.name}
-													</div>
-													<div className='order-form-item-price'>
-														{getDollarFormat(od?.product?.price)} X
-													</div>
-													<div className='order-form-item-quantity'>
-														{od.quantity}
-													</div>
-													<div className='order-form-item-total'>
-														{getDollarFormat(od.total)}
-													</div>
-												</div>
-											))}
+											<DataTable
+												columns={columns}
+												data={order.orderDetails}
+												pagination
+												paginationPerPage={10}
+												paginationRowsPerPageOptions={[10, 15, 20]}
+											/>
 										</div>
 									</CardBody>
 								</Card>
