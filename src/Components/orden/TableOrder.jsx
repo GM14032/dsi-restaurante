@@ -120,7 +120,7 @@ const TableOrders = () => {
 							{hasPermission.updateOrder && (
 								<>
 									<Link
-										href={`/pages/order/${row.id}`}
+										href={`/pages/orden/${row.id}`}
 										style={{ marginRight: '8px' }}
 									>
 										<Button color='info' className='btn-icon' title='Ver orden'>
