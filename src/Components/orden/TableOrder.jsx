@@ -5,6 +5,7 @@ import { DefaultModalExample } from '@/Components/ui-common/UiModalCode';
 import Link from 'next/link';
 import decode from 'jwt-decode';
 import { putRequest, getAll } from '@/api';
+import { getDollarFormat } from '@/utils/format';
 
 const TableOrders = () => {
 	const [orders, setOrders] = useState([]);
@@ -86,24 +87,27 @@ const TableOrders = () => {
 				sortable: true,
 			},
 			{
-				name: <span className='font-weight-bold fs-13'>Nombre</span>,
-				selector: (row) => row.name,
+				name: <span className='font-weight-bold fs-13'># Mesa</span>,
+				selector: (row) => row.tableNumber,
 				sortable: true,
 			},
 			{
-				name: <span className='font-weight-bold fs-13'>Cantidad</span>,
-				selector: (row) => row.quantity,
+				name: <span className='font-weight-bold fs-13'>Total</span>,
+				selector: (row) => getDollarFormat(row.total),
 				sortable: true,
 			},
 			{
 				name: <span className='font-weight-bold fs-13'>Estado</span>,
 				selector: (row) => (
 					<span
-						className={`badge badge-soft-${
-							row.state ? 'success' : 'danger'
-						} fs-13`}
+						className={`badge badge-soft-success fs-13`}
+						style={{
+							backgroundColor: row?.state?.colorHex,
+							color: 'white',
+							fontWeight: 'bold',
+						}}
 					>
-						{row.state ? 'Activo' : 'Inactivo'}
+						{row?.state?.name}
 					</span>
 				),
 				sortable: true,
@@ -115,13 +119,20 @@ const TableOrders = () => {
 						<div>
 							{hasPermission.updateOrder && (
 								<>
-									<Link href={`/pages/Orders/actualizar/${row.id}`}>
+									<Link
+										href={`/pages/order/${row.id}`}
+										style={{ marginRight: '8px' }}
+									>
+										<Button color='info' className='btn-icon' title='Ver orden'>
+											<i className='bx bxs-show' />
+										</Button>
+									</Link>
+									<Link href={`/pages/orden/update/${row.id}`}>
 										<Button
 											color='success'
 											className='btn-icon'
 											title='Actualizar rol'
 										>
-											{' '}
 											<i className=' bx bxs-edit' />{' '}
 										</Button>
 									</Link>

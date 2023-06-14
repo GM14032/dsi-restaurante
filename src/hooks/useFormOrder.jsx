@@ -77,6 +77,7 @@ const useFormOrder = (products = []) => {
 			description: orderData.description,
 			tableNumber: orderData.table,
 			category: orderData.category,
+			total: orderDetails.reduce((acc, od) => acc + od.total, 0),
 		};
 		const orderResponse = await postRequest(order, 'orders');
 		if (orderResponse.error) {
