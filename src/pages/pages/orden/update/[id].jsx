@@ -19,6 +19,7 @@ import OrderForm from '@/Components/orden/OrderForm';
 import { RenderInput } from '@/Components/Common/RenderInput';
 import useUpdateOrder from '@/hooks/useUpdateOrder';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import TableOrderDetail from '@/Components/orden/TableOrderDetail';
 
 const CreateOrder = ({
 	products = [],
@@ -102,7 +103,7 @@ const CreateOrder = ({
 											</div>
 											<div className='order-form-group order-form-select'>
 												<Label htmlFor='table' className='order-form-label'>
-													Mesa:
+													Estado de orden:
 												</Label>
 												<FormControl
 													variant='standard'
@@ -134,18 +135,7 @@ const CreateOrder = ({
 												</FormControl>
 											</div>
 										</div>
-										<AddOrder
-											products={getProductsThatAreNotInOrderDetails()}
-											addValue={addOrderDetail}
-											error={errorOrder}
-										/>
-										<OrderForm
-											handleQuantity={handleQuantity}
-											orderDetails={orderDetails}
-											removeOrderDetail={removeOrderDetail}
-											validation={validation}
-											handleChange={handleChange}
-										/>
+										<TableOrderDetail orderDetails={order.orderDetails} />
 										<Col lg={11} className='buttons-order-form'>
 											<div className='text-end'>
 												<Link

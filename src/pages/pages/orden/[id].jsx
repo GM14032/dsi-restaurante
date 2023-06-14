@@ -1,5 +1,5 @@
 import Layout from '@/Layouts';
-import React, { useMemo } from 'react';
+import React from 'react';
 import BreadCrumb from '@/Components/Common/BreadCrumb';
 import {
 	Card,
@@ -13,37 +13,10 @@ import {
 import 'react-toastify/dist/ReactToastify.css';
 import dynamic from 'next/dynamic';
 import { getById } from '@/api';
-import { getDollarFormat } from '@/utils/format';
 import Link from 'next/link';
-import DataTable from 'react-data-table-component';
+import TableOrderDetail from '@/Components/orden/TableOrderDetail';
 
 const ShowOrder = ({ order }) => {
-	console.log({ order });
-	const columns = useMemo(
-		() => [
-			{
-				name: <span className='font-weight-bold fs-13'>Producto</span>,
-				selector: (row) => row.product.name,
-				sortable: true,
-			},
-			{
-				name: <span className='font-weight-bold fs-13'>Precio</span>,
-				selector: (row) => row.product.price,
-				sortable: true,
-			},
-			{
-				name: <span className='font-weight-bold fs-13'>Cantidad</span>,
-				selector: (row) => row.quantity,
-				sortable: true,
-			},
-			{
-				name: <span className='font-weight-bold fs-13'>Total</span>,
-				selector: (row) => getDollarFormat(row.total),
-				sortable: true,
-			},
-		],
-		[]
-	);
 	return (
 		<Layout title='Nueva orden'>
 			<Container fluid>
@@ -101,13 +74,7 @@ const ShowOrder = ({ order }) => {
 											</div>
 										</div>
 										<div className='order-form'>
-											<DataTable
-												columns={columns}
-												data={order.orderDetails}
-												pagination
-												paginationPerPage={10}
-												paginationRowsPerPageOptions={[10, 15, 20]}
-											/>
+											<TableOrderDetail orderDetails={order?.orderDetails} />
 										</div>
 									</CardBody>
 								</Card>
