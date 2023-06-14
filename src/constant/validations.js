@@ -34,4 +34,15 @@ const ValidationOrder = Yup.object({
 	category: Yup.string().required('Por favor ingrese una categoria'),
 });
 
-export { ValidationUser, ValidationRole, ValidationOrder };
+const ValidationOrderUpdate = Yup.object({
+	table: Yup.number().required('Por favor ingrese el numero de mesa'),
+	description: Yup.string(),
+	category: Yup.string().required('Por favor ingrese una categoria'),
+});
+
+export {
+	ValidationUser,
+	ValidationRole,
+	ValidationOrder,
+	ValidationOrderUpdate,
+};

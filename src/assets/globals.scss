@@ -150,3 +150,9 @@ here your global styles
 		flex-direction: column;
 	}
 }
+
+.order-form-select {
+	.MuiFormControl-root {
+		width: 80%;
+	}
+}

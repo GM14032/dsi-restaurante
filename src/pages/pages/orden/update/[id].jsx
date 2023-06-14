@@ -11,15 +11,21 @@ import {
 	Row,
 } from 'reactstrap';
 import 'react-toastify/dist/ReactToastify.css';
-import { getAll } from '@/api';
+import { getAll, getById } from '@/api';
 import dynamic from 'next/dynamic';
 import AddOrder from '@/Components/orden/AddOrder';
 import Link from 'next/link';
-import useFormOrder from '@/hooks/useFormOrder';
 import OrderForm from '@/Components/orden/OrderForm';
 import { RenderInput } from '@/Components/Common/RenderInput';
+import useUpdateOrder from '@/hooks/useUpdateOrder';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
+const CreateOrder = ({
+	products = [],
+	orderStates = [],
+	error = '',
+	order,
+}) => {
 	const {
 		addOrderDetail,
 		createOrder,
@@ -30,7 +36,7 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 		error: errorOrder,
 		removeOrderDetail,
 		handleChange,
-	} = useFormOrder(products);
+	} = useUpdateOrder(products, order);
 
 	return (
 		<Layout title='Nueva orden'>
@@ -94,6 +100,39 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 													/>
 												</div>
 											</div>
+											<div className='order-form-group order-form-select'>
+												<Label htmlFor='table' className='order-form-label'>
+													Mesa:
+												</Label>
+												<FormControl
+													variant='standard'
+													sx={{ m: 1, minWidth: 120 }}
+												>
+													<InputLabel id='order_state'>order state</InputLabel>
+													<Select
+														labelId='order_state'
+														id='order_state'
+														name='order_state'
+														value={
+															validation.values &&
+															validation.values['order_state']
+																? validation.values['order_state']
+																: ''
+														}
+														onChange={handleChange}
+														label='Order State'
+													>
+														{orderStates.map((orderState) => (
+															<MenuItem
+																key={orderState.id}
+																value={orderState.id}
+															>
+																{orderState.name}
+															</MenuItem>
+														))}
+													</Select>
+												</FormControl>
+											</div>
 										</div>
 										<AddOrder
 											products={getProductsThatAreNotInOrderDetails()}
@@ -137,14 +176,16 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 };
 
 export async function getServerSideProps({ params: { id } }) {
-	console.log(id);
 	try {
+		const order = Number.isInteger(+id)
+			? await (await getById(id, 'orders')).json()
+			: {};
 		const [products, orderStates] = await Promise.all([
 			await (await getAll('products')).json(),
 			await (await getAll('order_states')).json(),
 		]);
 		return {
-			props: { products, orderStates },
+			props: { products, orderStates, order },
 		};
 	} catch (error) {
 		console.log(error);

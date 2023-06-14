@@ -26,7 +26,9 @@ const ShowOrder = ({ order }) => {
 					<Col xs={12}>
 						<Card>
 							<CardHeader className='d-flex justify-content-between align-items-center'>
-								<h4 className='card-title mb-0'>Orden {order?.id}</h4>
+								<h4 className='card-title mb-0'>
+									Detalle de orden #{order?.id}
+								</h4>
 								<Link href='/pages/orden' className='btn btn-primary'>
 									<i className='ri-arrow-left-fill align-bottom'></i> Volver
 								</Link>
