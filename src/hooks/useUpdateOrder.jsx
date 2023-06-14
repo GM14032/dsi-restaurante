@@ -93,7 +93,7 @@ const useUpdateOrder = (products = [], order) => {
 				};
 			}),
 			state: {
-				id: 1, // start with state pending
+				id: orderData.order_state, // start with state pending
 			},
 			tableNumber: 1,
 			description: orderData.description,
