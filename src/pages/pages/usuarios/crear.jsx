@@ -4,6 +4,7 @@ import InputMask from "react-input-mask";
 import { ValidationUser } from "../../../constant/validations";
 import { RenderInput } from "../../../Components/Common/RenderInput";
 import { ToastEffect } from "../../../Components/Common/ToastEffect";
+import  SelectField    from '@/Components/Common/SelectField';
 import {
   Col,
   Container,
@@ -18,7 +19,7 @@ import {
 } from "reactstrap";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
 import Layout from "@/Layouts";
-import { Formik, useFormik, Field } from "formik";
+import { Formik, useFormik } from "formik";
 import dynamic from "next/dynamic";
 import "react-toastify/dist/ReactToastify.css";
 import { postRequest,getAll } from "@/api";
@@ -94,7 +95,7 @@ const CrearUsuarios = ({ data, error }) => {
     initialValues: initialState,
     validationSchema: ValidationUser,
   });
-
+	console.log(validation)
   return (
     <Layout title="Crear usuario">
       <Container fluid>
@@ -109,13 +110,13 @@ const CrearUsuarios = ({ data, error }) => {
                 <Card>
                   <CardBody>
                     <div className="live-preview">
-                    <ToastEffect
-                            submitClicked={true}
-                            errorCreate={error}
-                            mensaje={error}
-                            setSubmitClicked={setSubmitClicked}
-                            className="danger"
-                          />
+                      <ToastEffect
+                        submitClicked={true}
+                        errorCreate={error}
+                        mensaje={error}
+                        setSubmitClicked={setSubmitClicked}
+                        className="danger"
+                      />
 
                       <Formik>
                         <Form
@@ -289,35 +290,17 @@ const CrearUsuarios = ({ data, error }) => {
                               </Label>
                             </Col>
                             <Col lg={9}>
-                              <Field
-                                as="select"
-                                className={`form-select mb-3 ${
-                                  validation.touched.rol &&
-                                  validation.errors.rol
-                                    ? "is-invalid"
-                                    : validation.touched.rol &&
-                                      !validation.errors.rol
-                                    ? "is-valid"
-                                    : ""
-                                }`}
+                              <SelectField
                                 id="rol"
                                 name="rol"
+                                options={data}
                                 onChange={handleChange}
                                 value={formState.rol}
-                              >
-                                <option value="">Select your Status </option>
-                                {data?.map((role) => (
-                                  <option key={role.id} value={role.id}>
-                                    {role.name}
-                                  </option>
-                                ))}
-                              </Field>
-                              {validation.touched.rol &&
-                              validation.errors.rol ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.rol}
-                                </FormFeedback>
-                              ) : null}
+                                touched={validation.touched}
+                                errors={validation.errors}
+                                label="Selecciona el rol"
+                                fieldName='name'
+                              />
                             </Col>
                           </Row>
 

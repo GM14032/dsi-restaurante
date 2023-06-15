@@ -29,7 +29,7 @@ const ValidationRole = Yup.object({
 });
 
 const ValidationOrder = Yup.object({
-	table: Yup.number().required('Por favor ingrese el numero de mesa'),
+	table: Yup.string().required('Por favor ingrese el numero de mesa').min(1, 'Por favor seleccione una mesa'),
 	description: Yup.string(),
 	category: Yup.string().required('Por favor ingrese una categoria'),
 });
