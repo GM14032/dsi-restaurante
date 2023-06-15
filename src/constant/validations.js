@@ -22,6 +22,10 @@ const ValidationUser = Yup.object({
 		.required('Por favor seleccione un rol')
 		.min(1, 'Por favor seleccione un rol'),
 });
+const ValidationTable = Yup.object({
+	capacity: Yup.number().required('Por favor ingrese la capacidad'),
+	description: Yup.string().required('Por favor ingrese la descripcion'),
+});
 
 const ValidationRole = Yup.object({
 	name: Yup.string().required('Por favor ingrese el nombre'),
@@ -45,4 +49,5 @@ export {
 	ValidationRole,
 	ValidationOrder,
 	ValidationOrderUpdate,
+	ValidationTable,
 };

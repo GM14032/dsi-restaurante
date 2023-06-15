@@ -83,19 +83,19 @@ const Table_tables = () => {
         selector: (row) => {
           return (
             <div>
-              {hasPermission.deleteRol && (
+              {hasPermission.deleteTable && (
                 <>
                   <Button
-                    color={row.enable ? "danger" : "warning"}
+                    color={row.capacity ? "danger" : "warning"}
                     className="btn-icon"
-                    title={row.enable ? "Inactivar rol" : "Activar rol"}
+                    title={row.capacity ? "Inactivar rol" : "Activar rol"}
                     onClick={() => {
                       tog_standard();
                       setSelectedTable(row);
                     }}
                   >
                     <i
-                      className={`bx bx-${row.enable ? "x" : "plus"}-circle`}
+                      className={`bx bx-${row.capacity ? "x" : "plus"}-circle`}
                     />
                   </Button>{" "}
                 </>
@@ -106,9 +106,9 @@ const Table_tables = () => {
                   <i className="bx bxs-show" />
                 </Button>
               </Link>{" "}
-                {hasPermission.updateRol && (
+                {hasPermission.updateTable && (
                   <>
-              <Link href={`/pages/roles/actualizar/${row.id}`}>
+              <Link href={`/pages/tables/actualizar/${row.id}`}>
               <Button
                 color="success"
                 className="btn-icon"
