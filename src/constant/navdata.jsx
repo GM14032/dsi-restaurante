@@ -69,4 +69,23 @@ export const menuItems = [
 		},
 	],
 },
+{
+	id: 'Table',
+	label: 'Gestion de Mesas',
+	icon: 'mdi mdi-file-table-box-multiple',
+	subItems: [
+		{
+			id: 'Table',
+			label: 'Ver Mesas',
+			link: '/pages/tables',
+			parentId: 'tables',
+		},
+		{
+			id: 'Table',
+			label: 'Agregar Mesa',
+			link: '/pages/tables/crear',
+			parentId: 'table',
+		},
+	],
+},
 ];

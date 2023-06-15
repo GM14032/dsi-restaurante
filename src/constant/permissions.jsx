@@ -5,5 +5,7 @@ export const PERMISSIONS = {
 	WRITE_ROLE: ['/pages/roles/crear', '/pages/roles/actualizar/[id]'],
 	READ_ORDER: ['/pages/orden', '/pages/orden/[id]'],
 	WRITE_ORDER: ['/pages/orden/crear', '/pages/orden/update/[id]'],
+	READ_TABLE:['/pages/tables','/pages/tables/[id]'],
+	WRITE_TABLE:['/pages/tables/crear','/pages/tables/actualizar/[id]'],
 };
 export const NO_PERMISSIONS = ['/login', '/register', '/'];
