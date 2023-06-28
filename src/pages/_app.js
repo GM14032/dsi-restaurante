@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { StompSessionProvider } from 'react-stomp-hooks';
+
 import 'cleave.js/dist/addons/cleave-phone.in';
 import '@/assets/globals.scss';
 import '@/assets/scss/jquery-jvectormap.scss';
@@ -20,7 +22,12 @@ import 'react-dual-listbox/lib/react-dual-listbox.css';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 
+const SOCKET_URL = 'http://localhost:8080/ws';
+
 export default function App({ Component, pageProps }) {
-	return <Component {...pageProps} />;
-	
+	return (
+		<StompSessionProvider url={SOCKET_URL}>
+			<Component {...pageProps} />
+		</StompSessionProvider>
+	);
 }
