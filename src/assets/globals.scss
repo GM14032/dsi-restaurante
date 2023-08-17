@@ -1,0 +1,162 @@
+/**
+here your global styles
+**/
+
+@import '~node_modules/bootstrap/scss/bootstrap';
+
+.subitems-nav-menu {
+	background: none;
+	width: 100%;
+	display: flex;
+	border: none;
+}
+
+.btn_clean {
+	background: none;
+	width: 100%;
+	display: flex;
+	border: none;
+}
+
+.vertical-hidden {
+	animation: hideSidebar 0.5s forwards;
+}
+
+.vertical-collpsed {
+	animation: showSidebar 0.5s forwards;
+}
+
+.content-margin {
+	margin-left: 270px;
+}
+
+@media (max-width: 767.98px) {
+	.content-margin {
+		margin-left: 0;
+	}
+}
+
+@keyframes hideSidebar {
+	0% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateX(-100%);
+	}
+}
+
+@keyframes showSidebar {
+	0% {
+		opacity: 0;
+		transform: translateX(-100%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+.autocomplete-order {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	.MuiAutocomplete-root {
+		width: 100%;
+	}
+	span {
+		color: #f7666e;
+		margin-top: 0.25rem;
+		font-size: 0.875em;
+	}
+	button {
+		padding: 0;
+		width: 50px;
+		i {
+			font-size: 2rem;
+		}
+	}
+}
+
+.order-form-total {
+	background-color: #eee;
+	border-radius: 8px;
+	padding: 8px 20px;
+	display: grid;
+	grid-template-columns: 5fr 2fr;
+	align-items: center;
+	margin-top: 16px;
+	.order-form-item-total {
+		display: flex;
+		justify-content: flex-end;
+	}
+}
+.order-form {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 16px;
+	.order-form-item {
+		background-color: #eee;
+		border-radius: 8px;
+		padding: 4px 5px;
+		display: grid;
+		grid-template-columns: 5fr 1fr 1fr 1fr;
+		align-items: center;
+		i {
+			margin-right: 4px;
+			cursor: pointer;
+			font-weight: bolder;
+		}
+		.order-form-item-quantity input {
+			outline: none;
+			border: none;
+			width: 125px;
+			border-radius: 5px;
+			padding: 5px 10px;
+		}
+		.order-form-item-total {
+			display: flex;
+			justify-content: flex-end;
+		}
+	}
+}
+
+.buttons-order-form {
+	margin-top: 20px;
+	div > a {
+		margin-right: 16px;
+	}
+}
+.order-data-form {
+	margin-top: 16px;
+	margin-bottom: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.order-form-group {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	.order-form-label {
+		display: flex;
+		width: 20%;
+	}
+	.order-form-input {
+		width: 80%;
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.order-form-select {
+	.MuiFormControl-root {
+		width: 80%;
+	}
+}
+
+.unseenNotification {
+	background-color: rgba(60, 209, 136, 0.1) !important;
+}
