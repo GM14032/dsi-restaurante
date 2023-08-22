@@ -7,7 +7,7 @@ import decode from 'jwt-decode';
 import { putRequest, getAll } from '@/api';
 import { getDollarFormat } from '@/utils/format';
 
-const TableOrders = ({ stateSelected = 0}) => {
+const TableOrders = ({ stateSelected = 0, startDate = '', endDate = ''}) => {
 	const [orders, setOrders] = useState([]);
 	const [orderFiltered, setOrderFiltered] = useState([]);
 	const [dataLoaded, setDataLoaded] = useState(false);
@@ -20,25 +20,20 @@ const TableOrders = ({ stateSelected = 0}) => {
 	});
 	const fetchOrders = async () => {
 		try {
-			const date = new Date();
-			// remove the offset time
-			const dateNow = new Date(
-				date.getTime() - date.getTimezoneOffset() * 60000
-			)
-				.toISOString()
-				.split('T')[0];
-			const responseOrders = await getAll('orders', `?startDate=${dateNow}`);
+			setDataLoaded(false);
+			const responseOrders = await getAll('orders', `${startDate}${endDate}`);
 			const data = await responseOrders.json();
 			setOrders(data);
 		} catch (error) {
-			console.log(error);
+			setOrders([]);
+		}finally{
+			setDataLoaded(true);
 		}
 	};
 
 	useEffect(() => {
 		fetchOrders();
-		setDataLoaded(true);
-	}, []);
+	}, [startDate, endDate]);
 	useEffect(() => {
 		if (window && window.localStorage) {
 			const token = localStorage.getItem('token');

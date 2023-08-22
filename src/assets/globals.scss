@@ -162,12 +162,33 @@ here your global styles
 }
 
 .table-control {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+	display: flex;
+    justify-content: space-between;
 	gap: 16px;
 	min-width: 300px;
 }
 
+.table-control > .MuiFormControl-root {
+    width: 200px;
+}
+
 .simple-select-order > div {
 	padding: 10px;
+}
+
+.date-picker-order-filter{
+    width: 300px;
+    display: flex;
+    gap: 16px;
+}
+
+.date-form-filter {
+    display: flex;
+    flex-direction: column;
+    input {
+      padding: 0;
+    }
+    fieldset {
+        border: none;
+    }
 }

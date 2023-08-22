@@ -67,6 +67,12 @@ export const menuItems = [
 			link: '/pages/orden/crear',
 			parentId: 'Orden',
 		},
+		{
+			id: 'historial',
+			label: 'Historial',
+			link: '/pages/orden/history',
+			parentId: 'Orden'
+		}
 	],
 },
 {
