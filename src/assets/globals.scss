@@ -160,3 +160,14 @@ here your global styles
 .unseenNotification {
 	background-color: rgba(60, 209, 136, 0.1) !important;
 }
+
+.table-control {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	min-width: 300px;
+}
+
+.simple-select-order > div {
+	padding: 10px;
+}

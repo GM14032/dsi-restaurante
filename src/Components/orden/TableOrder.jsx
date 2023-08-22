@@ -7,8 +7,9 @@ import decode from 'jwt-decode';
 import { putRequest, getAll } from '@/api';
 import { getDollarFormat } from '@/utils/format';
 
-const TableOrders = () => {
+const TableOrders = ({ stateSelected = 0}) => {
 	const [orders, setOrders] = useState([]);
+	const [orderFiltered, setOrderFiltered] = useState([]);
 	const [dataLoaded, setDataLoaded] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [modal_standard, setmodal_standard] = useState(false);
@@ -19,7 +20,14 @@ const TableOrders = () => {
 	});
 	const fetchOrders = async () => {
 		try {
-			const responseOrders = await getAll('orders');
+			const date = new Date();
+			// remove the offset time
+			const dateNow = new Date(
+				date.getTime() - date.getTimezoneOffset() * 60000
+			)
+				.toISOString()
+				.split('T')[0];
+			const responseOrders = await getAll('orders', `?startDate=${dateNow}`);
 			const data = await responseOrders.json();
 			setOrders(data);
 		} catch (error) {
@@ -73,6 +81,10 @@ const TableOrders = () => {
 			}
 		}
 	};
+
+	useEffect(()=>{
+		setOrderFiltered(orders.filter(order=> order.state.id === stateSelected || !stateSelected));
+	}, [orders, stateSelected])
 
 	const columns = useMemo(
 		() => [
@@ -157,7 +169,7 @@ const TableOrders = () => {
 			<div>
 				<DataTable
 					columns={columns}
-					data={orders}
+					data={orderFiltered}
 					pagination
 					paginationPerPage={10}
 					paginationRowsPerPageOptions={[10, 15, 20]}
