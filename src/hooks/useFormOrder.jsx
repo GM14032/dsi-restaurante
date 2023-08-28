@@ -85,10 +85,11 @@ const useFormOrder = (products = []) => {
 			return;
 		}
 		if (orderResponse.ok) {
+			const orderJson = await orderResponse.json();
 			const response = await postRequest(
 				{
 					message: 'Orden test: ' + orderData.description,
-					redirect: `/pages/orden/${orderResponse.data.id}`,
+					redirect: `/pages/orden/${orderJson.id}`,
 					roles: ['Admin', 'Chef'],
 				},
 				'notifications'
@@ -101,7 +102,7 @@ const useFormOrder = (products = []) => {
 					content: 'Orden ABC: ' + orderData.description,
 					roles: ['Admin', 'Chef'],
 					idNotification: notificationsResponse.id,
-					redirect: `/pages/orden/${orderResponse.data.id}`,
+					redirect: `/pages/orden/${orderJson.id}`,
 				}),
 				headers: {
 					'Content-Type': 'application/json',

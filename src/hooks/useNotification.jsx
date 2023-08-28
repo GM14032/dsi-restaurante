@@ -7,13 +7,11 @@ import {
 	fetchNotifications,
 	notificationsStateInitial,
 } from '@/utils/notification';
-import { useRouter } from 'next/router';
 
 export const useNotification = () => {
 	const [notificationState, setNotificationState] = useState(
 		notificationsStateInitial
 	);
-	const router = useRouter();
 
 	useEffect(() => {
 		const getNotifications = async () => {
@@ -125,7 +123,10 @@ export const useNotification = () => {
 
 	const redirectTo = (url = '/', message = '') => {
 		const messageQuery = message ? `?mensaje=${message}` : '';
-		router.push(`${url}${messageQuery}`);
+		if (window) {
+			// I want a full new render, so I use location.href
+			window.location.href = `${url}${messageQuery}`;
+		}
 	};
 
 	const markAsRead = async (notification) => {
