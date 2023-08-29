@@ -22,7 +22,7 @@ import 'react-dual-listbox/lib/react-dual-listbox.css';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 
-const SOCKET_URL = "http://localhost:8080/ws";
+const SOCKET_URL = `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`;
 
 export default function App({ Component, pageProps }) {
 	return (
