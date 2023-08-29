@@ -7,8 +7,9 @@ import decode from 'jwt-decode';
 import { putRequest, getAll } from '@/api';
 import { getDollarFormat } from '@/utils/format';
 
-const TableOrders = () => {
+const TableOrders = ({ stateSelected = 0, startDate = '', endDate = ''}) => {
 	const [orders, setOrders] = useState([]);
+	const [orderFiltered, setOrderFiltered] = useState([]);
 	const [dataLoaded, setDataLoaded] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [modal_standard, setmodal_standard] = useState(false);
@@ -19,18 +20,20 @@ const TableOrders = () => {
 	});
 	const fetchOrders = async () => {
 		try {
-			const responseOrders = await getAll('orders');
+			setDataLoaded(false);
+			const responseOrders = await getAll('orders', `${startDate}${endDate}`);
 			const data = await responseOrders.json();
 			setOrders(data);
 		} catch (error) {
-			console.log(error);
+			setOrders([]);
+		}finally{
+			setDataLoaded(true);
 		}
 	};
 
 	useEffect(() => {
 		fetchOrders();
-		setDataLoaded(true);
-	}, []);
+	}, [startDate, endDate]);
 	useEffect(() => {
 		if (window && window.localStorage) {
 			const token = localStorage.getItem('token');
@@ -73,6 +76,10 @@ const TableOrders = () => {
 			}
 		}
 	};
+
+	useEffect(()=>{
+		setOrderFiltered(orders.filter(order=> order.state.id === stateSelected || !stateSelected));
+	}, [orders, stateSelected])
 
 	const columns = useMemo(
 		() => [
@@ -157,7 +164,7 @@ const TableOrders = () => {
 			<div>
 				<DataTable
 					columns={columns}
-					data={orders}
+					data={orderFiltered}
 					pagination
 					paginationPerPage={10}
 					paginationRowsPerPageOptions={[10, 15, 20]}

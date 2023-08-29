@@ -85,18 +85,24 @@ const useFormOrder = (products = []) => {
 			return;
 		}
 		if (orderResponse.ok) {
-			const response = await postRequest( {
-				message:"Orden test: "+orderData.description,
-				"roles":["Admin","Chef"]
-			},"notifications");
-			const notificationsResponse=await response.json()
-			console.log(notificationsResponse.id)
+			const orderJson = await orderResponse.json();
+			const response = await postRequest(
+				{
+					message: 'Orden test: ' + orderData.description,
+					redirect: `/pages/orden/${orderJson.id}`,
+					roles: ['Admin', 'Chef'],
+				},
+				'notifications'
+			);
+			const notificationsResponse = await response.json();
+			console.log(notificationsResponse.id);
 			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message/send`, {
 				method: 'POST',
-				body:JSON.stringify({
-					"content":"Orden ABC: "+orderData.description,
-					"roles":["Admin","Chef"],
-					"idNotification":notificationsResponse.id
+				body: JSON.stringify({
+					content: 'Orden ABC: ' + orderData.description,
+					roles: ['Admin', 'Chef'],
+					idNotification: notificationsResponse.id,
+					redirect: `/pages/orden/${orderJson.id}`,
 				}),
 				headers: {
 					'Content-Type': 'application/json',

@@ -58,7 +58,7 @@ export const useNotification = () => {
 			total: prevState.total + 1,
 			data: [
 				{
-					id: `server-${idNotification}`,
+					id: idNotification,
 					message: message,
 					create_at: new Date(),
 					idNotification: idNotification,
@@ -85,18 +85,68 @@ export const useNotification = () => {
 		}
 	};
 
+	const markAsReadRequest = async (notification) => {
+		const errorMessage = {
+			message: 'Error marking notification as read',
+			redirect: false,
+		};
+		try {
+			const notificationId = +notification.id;
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/usernotifications/`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						notification: {
+							id: notificationId,
+						},
+						user: {
+							id: notificationState.userId,
+						},
+					}),
+				}
+			);
+			if (response.ok) {
+				return {
+					message: 'Notification marked as read',
+					redirect: true,
+				};
+			}
+			return errorMessage;
+		} catch (error) {
+			return errorMessage;
+		}
+	};
+
+	const redirectTo = (url = '/', message = '') => {
+		const messageQuery = message ? `?mensaje=${message}` : '';
+		if (window) {
+			// I want a full new render, so I use location.href
+			window.location.href = `${url}${messageQuery}`;
+		}
+	};
+
 	const markAsRead = async (notification) => {
-		// if the notification is already read, then we don't need to do anything
-		if (!notification || notification.status) return;
-		// await markAsReadRequest(idNotification);
-		setNotificationState((prevState) => ({
-			...prevState,
-			data: prevState.data.map((n) => {
-				if (n.id === notification.id) return { ...n, status: 1 };
-				return n;
-			}),
-			unseenNotifications: Math.max(prevState.unseenNotifications - 1, 0),
-		}));
+		// if the notification is already read, then we don't need to do anything just redirect
+		if (!notification || notification.status) {
+			redirectTo(notification.redirect || '/pages/orden');
+			return;
+		}
+		const notificationResponse = await markAsReadRequest(notification);
+		if (notificationResponse.redirect) {
+			setNotificationState((prevState) => ({
+				...prevState,
+				data: prevState.data.map((n) => {
+					if (n.id === notification.id) return { ...n, status: 1 };
+					return n;
+				}),
+				unseenNotifications: Math.max(prevState.unseenNotifications - 1, 0),
+			}));
+		}
+		redirectTo(notification.redirect || '/pages/orden');
 	};
 
 	return {
