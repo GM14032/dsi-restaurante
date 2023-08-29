@@ -103,7 +103,7 @@ export const useNotification = () => {
 						notification: {
 							id: notificationId,
 						},
-						user: {
+						users: {
 							id: notificationState.userId,
 						},
 					}),
