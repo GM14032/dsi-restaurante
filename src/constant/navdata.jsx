@@ -78,7 +78,7 @@ export const menuItems = [
 {
 	id: 'Table',
 	label: 'Gestion de Mesas',
-	icon: 'mdi mdi-file-table-box-multiple',
+	icon: 'mdi mdi-table-chair',
 	subItems: [
 		{
 			id: 'Table',

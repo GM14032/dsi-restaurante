@@ -1,4 +1,4 @@
-import { putRequest } from '@/api';
+import {postRequest, putRequest} from '@/api';
 import { ValidationOrderUpdate } from '@/constant/validations';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
@@ -107,6 +107,29 @@ const useUpdateOrder = (products = [], order) => {
 			return;
 		}
 		if (orderResponse.ok) {
+			const orderJson = await orderResponse.json();
+			const response = await postRequest(
+				{
+					message: 'Orden número: # ' + orderJson.numberOrder +", estado: " +orderJson.state.name,
+					redirect: `/pages/orden/${orderJson.id}`,
+					roles: ['Admin', 'Chef'],
+				},
+				'notifications'
+			);
+			const notificationsResponse = await response.json();
+			console.log(notificationsResponse.id);
+			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message/send`, {
+				method: 'POST',
+				body: JSON.stringify({
+					content: 'Orden número: # ' + orderJson.numberOrder +" actualizada, estado: " +orderJson.state.name,
+					roles: ['Admin', 'Chef'],
+					idNotification: notificationsResponse.id,
+					redirect: `/pages/orden/${orderJson.id}`,
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
 			router.push('/pages/orden');
 		}
 	};

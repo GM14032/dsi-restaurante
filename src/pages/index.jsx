@@ -6,7 +6,7 @@ import Layout from '@/Layouts';
 
 const Starter = () => {
 	return (
-		<Layout title='DSI | Restaurante'>
+		<Layout title='DSI Restaurant'>
 			<Container fluid>
 				<BreadCrumb title='Starter' pageTitle='Pages' />
 				<Row>

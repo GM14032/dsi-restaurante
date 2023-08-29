@@ -79,6 +79,7 @@ const useFormOrder = (products = []) => {
 			category: orderData.category,
 			total: orderDetails.reduce((acc, od) => acc + od.total, 0),
 		};
+		console.log(order)
 		const orderResponse = await postRequest(order, 'orders');
 		if (orderResponse.error) {
 			setError(orderResponse.error);
@@ -88,7 +89,7 @@ const useFormOrder = (products = []) => {
 			const orderJson = await orderResponse.json();
 			const response = await postRequest(
 				{
-					message: 'Orden test: ' + orderData.description,
+					message: 'Se ha creado una nueva orden con el número: # ' + orderJson.numberOrder,
 					redirect: `/pages/orden/${orderJson.id}`,
 					roles: ['Admin', 'Chef'],
 				},
@@ -99,7 +100,7 @@ const useFormOrder = (products = []) => {
 			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message/send`, {
 				method: 'POST',
 				body: JSON.stringify({
-					content: 'Orden ABC: ' + orderData.description,
+					content: 'Se ha creado una nueva orden con el número: # ' + orderJson.numberOrder,
 					roles: ['Admin', 'Chef'],
 					idNotification: notificationsResponse.id,
 					redirect: `/pages/orden/${orderJson.id}`,

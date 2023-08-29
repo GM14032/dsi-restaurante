@@ -85,7 +85,7 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = ''}) => {
 		() => [
 			{
 				name: <span className='font-weight-bold fs-13'>Numero de Orden</span>,
-				selector: (row) => row.id,
+				selector: (row) => row.numberOrder,
 				sortable: true,
 			},
 			{
