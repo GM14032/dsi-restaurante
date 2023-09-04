@@ -25,8 +25,18 @@ const ShowOrder = ({ order }) => {
 					<Col xs={12}>
 						<Card>
 							<CardHeader className='d-flex justify-content-between align-items-center'>
-								<h4 className='card-title mb-0'>
+								<h4 className='card-title mb-0 custom-card-detail'>
 									Detalle de orden #{order?.id}
+									{order?.state?.name && order?.state?.colorHex && (
+										<span
+											className='order-state'
+											style={{
+												backgroundColor: order.state.colorHex,
+											}}
+										>
+											{order.state.name}
+										</span>
+									)}
 								</h4>
 								<Link href='/pages/orden' className='btn btn-primary'>
 									<i className='ri-arrow-left-fill align-bottom'></i> Volver

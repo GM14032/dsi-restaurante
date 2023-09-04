@@ -7,6 +7,7 @@ import {
 	CardHeader,
 	Col,
 	Container,
+	FormFeedback,
 	Label,
 	Row,
 } from 'reactstrap';
@@ -98,7 +99,7 @@ const CreateOrder = ({
 																: ''
 														}
 														onChange={handleChange}
-														label='Mesa'
+														label='table'
 														disabled={true}
 													>
 														{tables.map((table) => (
@@ -107,6 +108,11 @@ const CreateOrder = ({
 															</MenuItem>
 														))}
 													</Select>
+													{validation.errors['table'] && (
+														<FormFeedback type='invalid'>
+															{validation.errors['table']}
+														</FormFeedback>
+													)}
 												</FormControl>
 											</div>
 											<div className='order-form-group order-form-select'>
