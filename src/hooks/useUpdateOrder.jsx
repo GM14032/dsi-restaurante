@@ -71,10 +71,9 @@ const useUpdateOrder = (products = [], order, orderStates = []) => {
 
 	const createOrder = async () => {
 		const isValid = await validation.validateForm();
-		if (isValid.description || isValid.table) {
+		if (isValid.description) {
 			// show errors
 			validation.setFieldTouched('category', true);
-			validation.setFieldTouched('table', true);
 			return;
 		}
 		if (orderDetails.length === 0) {

@@ -17,6 +17,7 @@ import Link from 'next/link';
 import TableOrderDetail from '@/Components/orden/TableOrderDetail';
 
 const ShowOrder = ({ order }) => {
+	console.log(order);
 	return (
 		<Layout title='Nueva orden'>
 			<Container fluid>
@@ -25,8 +26,18 @@ const ShowOrder = ({ order }) => {
 					<Col xs={12}>
 						<Card>
 							<CardHeader className='d-flex justify-content-between align-items-center'>
-								<h4 className='card-title mb-0'>
+								<h4 className='card-title mb-0 custom-card-detail'>
 									Detalle de orden #{order?.id}
+									{order?.state?.name && order?.state?.colorHex && (
+										<span
+											className='order-state'
+											style={{
+												backgroundColor: order.state.colorHex,
+											}}
+										>
+											{order.state.name}
+										</span>
+									)}
 								</h4>
 								<Link href='/pages/orden' className='btn btn-primary'>
 									<i className='ri-arrow-left-fill align-bottom'></i> Volver
@@ -64,14 +75,16 @@ const ShowOrder = ({ order }) => {
 													{order?.description}
 												</div>
 											</div>
-											<div className='order-form-group'>
-												<Label htmlFor='table' className='order-form-label'>
-													Mesa:
-												</Label>
-												<div className='order-form-input'>
-													{order?.tableNumber}
+											{order?.table?.id && (
+												<div className='order-form-group'>
+													<Label htmlFor='table' className='order-form-label'>
+														Mesa:
+													</Label>
+													<div className='order-form-input'>
+														{`#${order?.table?.id} con ${order?.table?.capacity} asientos disponibles`}
+													</div>
 												</div>
-											</div>
+											)}
 										</div>
 										<div className='order-form'>
 											<TableOrderDetail orderDetails={order?.orderDetails} />
