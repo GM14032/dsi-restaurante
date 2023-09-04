@@ -99,6 +99,7 @@ const CreateOrder = ({
 														}
 														onChange={handleChange}
 														label='Mesa'
+														disabled={true}
 													>
 														{tables.map((table) => (
 															<MenuItem key={table.id} value={`${table.id}`}>
