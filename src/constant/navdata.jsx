@@ -67,12 +67,18 @@ export const menuItems = [
 			link: '/pages/orden/crear',
 			parentId: 'Orden',
 		},
+		{
+			id: 'historial',
+			label: 'Historial',
+			link: '/pages/orden/history',
+			parentId: 'Orden'
+		}
 	],
 },
 {
 	id: 'Table',
 	label: 'Gestion de Mesas',
-	icon: 'mdi mdi-file-table-box-multiple',
+	icon: 'mdi mdi-table-chair',
 	subItems: [
 		{
 			id: 'Table',

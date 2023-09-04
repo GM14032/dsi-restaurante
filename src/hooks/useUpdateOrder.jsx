@@ -1,11 +1,13 @@
-import { putRequest } from '@/api';
+import { postRequest, putRequest } from '@/api';
 import { ValidationOrderUpdate } from '@/constant/validations';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import useTable from './useTable';
 
-const useUpdateOrder = (products = [], order) => {
+const useUpdateOrder = (products = [], order, orderStates = []) => {
 	const router = useRouter();
+	const { tables } = useTable();
 	const [orderDetails, setOrderDetails] = useState(() =>
 		order.orderDetails.map((od) => ({
 			...od,
@@ -15,7 +17,7 @@ const useUpdateOrder = (products = [], order) => {
 	);
 	const [orderData, setOrderData] = useState({
 		description: order.description || '',
-		table: order.tableNumber || '',
+		table: order.table?.id || '',
 		category: order.category || '',
 		order_state: order.state.id || '',
 	});
@@ -93,9 +95,11 @@ const useUpdateOrder = (products = [], order) => {
 				};
 			}),
 			state: {
+				...orderStates.find((os) => os.id === orderData.order_state),
 				id: orderData.order_state, // start with state pending
 			},
-			tableNumber: 1,
+			tableNumber: orderData.table,
+			table: tables.find((t) => t.id === +orderData.table),
 			description: orderData.description,
 			tableNumber: orderData.table,
 			category: orderData.category,
@@ -107,6 +111,37 @@ const useUpdateOrder = (products = [], order) => {
 			return;
 		}
 		if (orderResponse.ok) {
+			const orderJson = await orderResponse.json();
+			const response = await postRequest(
+				{
+					message:
+						'Orden número: # ' +
+						orderJson.numberOrder +
+						' actualizada, estado: ' +
+						orderJson.state.name,
+					redirect: `/pages/orden/${orderJson.id}`,
+					roles: ['Admin', 'Chef'],
+				},
+				'notifications'
+			);
+			const notificationsResponse = await response.json();
+
+			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message/send`, {
+				method: 'POST',
+				body: JSON.stringify({
+					content:
+						'Orden número: # ' +
+						orderJson.numberOrder +
+						' actualizada, estado: ' +
+						orderJson.state.name,
+					roles: ['Admin', 'Chef'],
+					idNotification: notificationsResponse.id,
+					redirect: `/pages/orden/${orderJson.id}`,
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
 			router.push('/pages/orden');
 		}
 	};
@@ -129,6 +164,7 @@ const useUpdateOrder = (products = [], order) => {
 		orderDetails,
 		validation,
 		error,
+		tables,
 		getProductsThatAreNotInOrderDetails,
 		addOrderDetail,
 		removeOrderDetail,

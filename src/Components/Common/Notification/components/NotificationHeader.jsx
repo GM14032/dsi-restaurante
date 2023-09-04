@@ -14,9 +14,11 @@ const NotificationHeader = () => {
 						<h6 className='m-0 fs-16 fw-semibold text-white'>Notifications</h6>
 					</Col>
 					<div className='col-auto dropdown-tabs'>
-						<span className='badge badge-soft-light fs-13'>
-							{unseenNotifications} New
-						</span>
+						{unseenNotifications > 0 && (
+							<span className='badge badge-soft-light fs-13'>
+								{unseenNotifications} New
+							</span>
+						)}
 					</div>
 				</Row>
 			</div>

@@ -8,7 +8,7 @@ const ParticlesAuth = ({ children, title, content = '' }) => {
 				<title>{title}</title>
 				<meta name='description' content={content} />
 				<meta name='viewport' content='width=device-width, initial-scale=1' />
-				<link rel='icon' href='/favicon.ico' />
+				<link rel='icon' href='/favicon1.ico' />
 			</Head>
 			<div className='auth-page-wrapper pt-5'>
 				<div className='auth-one-bg-position auth-one-bg' id='auth-particles'>

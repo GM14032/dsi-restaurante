@@ -6,7 +6,7 @@
  * @returns
  */
 //
-export const putRequest = async (id, body,path) => {
+export const putRequest = async (id, body, path) => {
 	return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${path}/${id}`, {
 		method: 'PUT',
 		headers: {
@@ -16,7 +16,7 @@ export const putRequest = async (id, body,path) => {
 	});
 };
 //
-export const getById = async (id,path) => {
+export const getById = async (id, path) => {
 	return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${path}/${id}`, {
 		method: 'GET',
 		headers: {
@@ -25,7 +25,7 @@ export const getById = async (id,path) => {
 	});
 };
 //
-export const postRequest = async ( body,path) => {
+export const postRequest = async (body, path) => {
 	return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${path}/`, {
 		method: 'POST',
 		headers: {
@@ -35,12 +35,11 @@ export const postRequest = async ( body,path) => {
 	});
 };
 //
-export const getAll = async (path ) => {
-	return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${path}/`, {
+export const getAll = async (path, params = '') => {
+	return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${path}/${params}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
 		},
 	});
 };
-
