@@ -18,8 +18,12 @@ import Link from 'next/link';
 import useFormOrder from '@/hooks/useFormOrder';
 import OrderForm from '@/Components/orden/OrderForm';
 import { RenderInput } from '@/Components/Common/RenderInput';
+import useTable from '@/hooks/useTable';
+import AddTable from '@/Components/orden/AddTable';
 
 const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
+	const { tables, currentTable, tableError, selectTable, setTableError } =
+		useTable();
 	const {
 		addOrderDetail,
 		createOrder,
@@ -30,7 +34,7 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 		error: errorOrder,
 		removeOrderDetail,
 		handleChange,
-	} = useFormOrder(products);
+	} = useFormOrder(products, setTableError);
 
 	return (
 		<Layout title='Nueva orden'>
@@ -80,20 +84,12 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 													/>
 												</div>
 											</div>
-											<div className='order-form-group'>
-												<Label htmlFor='table' className='order-form-label'>
-													Mesa:
-												</Label>
-												<div className='order-form-input'>
-													<RenderInput
-														type='text'
-														validation={validation}
-														fieldName='table'
-														placeholder='Ingrese el numero de mesa'
-														handleChange={handleChange}
-													/>
-												</div>
-											</div>
+											<AddTable
+												tables={tables}
+												addValue={selectTable}
+												error={tableError}
+												value={currentTable}
+											/>
 										</div>
 										<AddOrder
 											products={getProductsThatAreNotInOrderDetails()}
@@ -119,7 +115,7 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 												<button
 													type='button'
 													className='btn btn-primary btn-lg '
-													onClick={createOrder}
+													onClick={() => createOrder(currentTable)}
 												>
 													Guardar
 												</button>
