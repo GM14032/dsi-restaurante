@@ -37,7 +37,7 @@ const CreateOrder = ({
 		error: errorOrder,
 		removeOrderDetail,
 		handleChange,
-	} = useUpdateOrder(products, order);
+	} = useUpdateOrder(products, order, orderStates);
 
 	return (
 		<Layout title='Nueva orden'>

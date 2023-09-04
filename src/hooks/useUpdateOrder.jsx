@@ -1,10 +1,10 @@
-import {postRequest, putRequest} from '@/api';
+import { postRequest, putRequest } from '@/api';
 import { ValidationOrderUpdate } from '@/constant/validations';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-const useUpdateOrder = (products = [], order) => {
+const useUpdateOrder = (products = [], order, orderStates = []) => {
 	const router = useRouter();
 	const [orderDetails, setOrderDetails] = useState(() =>
 		order.orderDetails.map((od) => ({
@@ -93,6 +93,7 @@ const useUpdateOrder = (products = [], order) => {
 				};
 			}),
 			state: {
+				...orderStates.find((os) => os.id === orderData.order_state),
 				id: orderData.order_state, // start with state pending
 			},
 			tableNumber: 1,
@@ -101,6 +102,7 @@ const useUpdateOrder = (products = [], order) => {
 			category: orderData.category,
 			total: orderDetails.reduce((acc, od) => acc + od.total, 0),
 		};
+
 		const orderResponse = await putRequest(order.id, newOrders, 'orders');
 		if (orderResponse.error) {
 			setError(orderResponse.error);
@@ -110,18 +112,26 @@ const useUpdateOrder = (products = [], order) => {
 			const orderJson = await orderResponse.json();
 			const response = await postRequest(
 				{
-					message: 'Orden número: # ' + orderJson.numberOrder +", estado: " +orderJson.state.name,
+					message:
+						'Orden número: # ' +
+						orderJson.numberOrder +
+						' actualizada, estado: ' +
+						orderJson.state.name,
 					redirect: `/pages/orden/${orderJson.id}`,
 					roles: ['Admin', 'Chef'],
 				},
 				'notifications'
 			);
 			const notificationsResponse = await response.json();
-			console.log(notificationsResponse.id);
+
 			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message/send`, {
 				method: 'POST',
 				body: JSON.stringify({
-					content: 'Orden número: # ' + orderJson.numberOrder +" actualizada, estado: " +orderJson.state.name,
+					content:
+						'Orden número: # ' +
+						orderJson.numberOrder +
+						' actualizada, estado: ' +
+						orderJson.state.name,
 					roles: ['Admin', 'Chef'],
 					idNotification: notificationsResponse.id,
 					redirect: `/pages/orden/${orderJson.id}`,
