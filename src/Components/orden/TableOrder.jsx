@@ -7,7 +7,7 @@ import decode from 'jwt-decode';
 import { putRequest, getAll } from '@/api';
 import { getDollarFormat } from '@/utils/format';
 
-const TableOrders = ({ stateSelected = 0, startDate = '', endDate = ''}) => {
+const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 	const [orders, setOrders] = useState([]);
 	const [orderFiltered, setOrderFiltered] = useState([]);
 	const [dataLoaded, setDataLoaded] = useState(false);
@@ -26,7 +26,7 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = ''}) => {
 			setOrders(data);
 		} catch (error) {
 			setOrders([]);
-		}finally{
+		} finally {
 			setDataLoaded(true);
 		}
 	};
@@ -77,9 +77,13 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = ''}) => {
 		}
 	};
 
-	useEffect(()=>{
-		setOrderFiltered(orders.filter(order=> order.state.id === stateSelected || !stateSelected));
-	}, [orders, stateSelected])
+	useEffect(() => {
+		setOrderFiltered(
+			orders.filter(
+				(order) => order.state.id === stateSelected || !stateSelected
+			)
+		);
+	}, [orders, stateSelected]);
 
 	const columns = useMemo(
 		() => [
@@ -95,7 +99,7 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = ''}) => {
 			},
 			{
 				name: <span className='font-weight-bold fs-13'># Mesa</span>,
-				selector: (row) => row.tableNumber,
+				selector: (row) => row.table?.id,
 				sortable: true,
 			},
 			{

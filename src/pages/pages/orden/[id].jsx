@@ -17,6 +17,7 @@ import Link from 'next/link';
 import TableOrderDetail from '@/Components/orden/TableOrderDetail';
 
 const ShowOrder = ({ order }) => {
+	console.log(order);
 	return (
 		<Layout title='Nueva orden'>
 			<Container fluid>
@@ -74,14 +75,16 @@ const ShowOrder = ({ order }) => {
 													{order?.description}
 												</div>
 											</div>
-											<div className='order-form-group'>
-												<Label htmlFor='table' className='order-form-label'>
-													Mesa:
-												</Label>
-												<div className='order-form-input'>
-													{order?.tableNumber}
+											{order?.table?.id && (
+												<div className='order-form-group'>
+													<Label htmlFor='table' className='order-form-label'>
+														Mesa:
+													</Label>
+													<div className='order-form-input'>
+														{`#${order?.table?.id} con ${order?.table?.capacity} asientos disponibles`}
+													</div>
 												</div>
-											</div>
+											)}
 										</div>
 										<div className='order-form'>
 											<TableOrderDetail orderDetails={order?.orderDetails} />
