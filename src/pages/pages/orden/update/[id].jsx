@@ -13,9 +13,7 @@ import {
 import 'react-toastify/dist/ReactToastify.css';
 import { getAll, getById } from '@/api';
 import dynamic from 'next/dynamic';
-import AddOrder from '@/Components/orden/AddOrder';
 import Link from 'next/link';
-import OrderForm from '@/Components/orden/OrderForm';
 import { RenderInput } from '@/Components/Common/RenderInput';
 import useUpdateOrder from '@/hooks/useUpdateOrder';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
@@ -27,17 +25,11 @@ const CreateOrder = ({
 	error = '',
 	order,
 }) => {
-	const {
-		addOrderDetail,
-		createOrder,
-		getProductsThatAreNotInOrderDetails,
-		handleQuantity,
-		orderDetails,
-		validation,
-		error: errorOrder,
-		removeOrderDetail,
-		handleChange,
-	} = useUpdateOrder(products, order, orderStates);
+	const { createOrder, validation, tables, handleChange } = useUpdateOrder(
+		products,
+		order,
+		orderStates
+	);
 
 	return (
 		<Layout title='Nueva orden'>
@@ -87,19 +79,34 @@ const CreateOrder = ({
 													/>
 												</div>
 											</div>
-											<div className='order-form-group'>
+											<div className='order-form-group order-form-select'>
 												<Label htmlFor='table' className='order-form-label'>
 													Mesa:
 												</Label>
-												<div className='order-form-input'>
-													<RenderInput
-														type='text'
-														validation={validation}
-														fieldName='table'
-														placeholder='Ingrese el numero de mesa'
-														handleChange={handleChange}
-													/>
-												</div>
+												<FormControl
+													variant='standard'
+													sx={{ m: 1, minWidth: 120 }}
+												>
+													<InputLabel id='order_state'># de mesa</InputLabel>
+													<Select
+														labelId='table'
+														id='table'
+														name='table'
+														value={
+															validation.values && validation.values['table']
+																? validation.values['table']
+																: ''
+														}
+														onChange={handleChange}
+														label='Mesa'
+													>
+														{tables.map((table) => (
+															<MenuItem key={table.id} value={`${table.id}`}>
+																{`Mesa #${table.id}: ${table.capacity} asientos`}
+															</MenuItem>
+														))}
+													</Select>
+												</FormControl>
 											</div>
 											<div className='order-form-group order-form-select'>
 												<Label htmlFor='table' className='order-form-label'>

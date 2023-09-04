@@ -3,9 +3,11 @@ import { ValidationOrderUpdate } from '@/constant/validations';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import useTable from './useTable';
 
 const useUpdateOrder = (products = [], order, orderStates = []) => {
 	const router = useRouter();
+	const { tables } = useTable();
 	const [orderDetails, setOrderDetails] = useState(() =>
 		order.orderDetails.map((od) => ({
 			...od,
@@ -15,7 +17,7 @@ const useUpdateOrder = (products = [], order, orderStates = []) => {
 	);
 	const [orderData, setOrderData] = useState({
 		description: order.description || '',
-		table: order.tableNumber || '',
+		table: order.table?.id || '',
 		category: order.category || '',
 		order_state: order.state.id || '',
 	});
@@ -96,13 +98,13 @@ const useUpdateOrder = (products = [], order, orderStates = []) => {
 				...orderStates.find((os) => os.id === orderData.order_state),
 				id: orderData.order_state, // start with state pending
 			},
-			tableNumber: 1,
+			tableNumber: orderData.table,
+			table: tables.find((t) => t.id === +orderData.table),
 			description: orderData.description,
 			tableNumber: orderData.table,
 			category: orderData.category,
 			total: orderDetails.reduce((acc, od) => acc + od.total, 0),
 		};
-
 		const orderResponse = await putRequest(order.id, newOrders, 'orders');
 		if (orderResponse.error) {
 			setError(orderResponse.error);
@@ -162,6 +164,7 @@ const useUpdateOrder = (products = [], order, orderStates = []) => {
 		orderDetails,
 		validation,
 		error,
+		tables,
 		getProductsThatAreNotInOrderDetails,
 		addOrderDetail,
 		removeOrderDetail,
