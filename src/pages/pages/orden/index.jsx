@@ -9,7 +9,7 @@ function Order(props) {
 	const [stateSelected, setStateSelected] = useState(0);
 
 	return (
-		<OrderPage startDate={startDate}>
+		<OrderPage startDate={startDate} stateSelected={stateSelected}>
 			<FormControl>
 				<InputLabel id='demo-simple-select-label'>Estado</InputLabel>
 				<Select
