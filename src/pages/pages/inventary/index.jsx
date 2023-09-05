@@ -10,12 +10,16 @@ import { useEffect } from 'react';
 import InventaryComponent from '@/Components/inventary/InventaryComponent';
 import { getLowStock } from '@/utils/inventary';
 
+import { Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
+
 const Inventary = ({ inventary, inventaryDetails = [], config }) => {
 	const [inventaryData, setInventaryData] = useState({
 		inventaryDetails: [],
 		inventary: null,
 		loading: true,
 	});
+
+	const [openModal, setOpenModal] = useState(false);
 
 	useEffect(() => {
 		if (inventary) {
@@ -28,6 +32,15 @@ const Inventary = ({ inventary, inventaryDetails = [], config }) => {
 			});
 		}
 	}, [inventary]);
+
+	const addNewIDetail = () => {
+		console.log('open modal');
+		setOpenModal(!openModal);
+	};
+
+	const handleNewDetail = () => {
+		console.log('new detail');
+	};
 
 	const setNewInventary = (inventary, inventaryDetails = []) => {
 		if (inventary) {
@@ -44,10 +57,34 @@ const Inventary = ({ inventary, inventaryDetails = [], config }) => {
 			<Container fluid>
 				<BreadCrumb title='Inventario' pageTitle='Pages' />
 				{inventaryData.inventary || inventary ? (
-					<InventaryComponent {...inventaryData} config={config} />
+					<InventaryComponent
+						{...inventaryData}
+						config={config}
+						addNewIDetail={addNewIDetail}
+					/>
 				) : (
 					<EmptyInventary setNewInventary={setNewInventary} />
 				)}
+				<Modal id='myModal' isOpen={openModal} toggle={addNewIDetail}>
+					<ModalHeader
+						className='modal-title'
+						id='myModalLabel'
+						toggle={addNewIDetail}
+					>
+						Agregar nuevo detalle
+					</ModalHeader>
+					<ModalBody>
+						<h5 className='fs-15'>detalleeee</h5>
+					</ModalBody>
+					<div className='modal-footer'>
+						<Button color='light' onClick={addNewIDetail}>
+							Cancelar
+						</Button>
+						<Button color='primary' onClick={handleNewDetail}>
+							Aceptar
+						</Button>
+					</div>
+				</Modal>
 			</Container>
 		</Layout>
 	);
@@ -59,6 +96,8 @@ export async function getServerSideProps() {
 		const inventaryDetails = await (await getAll('inventorydetails')).json();
 		const config = {
 			lowStock: getLowStock(),
+			canRemove: false,
+			canAdd: true,
 		};
 		return {
 			props: { inventary, inventaryDetails, config },

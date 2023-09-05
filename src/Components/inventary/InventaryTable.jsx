@@ -7,8 +7,29 @@ import { getDollarFormat } from '@/utils/format';
 
 const InventaryTable = ({
 	inventaryDetails = [],
-	config: { lowStock = 1 },
+	config: { lowStock = 1, canRemove = false },
+	removeItem = (row) => {},
 }) => {
+	const optional = {
+		name: <span className='font-weight-bold fs-13'>Acciones</span>,
+		selector: (row) => {
+			return (
+				<div>
+					<Button
+						color='danger'
+						className='btn-icon'
+						title='Eliminar detalle'
+						onClick={() => {
+							removeItem(row);
+						}}
+					>
+						<i className={`bx bx-x-circle`} />
+					</Button>
+				</div>
+			);
+		},
+	};
+	const opColumns = canRemove ? [optional] : [];
 	const columns = useMemo(
 		() => [
 			{
@@ -57,6 +78,7 @@ const InventaryTable = ({
 				),
 				sortable: true,
 			},
+			...opColumns,
 		],
 		[]
 	);
