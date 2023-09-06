@@ -22,7 +22,7 @@ export const ConfirmNewInventory = ({
 				id='myModalLabel'
 				toggle={closeModal}
 			>
-				Agregar nuevo detalle
+				Crear nuevo inventario
 			</ModalHeader>
 			<ModalBody>
 				<div
