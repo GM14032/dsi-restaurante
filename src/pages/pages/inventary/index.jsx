@@ -50,7 +50,7 @@ const Inventary = ({
 		if (inventary) {
 			setInventaryData({
 				inventary,
-				inventaryDetails: [inventaryDetail, ...inventaryData.inventaryDetails],
+				inventaryDetails,
 				loading: false,
 			});
 		}
@@ -65,6 +65,7 @@ const Inventary = ({
 						{...inventaryData}
 						config={config}
 						addNewIDetail={openModalHandler}
+						createInventaryFromZero={createInventaryFromZero}
 					/>
 				) : (
 					<EmptyInventary createInventaryFromZero={createInventaryFromZero} />

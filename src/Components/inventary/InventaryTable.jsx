@@ -42,7 +42,8 @@ const InventaryTable = ({
 				selector: (row) => (
 					<span
 						style={{
-							color: row?.quantity <= lowStock ? 'red' : 'black',
+							color:
+								row?.quantity <= lowStock && row?.isEntry ? 'red' : 'black',
 							fontWeight: 'bold',
 						}}
 					>
