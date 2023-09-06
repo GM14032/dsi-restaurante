@@ -8,6 +8,10 @@ export const PERMISSIONS = {
 	READ_TABLE: ['/pages/tables', '/pages/tables/[id]'],
 	WRITE_TABLE: ['/pages/tables/crear', '/pages/tables/actualizar/[id]'],
 	READ_PERMISSION: ['/pages/permisos'],
-	WRITE_INVENTARY: ['/pages/inventary', '/pages/inventary/ingredients'],
+	WRITE_INVENTARY: [
+		'/pages/inventary',
+		'/pages/inventary/[id]',
+		'/pages/inventary/ingredients',
+	],
 };
 export const NO_PERMISSIONS = ['/login', '/register', '/'];
