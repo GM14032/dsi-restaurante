@@ -2,24 +2,40 @@ import React, { useMemo } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button } from 'reactstrap';
 import { DefaultModalExample } from '@/Components/ui-common/UiModalCode';
-import { formatDate, getDollarFormat } from '@/utils/format';
+import { formatDate } from '@/utils/format';
 
 const IngredientTable = ({
 	ingredients = [],
-	config: { lowStock = 1, canRemove = false },
+	config: { canRemove = false, canUpdate = false, canAdd = false },
 	removeItem = (row) => {},
+	updateItem = (row) => {},
+	addNewItem = () => {},
 }) => {
 	const optional = {
 		name: <span className='font-weight-bold fs-13'>Acciones</span>,
 		selector: (row) => {
 			return (
-				<div>
+				<div style={{ display: 'flex', gap: '8px' }}>
+					{canUpdate && (
+						<Button
+							color='primary'
+							className='btn-icon'
+							title='Editar detalle'
+							onClick={() => {
+								console.log('edit', row);
+								updateItem(row);
+							}}
+						>
+							<i className={`bx bx-edit-alt`} />
+						</Button>
+					)}
 					{canRemove && (
 						<Button
 							color='danger'
 							className='btn-icon'
 							title='Eliminar detalle'
 							onClick={() => {
+								console.log('remove', row);
 								removeItem(row);
 							}}
 						>
@@ -69,7 +85,15 @@ const IngredientTable = ({
 	);
 
 	return (
-		<div>
+		<div className='inventary-component'>
+			<div className='inventary-title'>
+				<h3>Ingredientes</h3>
+				{canAdd && (
+					<button className='btn btn-primary' onClick={addNewItem}>
+						<i className='ri-add-box-line align-bottom'></i> Agregar
+					</button>
+				)}
+			</div>
 			<DataTable
 				columns={columns}
 				data={ingredients}
