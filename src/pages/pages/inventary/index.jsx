@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import BreadCrumb from '@/Components/Common/BreadCrumb';
 import Layout from '@/Layouts';
 import { Container } from 'reactstrap';
-import { getAll, getById } from '@/api';
+import { deleteRequest, getAll, getById } from '@/api';
 import dynamic from 'next/dynamic';
 import EmptyInventary from '@/Components/inventary/EmptyInventary';
 import InventaryComponent from '@/Components/inventary/InventaryComponent';
 import { getLowStock } from '@/utils/inventary';
 import AddInventoryDetails from '@/Components/inventary/AddInventoryDetails';
+import ConfirmNewInventory from '@/Components/inventary/ConfirmNewInventory';
 
 const Inventary = ({
 	inventary,
@@ -23,6 +24,36 @@ const Inventary = ({
 	const [openModal, setOpenModal] = useState(false);
 	const openModalHandler = () => setOpenModal(!openModal);
 	const closeModalHandler = () => setOpenModal(false);
+	const [confirmModal, setConfirmModal] = useState(false);
+	const [inventoryDetailToRemove, setInventoryDetailToRemove] = useState(null);
+
+	const removeInventoryDetail = async () => {
+		console.log('removeInventoryDetail', inventoryDetailToRemove);
+		try {
+			const request = await deleteRequest(
+				inventoryDetailToRemove.id,
+				'inventorydetails'
+			);
+			if (request.status === 200) {
+				const newInventaryDetails = inventaryData.inventaryDetails.filter(
+					(item) => item.id !== inventoryDetailToRemove.id
+				);
+				setInventaryData({
+					...inventaryData,
+					inventaryDetails: newInventaryDetails,
+				});
+				setConfirmModal(false);
+				setInventoryDetailToRemove(null);
+			}
+		} catch (error) {
+			console.log('error', error);
+		}
+	};
+
+	const handleModalDelete = (item) => {
+		setInventoryDetailToRemove(item);
+		setConfirmModal(true);
+	};
 
 	useEffect(() => {
 		if (inventary) {
@@ -66,6 +97,7 @@ const Inventary = ({
 						config={config}
 						addNewIDetail={openModalHandler}
 						createInventaryFromZero={createInventaryFromZero}
+						handleModalDelete={handleModalDelete}
 					/>
 				) : (
 					<EmptyInventary createInventaryFromZero={createInventaryFromZero} />
@@ -77,6 +109,16 @@ const Inventary = ({
 				closeModalHandler={closeModalHandler}
 				inventory={inventaryData.inventary}
 				setNewInventary={setNewInventary}
+			/>
+			<ConfirmNewInventory
+				openModal={confirmModal}
+				closeModal={() => {
+					setConfirmModal(false);
+					setInventoryDetailToRemove(null);
+				}}
+				description='Se borrara el detalle del inventario, ¿Desea continuar?'
+				title='Borrar detalle de inventario'
+				createInventory={removeInventoryDetail}
 			/>
 		</Layout>
 	);
@@ -96,7 +138,7 @@ export async function getServerSideProps() {
 
 		const config = {
 			lowStock: getLowStock(),
-			canRemove: false,
+			canRemove: true,
 			canAdd: true,
 		};
 		return {

@@ -43,3 +43,12 @@ export const getAll = async (path, params = '') => {
 		},
 	});
 };
+
+export const deleteRequest = async (id, path) => {
+	return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${path}/${id}`, {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+};

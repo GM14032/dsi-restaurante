@@ -9,6 +9,7 @@ const InventaryComponent = ({
 	addNewIDetail = () => {},
 	inventaryDetails = [],
 	createInventaryFromZero = () => {},
+	handleModalDelete = () => {},
 }) => {
 	return (
 		<section className='inventary-component'>
@@ -32,7 +33,11 @@ const InventaryComponent = ({
 					</div>
 				)}
 			</div>
-			<InventaryTable inventaryDetails={inventaryDetails} config={config} />
+			<InventaryTable
+				inventaryDetails={inventaryDetails}
+				config={config}
+				removeItem={handleModalDelete}
+			/>
 		</section>
 	);
 };
