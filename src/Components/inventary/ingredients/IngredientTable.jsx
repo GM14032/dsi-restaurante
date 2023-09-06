@@ -76,7 +76,7 @@ const IngredientTable = ({
 			},
 			{
 				name: <span className='font-weight-bold fs-13'>unidad de medida</span>,
-				selector: (row) => row?.measureUnit,
+				selector: (row) => row?.unit,
 				sortable: true,
 			},
 			...opColumns,
