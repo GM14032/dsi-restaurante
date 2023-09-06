@@ -12,6 +12,7 @@ export const PERMISSIONS = {
 		'/pages/inventary',
 		'/pages/inventary/[id]',
 		'/pages/inventary/ingredients',
+		'/pages/inventary/history',
 	],
 };
 export const NO_PERMISSIONS = ['/login', '/register', '/'];

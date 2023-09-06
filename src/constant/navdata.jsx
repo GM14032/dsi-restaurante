@@ -101,15 +101,21 @@ export const menuItems = [
 		icon: 'mdi mdi-table-chair',
 		subItems: [
 			{
-				id: 'inventary-ingredients',
-				label: 'Ingredientes',
-				link: '/pages/inventary/ingredients',
-				parentId: 'Inventary',
-			},
-			{
 				id: 'inventary-inventary',
 				label: 'Inventario',
 				link: '/pages/inventary',
+				parentId: 'Inventary',
+			},
+			{
+				id: 'inventary-history',
+				label: 'Historial',
+				link: '/pages/inventary/history',
+				parentId: 'Inventary',
+			},
+			{
+				id: 'inventary-ingredients',
+				label: 'Ingredientes',
+				link: '/pages/inventary/ingredients',
 				parentId: 'Inventary',
 			},
 		],
