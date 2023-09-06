@@ -10,7 +10,7 @@ const EmptyInventary = ({ createInventaryFromZero }) => {
 	const createInventary = async () => {
 		setCreating(true);
 		const newInventary = await (
-			await postRequest({ active: true }, 'inventary')
+			await postRequest({ active: true }, 'inventory')
 		).json();
 
 		const inventaryDetail = await (
