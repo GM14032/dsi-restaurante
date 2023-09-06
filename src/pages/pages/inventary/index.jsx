@@ -1,25 +1,28 @@
+import React, { useState, useEffect } from 'react';
 import BreadCrumb from '@/Components/Common/BreadCrumb';
 import Layout from '@/Layouts';
-import React from 'react';
 import { Container } from 'reactstrap';
 import { getAll, getById } from '@/api';
 import dynamic from 'next/dynamic';
 import EmptyInventary from '@/Components/inventary/EmptyInventary';
-import { useState } from 'react';
-import { useEffect } from 'react';
 import InventaryComponent from '@/Components/inventary/InventaryComponent';
 import { getLowStock } from '@/utils/inventary';
+import AddInventoryDetails from '@/Components/inventary/AddInventoryDetails';
 
-import { Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
-
-const Inventary = ({ inventary, inventaryDetails = [], config }) => {
+const Inventary = ({
+	inventary,
+	inventaryDetails = [],
+	config,
+	ingredients = [],
+}) => {
 	const [inventaryData, setInventaryData] = useState({
 		inventaryDetails: [],
 		inventary: null,
 		loading: true,
 	});
-
 	const [openModal, setOpenModal] = useState(false);
+	const openModalHandler = () => setOpenModal(!openModal);
+	const closeModalHandler = () => setOpenModal(false);
 
 	useEffect(() => {
 		if (inventary) {
@@ -33,20 +36,11 @@ const Inventary = ({ inventary, inventaryDetails = [], config }) => {
 		}
 	}, [inventary]);
 
-	const addNewIDetail = () => {
-		console.log('open modal');
-		setOpenModal(!openModal);
-	};
-
-	const handleNewDetail = () => {
-		console.log('new detail');
-	};
-
-	const setNewInventary = (inventary, inventaryDetails = []) => {
+	const setNewInventary = (inventaryDetail) => {
 		if (inventary) {
 			setInventaryData({
 				inventary,
-				inventaryDetails,
+				inventaryDetails: [inventaryDetail, ...inventaryData.inventaryDetails],
 				loading: false,
 			});
 		}
@@ -60,32 +54,19 @@ const Inventary = ({ inventary, inventaryDetails = [], config }) => {
 					<InventaryComponent
 						{...inventaryData}
 						config={config}
-						addNewIDetail={addNewIDetail}
+						addNewIDetail={openModalHandler}
 					/>
 				) : (
 					<EmptyInventary setNewInventary={setNewInventary} />
 				)}
-				<Modal id='myModal' isOpen={openModal} toggle={addNewIDetail}>
-					<ModalHeader
-						className='modal-title'
-						id='myModalLabel'
-						toggle={addNewIDetail}
-					>
-						Agregar nuevo detalle
-					</ModalHeader>
-					<ModalBody>
-						<h5 className='fs-15'>detalleeee</h5>
-					</ModalBody>
-					<div className='modal-footer'>
-						<Button color='light' onClick={addNewIDetail}>
-							Cancelar
-						</Button>
-						<Button color='primary' onClick={handleNewDetail}>
-							Aceptar
-						</Button>
-					</div>
-				</Modal>
 			</Container>
+			<AddInventoryDetails
+				ingredients={ingredients}
+				openModal={openModal}
+				closeModalHandler={closeModalHandler}
+				inventory={inventaryData.inventary}
+				setNewInventary={setNewInventary}
+			/>
 		</Layout>
 	);
 };
@@ -94,13 +75,19 @@ export async function getServerSideProps() {
 	try {
 		const inventary = await (await getById('1', 'inventory')).json();
 		const inventaryDetails = await (await getAll('inventorydetails')).json();
+		const ingredients = await (await getAll('ingredients')).json();
 		const config = {
 			lowStock: getLowStock(),
 			canRemove: false,
 			canAdd: true,
 		};
 		return {
-			props: { inventary, inventaryDetails, config },
+			props: {
+				inventary,
+				inventaryDetails,
+				config,
+				ingredients,
+			},
 		};
 	} catch (error) {
 		return {
