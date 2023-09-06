@@ -22,7 +22,9 @@ const InventaryHistory = ({ inventories = [], config }) => {
 export async function getServerSideProps() {
 	try {
 		const inventories = await (await getAll('inventory')).json();
-		const config = {};
+		const config = {
+			showDetails: true,
+		};
 		return {
 			props: {
 				inventories,

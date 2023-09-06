@@ -3,11 +3,11 @@ import DataTable from 'react-data-table-component';
 import { Button } from 'reactstrap';
 import { DefaultModalExample } from '@/Components/ui-common/UiModalCode';
 import Link from 'next/link';
-import { formatDate, getDollarFormat } from '@/utils/format';
+import { formatDate } from '@/utils/format';
 
 const HistoryInv = ({
 	inventaries = [],
-	config: { canRemove = false },
+	config: { canRemove = false, showDetails = false },
 	removeItem = (row) => {},
 }) => {
 	const optional = {
@@ -15,21 +15,33 @@ const HistoryInv = ({
 		selector: (row) => {
 			return (
 				<div>
-					<Button
-						color='danger'
-						className='btn-icon'
-						title='Eliminar detalle'
-						onClick={() => {
-							removeItem(row);
-						}}
-					>
-						<i className={`bx bx-x-circle`} />
-					</Button>
+					{showDetails && (
+						<Link
+							href={`/pages/inventary/${row.id}`}
+							style={{ marginRight: '8px' }}
+						>
+							<Button color='info' className='btn-icon' title='Ver orden'>
+								<i className='bx bxs-show' />
+							</Button>
+						</Link>
+					)}
+					{canRemove && (
+						<Button
+							color='danger'
+							className='btn-icon'
+							title='Eliminar detalle'
+							onClick={() => {
+								removeItem(row);
+							}}
+						>
+							<i className={`bx bx-x-circle`} />
+						</Button>
+					)}
 				</div>
 			);
 		},
 	};
-	const opColumns = canRemove ? [optional] : [];
+	const opColumns = canRemove || showDetails ? [optional] : [];
 	const columns = useMemo(
 		() => [
 			{
@@ -55,7 +67,7 @@ const HistoryInv = ({
 					<span
 						className={`badge badge-soft-success fs-13`}
 						style={{
-							backgroundColor: row?.isActive ? '#3cd188' : '#0ac7fb',
+							backgroundColor: row?.isActive ? '#3cd188' : '#C51e3a',
 							color: 'white',
 							fontWeight: 'bold',
 						}}
