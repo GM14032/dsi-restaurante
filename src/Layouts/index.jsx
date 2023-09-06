@@ -1,11 +1,11 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 import decode from 'jwt-decode';
-import { PERMISSIONS,NO_PERMISSIONS } from '../constant/permissions';
+import { PERMISSIONS, NO_PERMISSIONS } from '../constant/permissions';
 const Layout = ({ children, title = 'Dashboard', content = '' }) => {
 	const [isOpenSidebar, setIsOpenSidebar] = useState({
 		isOpenSidebar: true,
@@ -74,7 +74,9 @@ const Layout = ({ children, title = 'Dashboard', content = '' }) => {
 					className={isOpenSidebar.className.sidebar}
 				/>
 				<div className={`main-content ${isOpenSidebar.className.content}`}>
-					<div className='page-content'>{children}</div>
+					<div className='page-content' style={{ marginBottom: '20px' }}>
+						{children}
+					</div>
 					<Footer className={isOpenSidebar.className.content} />
 				</div>
 			</div>
