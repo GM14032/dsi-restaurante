@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import error from '../../assets/images/error.svg';
 import Image from 'next/image';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
 import Loader from '../Common/Loader';
+import { getById, postRequest } from '@/api';
 
-const EmptyInventary = ({ setNewInventary }) => {
+const EmptyInventary = ({ createInventaryFromZero }) => {
 	const [creating, setCreating] = useState(false);
-	const router = useRouter();
 
-	const createInventary = () => {
+	const createInventary = async () => {
 		setCreating(true);
+		const newInventary = await (
+			await postRequest({ active: true }, 'inventary')
+		).json();
+
+		const inventaryDetail = await (
+			await getById(newInventary.id, 'inventorydetails')
+		).json();
+
 		setTimeout(() => {
-			setNewInventary({ name: 'test' }, []);
+			createInventaryFromZero(newInventary, inventaryDetail);
 		}, 3000);
 	};
 

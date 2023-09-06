@@ -46,6 +46,16 @@ const Inventary = ({
 		}
 	};
 
+	const createInventaryFromZero = (inventary, inventaryDetails = []) => {
+		if (inventary) {
+			setInventaryData({
+				inventary,
+				inventaryDetails: [inventaryDetail, ...inventaryData.inventaryDetails],
+				loading: false,
+			});
+		}
+	};
+
 	return (
 		<Layout title='Inventario'>
 			<Container fluid>
@@ -57,7 +67,7 @@ const Inventary = ({
 						addNewIDetail={openModalHandler}
 					/>
 				) : (
-					<EmptyInventary setNewInventary={setNewInventary} />
+					<EmptyInventary createInventaryFromZero={createInventaryFromZero} />
 				)}
 			</Container>
 			<AddInventoryDetails
@@ -73,9 +83,16 @@ const Inventary = ({
 
 export async function getServerSideProps() {
 	try {
-		const inventary = await (await getById('1', 'inventory')).json();
-		const inventaryDetails = await (await getAll('inventorydetails')).json();
+		const [inventary] = await (
+			await getAll('inventory', '?active=true')
+		).json();
+
+		const inventaryDetails = await (
+			await getById(inventary.id, 'inventorydetails')
+		).json();
+
 		const ingredients = await (await getAll('ingredients')).json();
+
 		const config = {
 			lowStock: getLowStock(),
 			canRemove: false,

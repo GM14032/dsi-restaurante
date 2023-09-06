@@ -47,6 +47,15 @@ export const AddInventoryDetails = ({
 		return true;
 	};
 
+	const initialValues = () => {
+		setData({
+			ingredient: null,
+			quantity: '',
+			price: '',
+			inventory,
+		});
+	};
+
 	const handleNewDetail = async () => {
 		if (!validateData()) return;
 		try {
@@ -57,10 +66,16 @@ export const AddInventoryDetails = ({
 			const newDetail = await request.json();
 			setNewInventary(newDetail);
 			closeModalHandler();
+			initialValues();
 		} catch (e) {
 			console.log(e);
 			setError('Error al crear el detalle');
 		}
+	};
+
+	const closeModal = () => {
+		closeModalHandler();
+		initialValues();
 	};
 
 	const handleChange = (e) => {
@@ -72,11 +87,11 @@ export const AddInventoryDetails = ({
 	};
 
 	return (
-		<Modal id='myModal' isOpen={openModal} toggle={closeModalHandler}>
+		<Modal id='myModal' isOpen={openModal} toggle={closeModal}>
 			<ModalHeader
 				className='modal-title'
 				id='myModalLabel'
-				toggle={closeModalHandler}
+				toggle={closeModal}
 			>
 				Agregar nuevo detalle
 			</ModalHeader>
@@ -165,7 +180,7 @@ export const AddInventoryDetails = ({
 				</div>
 			</ModalBody>
 			<div className='modal-footer'>
-				<Button color='light' onClick={closeModalHandler}>
+				<Button color='light' onClick={closeModal}>
 					Cancelar
 				</Button>
 				<Button color='primary' onClick={handleNewDetail}>
