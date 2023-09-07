@@ -17,7 +17,6 @@ import Link from 'next/link';
 import TableOrderDetail from '@/Components/orden/TableOrderDetail';
 
 const ShowOrder = ({ order }) => {
-	console.log(order);
 	return (
 		<Layout title='Nueva orden'>
 			<Container fluid>

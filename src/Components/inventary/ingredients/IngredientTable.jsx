@@ -22,7 +22,6 @@ const IngredientTable = ({
 							className='btn-icon'
 							title='Editar detalle'
 							onClick={() => {
-								console.log('edit', row);
 								updateItem(row);
 							}}
 						>
@@ -35,7 +34,6 @@ const IngredientTable = ({
 							className='btn-icon'
 							title='Eliminar detalle'
 							onClick={() => {
-								console.log('remove', row);
 								removeItem(row);
 							}}
 						>
