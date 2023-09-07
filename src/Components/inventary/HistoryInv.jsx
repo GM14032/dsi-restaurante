@@ -67,12 +67,13 @@ const HistoryInv = ({
 					<span
 						className={`badge badge-soft-success fs-13`}
 						style={{
-							backgroundColor: row?.isActive ? '#3cd188' : '#C51e3a',
+							backgroundColor:
+								row?.isActive || row?.active ? '#3cd188' : '#C51e3a',
 							color: 'white',
 							fontWeight: 'bold',
 						}}
 					>
-						{row?.isActive ? 'Activo' : 'Inactivo'}
+						{row?.isActive || row?.active ? 'Activo' : 'Inactivo'}
 					</span>
 				),
 				sortable: true,
