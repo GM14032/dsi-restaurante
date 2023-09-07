@@ -4,12 +4,11 @@ import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-const useFormOrder = (products = []) => {
+const useFormOrder = (products = [], setTableError) => {
 	const router = useRouter();
 	const [orderDetails, setOrderDetails] = useState([]);
 	const [orderData, setOrderData] = useState({
 		description: '',
-		table: '',
 		category: '',
 	});
 	const [error, setError] = useState('');
@@ -50,12 +49,15 @@ const useFormOrder = (products = []) => {
 		setOrderDetails(newOrderDetails);
 	};
 
-	const createOrder = async () => {
+	const createOrder = async (currentTable) => {
 		const isValid = await validation.validateForm();
-		if (isValid.description || isValid.table) {
+		if (isValid.description) {
 			// show errors
 			validation.setFieldTouched('category', true);
-			validation.setFieldTouched('table', true);
+			return;
+		}
+		if (!currentTable) {
+			setTableError('Debe seleccionar una mesa');
 			return;
 		}
 		if (orderDetails.length === 0) {
@@ -75,7 +77,7 @@ const useFormOrder = (products = []) => {
 			},
 			//tableNumber: 1,
 			description: orderData.description,
-			tableNumber: orderData.table,
+			table: currentTable,
 			category: orderData.category,
 			total: orderDetails.reduce((acc, od) => acc + od.total, 0),
 		};
@@ -85,18 +87,27 @@ const useFormOrder = (products = []) => {
 			return;
 		}
 		if (orderResponse.ok) {
-			const response = await postRequest( {
-				message:"Orden test: "+orderData.description,
-				"roles":["Admin","Chef"]
-			},"notifications");
-			const notificationsResponse=await response.json()
-			console.log(notificationsResponse.id)
+			const orderJson = await orderResponse.json();
+			const response = await postRequest(
+				{
+					message:
+						'Se ha creado una nueva orden con el número: # ' +
+						orderJson.numberOrder,
+					redirect: `/pages/orden/${orderJson.id}`,
+					roles: ['Admin', 'Chef'],
+				},
+				'notifications'
+			);
+			const notificationsResponse = await response.json();
 			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message/send`, {
 				method: 'POST',
-				body:JSON.stringify({
-					"content":"Orden ABC: "+orderData.description,
-					"roles":["Admin","Chef"],
-					"idNotification":notificationsResponse.id
+				body: JSON.stringify({
+					content:
+						'Se ha creado una nueva orden con el número: # ' +
+						orderJson.numberOrder,
+					roles: ['Admin', 'Chef'],
+					idNotification: notificationsResponse.id,
+					redirect: `/pages/orden/${orderJson.id}`,
 				}),
 				headers: {
 					'Content-Type': 'application/json',

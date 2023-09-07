@@ -11,10 +11,12 @@ const DropToggleNotification = () => {
 			className='btn btn-icon btn-topbar btn-ghost-secondary rounded-circle'
 		>
 			<i className='bx bx-bell fs-22'></i>
-			<span className='position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger'>
-				{unseenNotifications}
-				<span className='visually-hidden'>unread messages</span>
-			</span>
+			{unseenNotifications > 0 && (
+				<span className='position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger'>
+					{unseenNotifications}
+					<span className='visually-hidden'>unread messages</span>
+				</span>
+			)}
 		</DropdownToggle>
 	);
 };

@@ -4,3 +4,10 @@ export const getDollarFormat = (value) => {
 	}
 	return '$0.00';
 };
+
+export const formatDate = (date) => {
+	if (date) {
+		return new Date(date).toISOString().split('T')[0];
+	}
+	return '';
+};

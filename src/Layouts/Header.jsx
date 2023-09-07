@@ -16,19 +16,23 @@ const Header = ({ headerClass, toggleSidebar = () => {} }) => {
 						<div className='navbar-brand-box horizontal-logo'>
 							<Link href='/' className='logo logo-dark'>
 								<span className='logo-sm'>
-									<img src={logoSm} alt='here should be the logo' height='22' />
+									<img
+										src={logoSm.src}
+										alt='here should be the logo'
+										height='22'
+									/>
 								</span>
 								<span className='logo-lg'>
-									<img src={logoDark} alt='' height='17' />
+									<img src={logoDark.src} alt='' height='17' />
 								</span>
 							</Link>
 
 							<Link href='/' className='logo logo-light'>
 								<span className='logo-sm'>
-									<img src={logoSm} alt='' height='22' />
+									<img src={logoSm.src} alt='' height='22' />
 								</span>
 								<span className='logo-lg'>
-									<img src={logoLight} alt='' height='17' />
+									<img src={logoLight.src} alt='' height='17' />
 								</span>
 							</Link>
 						</div>
