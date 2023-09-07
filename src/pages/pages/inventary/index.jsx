@@ -28,7 +28,6 @@ const Inventary = ({
 	const [inventoryDetailToRemove, setInventoryDetailToRemove] = useState(null);
 
 	const removeInventoryDetail = async () => {
-		console.log('removeInventoryDetail', inventoryDetailToRemove);
 		try {
 			const request = await deleteRequest(
 				inventoryDetailToRemove.id,
@@ -109,6 +108,7 @@ const Inventary = ({
 				closeModalHandler={closeModalHandler}
 				inventory={inventaryData.inventary}
 				setNewInventary={setNewInventary}
+				inventaryDetails={inventaryData.inventaryDetails}
 			/>
 			<ConfirmNewInventory
 				openModal={confirmModal}

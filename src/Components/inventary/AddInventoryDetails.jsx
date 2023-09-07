@@ -16,12 +16,14 @@ export const AddInventoryDetails = ({
 	inventory,
 	closeModalHandler = () => {},
 	setNewInventary = () => {},
+	inventaryDetails = [],
 }) => {
 	const [data, setData] = useState({
 		ingredient: null,
 		quantity: '',
 		price: '',
 		inventory,
+		isEntry: true,
 	});
 	const [error, setError] = useState('');
 
@@ -30,6 +32,35 @@ export const AddInventoryDetails = ({
 			setData({ ...data, inventory });
 		}
 	}, [inventory]);
+
+	const getPriceAndQuantity = (id) => {
+		const total = inventaryDetails.reduce(
+			(acc, item) => {
+				if (item.ingredient.id === id) {
+					if (item.isEntry) {
+						return {
+							...acc,
+							ePrice: acc.ePrice + item.price * item.quantity,
+							eQuantity: acc.eQuantity + item.quantity,
+						};
+					} else {
+						return {
+							...acc,
+							oPrice: acc.oPrice - item.price * item.quantity,
+							oQuantity: acc.oQuantity + item.quantity,
+						};
+					}
+				}
+				return acc;
+			},
+			{ ePrice: 0, eQuantity: 0, oPrice: 0, oQuantity: 0 }
+		);
+		return {
+			price: total.ePrice,
+			quantity: total.eQuantity,
+			outStock: total.oQuantity,
+		};
+	};
 
 	const validateData = () => {
 		if (!data.ingredient) {
@@ -44,6 +75,24 @@ export const AddInventoryDetails = ({
 			setError('Precio es requerido');
 			return false;
 		}
+		if (data.quantity <= 0) {
+			setError('Cantidad debe ser mayor a 0');
+			return false;
+		}
+		if (data.price <= 0) {
+			setError('Precio debe ser mayor a 0');
+			return false;
+		}
+		const { quantity, outStock } = getPriceAndQuantity(data?.ingredient?.id);
+		console.log(quantity, outStock, data.quantity);
+		if (!data.isEntry && +data.quantity > quantity - outStock) {
+			setError(
+				`No hay suficiente cantidad de ${data.ingredient.name}, existen ${
+					quantity - outStock
+				} en el inventario`
+			);
+			return false;
+		}
 		return true;
 	};
 
@@ -56,13 +105,25 @@ export const AddInventoryDetails = ({
 		});
 	};
 
+	const handleIngredientChange = (e) => {
+		if (error) setError('');
+		let averagePrice = '';
+		if (!data.isEntry) {
+			const { price, quantity } = getPriceAndQuantity(e.target.value);
+			console.log(quantity);
+			averagePrice = price > 0 && quantity > 0 ? price / quantity : '';
+		}
+		setData({
+			...data,
+			ingredient: ingredients.find((i) => i.id === e.target.value),
+			price: averagePrice,
+		});
+	};
+
 	const handleNewDetail = async () => {
 		if (!validateData()) return;
 		try {
-			const request = await postRequest(
-				{ ...data, isEntry: true },
-				'inventorydetails'
-			);
+			const request = await postRequest(data, 'inventorydetails');
 			const newDetail = await request.json();
 			setNewInventary(newDetail);
 			closeModalHandler();
@@ -127,15 +188,7 @@ export const AddInventoryDetails = ({
 								name='order_state'
 								label='Order State'
 								value={data.ingredient?.id || ''}
-								onChange={(e) => {
-									if (error) setError('');
-									setData({
-										...data,
-										ingredient: ingredients.find(
-											(i) => i.id === e.target.value
-										),
-									});
-								}}
+								onChange={handleIngredientChange}
 							>
 								{ingredients.map((ingredient) => (
 									<MenuItem key={ingredient.id} value={ingredient.id}>
@@ -144,6 +197,40 @@ export const AddInventoryDetails = ({
 								))}
 							</Select>
 						</FormControl>
+					</div>
+					<div className='order-form-group'>
+						<Label htmlFor='entry' className='order-form-label'>
+							Entrada:
+						</Label>
+						<div
+							className='order-form-input'
+							style={{
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'start',
+								gap: '1rem',
+								color: 'orange',
+							}}
+						>
+							<Input
+								type='checkbox'
+								id='entry'
+								name='entry'
+								checked={data.isEntry}
+								onChange={(e) => {
+									if (error) setError('');
+									setData({
+										...data,
+										isEntry: !data.isEntry,
+									});
+								}}
+							/>
+							<label htmlFor='entry'>
+								{data.isEntry
+									? 'Agregando al inventario'
+									: 'Quitando del inventario'}
+							</label>
+						</div>
 					</div>
 					<div className='order-form-group'>
 						<Label htmlFor='description' className='order-form-label'>
