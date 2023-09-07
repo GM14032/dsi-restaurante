@@ -1,28 +1,48 @@
 import React from 'react';
 
-import { Autocomplete, TextField } from '@mui/material';
+import {
+	Autocomplete,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	TextField,
+} from '@mui/material';
+import { Label } from 'reactstrap';
 
 const AddTable = ({ tables = [], value, addValue = () => {}, error = '' }) => {
-	const onChange = (_, value) => {
-		addValue(value);
+	const onChange = ({ target: { value } }) => {
+		const table = tables.find((table) => table.id === value);
+		addValue(table);
 	};
 
 	return (
-		<div className='autocomplete-order'>
-			<Autocomplete
-				disablePortal
-				id='table'
-				options={tables.map((p) => ({
-					...p,
-					label: `Mesa #${p.id}: ${p.capacity} asientos`,
-				}))}
-				onChange={onChange}
-				value={value}
-				isOptionEqualToValue={(option, value) => option.id === value.id}
-				sx={{ width: 300 }}
-				renderInput={(params) => <TextField {...params} label='Mesa' />}
-			/>
-			<span>{error}</span>
+		<div
+			className='order-form-group order-form-select'
+			style={{
+				alignItems: 'end',
+			}}
+		>
+			<Label htmlFor='table' className='order-form-label'>
+				Mesa:
+			</Label>
+			<FormControl variant='standard' sx={{ m: 1, minWidth: 120 }}>
+				<InputLabel id='order_state'>Mesa</InputLabel>
+				<Select
+					labelId='table'
+					id='table'
+					name='table'
+					label='table'
+					value={value?.id || ''}
+					onChange={onChange}
+				>
+					{tables.map((table) => (
+						<MenuItem key={table.id} value={table.id}>
+							{`Mesa #${table.id}: ${table.capacity} asientos`}
+						</MenuItem>
+					))}
+				</Select>
+			</FormControl>
 		</div>
 	);
 };

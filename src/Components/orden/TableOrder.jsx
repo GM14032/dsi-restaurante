@@ -142,7 +142,7 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 										<Button
 											color='success'
 											className='btn-icon'
-											title='Actualizar rol'
+											title='Actualizar orden'
 										>
 											<i className=' bx bxs-edit' />{' '}
 										</Button>
