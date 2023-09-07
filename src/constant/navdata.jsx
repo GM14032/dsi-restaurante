@@ -98,7 +98,7 @@ export const menuItems = [
 	{
 		id: 'Inventary',
 		label: 'Inventario',
-		icon: 'mdi mdi-table-chair',
+		icon: 'mdi mdi-file-edit-outline',
 		subItems: [
 			{
 				id: 'inventary-inventary',
