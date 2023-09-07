@@ -64,7 +64,7 @@ const InventaryTable = ({
 				sortable: true,
 			},
 			{
-				name: <span className='font-weight-bold fs-13'>Estado</span>,
+				name: <span className='font-weight-bold fs-13'>Typo</span>,
 				selector: (row) => (
 					<span
 						className={`badge badge-soft-success fs-13`}
