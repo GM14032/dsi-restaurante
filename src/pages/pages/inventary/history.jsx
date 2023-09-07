@@ -7,8 +7,6 @@ import dynamic from 'next/dynamic';
 import { HistoryInv } from '@/Components/inventary/HistoryInv';
 
 const InventaryHistory = ({ inventories = [], config }) => {
-	console.log(inventories);
-
 	return (
 		<Layout title='Inventario'>
 			<Container fluid>
