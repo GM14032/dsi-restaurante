@@ -40,7 +40,7 @@ const BtnCreateInventary = ({ createInventaryFromZero, inventary }) => {
 				className='btn btn-secondary'
 				onClick={handleCreateInventary}
 			>
-				<i className='mdi mdi-home me-1'></i>Crear inventario
+				<i className='mdi mdi-file-edit-outline me-1'></i>Crear inventario
 			</button>
 			{creating && !inventary && <Loader />}
 			<ConfirmNewInventory
