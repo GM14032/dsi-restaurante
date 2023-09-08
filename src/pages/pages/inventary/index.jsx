@@ -8,12 +8,19 @@ import EmptyInventary from '@/Components/inventary/EmptyInventary';
 import InventaryComponent from '@/Components/inventary/InventaryComponent';
 import { getLowStock } from '@/utils/inventary';
 
-const Movements = ({ inventary, inventaryDetails = [], config }) => {
+const Movements = ({
+	inventary,
+	inventaryDetails = [],
+	config,
+	errorMessage = '',
+}) => {
 	const [inventaryData, setInventaryData] = useState({
 		inventaryDetails: [],
 		inventary: null,
 		loading: true,
 	});
+
+	console.log(errorMessage);
 
 	useEffect(() => {
 		if (inventary) {
@@ -51,6 +58,7 @@ const Movements = ({ inventary, inventaryDetails = [], config }) => {
 					<EmptyInventary
 						createInventaryFromZero={createInventaryFromZero}
 						showBtn={false}
+						title={errorMessage}
 					/>
 				)}
 			</Container>
@@ -65,8 +73,12 @@ export async function getServerSideProps() {
 		).json();
 
 		const inventaryDetails = await (
-			await getById(inventary.id, 'inventorydetails')
+			await getById(inventary.id, 'inventorydetails/total')
 		).json();
+
+		if (inventaryDetails.status === 404) {
+			throw new Error('No se encontró el movimiento de inventario');
+		}
 
 		const ingredients = await (await getAll('ingredients')).json();
 
@@ -74,6 +86,7 @@ export async function getServerSideProps() {
 			lowStock: getLowStock(),
 			canRemove: false,
 			canAdd: false,
+			showEntry: false,
 		};
 		return {
 			props: {
@@ -85,7 +98,11 @@ export async function getServerSideProps() {
 		};
 	} catch (error) {
 		return {
-			props: { error: 'Ocurrió un error al obtener el inventario', config: {} },
+			props: {
+				error: 'Ocurrió un error al obtener el inventario',
+				errorMessage: error.message,
+				config: {},
+			},
 		};
 	}
 }
