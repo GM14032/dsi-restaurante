@@ -7,29 +7,47 @@ import { getDollarFormat } from '@/utils/format';
 
 const InventaryTable = ({
 	inventaryDetails = [],
-	config: { lowStock = 1, canRemove = false },
+	config: { lowStock = 1, canRemove = false, showLowStock = true },
 	removeItem = (row) => {},
 }) => {
-	const optional = {
-		name: <span className='font-weight-bold fs-13'>Acciones</span>,
-		selector: (row) => {
-			return (
-				<div>
-					<Button
-						color='danger'
-						className='btn-icon'
-						title='Eliminar detalle'
-						onClick={() => {
-							removeItem(row);
-						}}
-					>
-						<i className={`bx bx-x-circle`} />
-					</Button>
-				</div>
-			);
+	const optional = [
+		{
+			name: <span className='font-weight-bold fs-13'>Tipo</span>,
+			selector: (row) => (
+				<span
+					className={`badge badge-soft-success fs-13`}
+					style={{
+						backgroundColor: row?.isEntry ? '#3cd188' : '#0ac7fb',
+						color: 'white',
+						fontWeight: 'bold',
+					}}
+				>
+					{row?.isEntry ? 'Entrada' : 'Salida'}
+				</span>
+			),
+			sortable: true,
 		},
-	};
-	const opColumns = canRemove ? [optional] : [];
+		{
+			name: <span className='font-weight-bold fs-13'>Acciones</span>,
+			selector: (row) => {
+				return (
+					<div>
+						<Button
+							color='danger'
+							className='btn-icon'
+							title='Eliminar detalle'
+							onClick={() => {
+								removeItem(row);
+							}}
+						>
+							<i className={`bx bx-x-circle`} />
+						</Button>
+					</div>
+				);
+			},
+		},
+	];
+	const opColumns = canRemove ? optional : [];
 	const columns = useMemo(
 		() => [
 			{
@@ -43,7 +61,9 @@ const InventaryTable = ({
 					<span
 						style={{
 							color:
-								row?.quantity <= lowStock && row?.isEntry ? 'red' : 'black',
+								showLowStock && row?.quantity <= lowStock && row?.isEntry
+									? 'red'
+									: 'black',
 							fontWeight: 'bold',
 						}}
 					>
@@ -61,22 +81,6 @@ const InventaryTable = ({
 				name: <span className='font-weight-bold fs-13'>Total</span>,
 				selector: (row) =>
 					getDollarFormat((row.price || 0) * (row.quantity || 0)),
-				sortable: true,
-			},
-			{
-				name: <span className='font-weight-bold fs-13'>Typo</span>,
-				selector: (row) => (
-					<span
-						className={`badge badge-soft-success fs-13`}
-						style={{
-							backgroundColor: row?.isEntry ? '#3cd188' : '#0ac7fb',
-							color: 'white',
-							fontWeight: 'bold',
-						}}
-					>
-						{row?.isEntry ? 'Entrada' : 'Salida'}
-					</span>
-				),
 				sortable: true,
 			},
 			...opColumns,

@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import error from '../../assets/images/error.svg';
 import Image from 'next/image';
-import Loader from '../Common/Loader';
-import { getById, postRequest } from '@/api';
 import BtnCreateInventary from './BtnCreateInventary';
 
-const EmptyInventary = ({ createInventaryFromZero }) => {
+const EmptyInventary = ({ createInventaryFromZero, showBtn = true }) => {
 	return (
 		<div className='empty-inventary'>
 			<h1>
@@ -13,7 +11,9 @@ const EmptyInventary = ({ createInventaryFromZero }) => {
 				siguiente botón
 			</h1>
 			<Image src={error} alt='' height='230' className='move-animation' />
-			<BtnCreateInventary createInventaryFromZero={createInventaryFromZero} />
+			{showBtn && (
+				<BtnCreateInventary createInventaryFromZero={createInventaryFromZero} />
+			)}
 		</div>
 	);
 };

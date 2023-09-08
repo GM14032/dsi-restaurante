@@ -2,57 +2,18 @@ import React, { useState, useEffect } from 'react';
 import BreadCrumb from '@/Components/Common/BreadCrumb';
 import Layout from '@/Layouts';
 import { Container } from 'reactstrap';
-import { deleteRequest, getAll, getById } from '@/api';
+import { getAll, getById } from '@/api';
 import dynamic from 'next/dynamic';
 import EmptyInventary from '@/Components/inventary/EmptyInventary';
 import InventaryComponent from '@/Components/inventary/InventaryComponent';
 import { getLowStock } from '@/utils/inventary';
-import AddInventoryDetails from '@/Components/inventary/AddInventoryDetails';
-import ConfirmNewInventory from '@/Components/inventary/ConfirmNewInventory';
 
-const Inventary = ({
-	inventary,
-	inventaryDetails = [],
-	config,
-	ingredients = [],
-}) => {
+const Movements = ({ inventary, inventaryDetails = [], config }) => {
 	const [inventaryData, setInventaryData] = useState({
 		inventaryDetails: [],
 		inventary: null,
 		loading: true,
 	});
-	const [openModal, setOpenModal] = useState(false);
-	const openModalHandler = () => setOpenModal(!openModal);
-	const closeModalHandler = () => setOpenModal(false);
-	const [confirmModal, setConfirmModal] = useState(false);
-	const [inventoryDetailToRemove, setInventoryDetailToRemove] = useState(null);
-
-	const removeInventoryDetail = async () => {
-		try {
-			const request = await deleteRequest(
-				inventoryDetailToRemove.id,
-				'inventorydetails'
-			);
-			if (request.status === 200) {
-				const newInventaryDetails = inventaryData.inventaryDetails.filter(
-					(item) => item.id !== inventoryDetailToRemove.id
-				);
-				setInventaryData({
-					...inventaryData,
-					inventaryDetails: newInventaryDetails,
-				});
-				setConfirmModal(false);
-				setInventoryDetailToRemove(null);
-			}
-		} catch (error) {
-			console.log('error', error);
-		}
-	};
-
-	const handleModalDelete = (item) => {
-		setInventoryDetailToRemove(item);
-		setConfirmModal(true);
-	};
 
 	useEffect(() => {
 		if (inventary) {
@@ -65,16 +26,6 @@ const Inventary = ({
 			});
 		}
 	}, [inventary]);
-
-	const setNewInventary = (inventaryDetail) => {
-		if (inventary) {
-			setInventaryData({
-				inventary,
-				inventaryDetails: [inventaryDetail, ...inventaryData.inventaryDetails],
-				loading: false,
-			});
-		}
-	};
 
 	const createInventaryFromZero = (inventary, inventaryDetails = []) => {
 		if (inventary) {
@@ -94,32 +45,15 @@ const Inventary = ({
 					<InventaryComponent
 						{...inventaryData}
 						config={config}
-						addNewIDetail={openModalHandler}
 						createInventaryFromZero={createInventaryFromZero}
-						handleModalDelete={handleModalDelete}
 					/>
 				) : (
-					<EmptyInventary createInventaryFromZero={createInventaryFromZero} />
+					<EmptyInventary
+						createInventaryFromZero={createInventaryFromZero}
+						showBtn={false}
+					/>
 				)}
 			</Container>
-			<AddInventoryDetails
-				ingredients={ingredients}
-				openModal={openModal}
-				closeModalHandler={closeModalHandler}
-				inventory={inventaryData.inventary}
-				setNewInventary={setNewInventary}
-				inventaryDetails={inventaryData.inventaryDetails}
-			/>
-			<ConfirmNewInventory
-				openModal={confirmModal}
-				closeModal={() => {
-					setConfirmModal(false);
-					setInventoryDetailToRemove(null);
-				}}
-				description='Se borrara el detalle del inventario, ¿Desea continuar?'
-				title='Borrar detalle de inventario'
-				createInventory={removeInventoryDetail}
-			/>
 		</Layout>
 	);
 };
@@ -138,8 +72,8 @@ export async function getServerSideProps() {
 
 		const config = {
 			lowStock: getLowStock(),
-			canRemove: true,
-			canAdd: true,
+			canRemove: false,
+			canAdd: false,
 		};
 		return {
 			props: {
@@ -156,4 +90,4 @@ export async function getServerSideProps() {
 	}
 }
 
-export default dynamic(() => Promise.resolve(Inventary), { ssr: false });
+export default dynamic(() => Promise.resolve(Movements), { ssr: false });
