@@ -10,11 +10,14 @@ const InventaryComponent = ({
 	inventaryDetails = [],
 	createInventaryFromZero = () => {},
 	handleModalDelete = () => {},
+	preTitle = 'Inventario #',
 }) => {
 	return (
 		<section className='inventary-component'>
 			<div className='inventary-title'>
-				<h3>I-{formatDate(inventary?.createAt)}</h3>
+				<h3>
+					{preTitle} I-{formatDate(inventary?.createAt)}
+				</h3>
 				{config.canAdd && (
 					<div style={{ display: 'flex', gap: '1rem' }}>
 						<div

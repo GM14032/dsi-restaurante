@@ -7,7 +7,7 @@ import useTable from './useTable';
 
 const useUpdateOrder = (products = [], order, orderStates = []) => {
 	const router = useRouter();
-	const { tables } = useTable();
+	const { tables } = useTable('');
 	const [orderDetails, setOrderDetails] = useState(() =>
 		order.orderDetails.map((od) => ({
 			...od,

@@ -107,8 +107,14 @@ export const menuItems = [
 				parentId: 'Inventary',
 			},
 			{
+				id: 'inventary-movements',
+				label: 'Movimientos',
+				link: '/pages/inventary/movements',
+				parentId: 'Inventary',
+			},
+			{
 				id: 'inventary-history',
-				label: 'Historial',
+				label: 'Historial Movimientos',
 				link: '/pages/inventary/history',
 				parentId: 'Inventary',
 			},
