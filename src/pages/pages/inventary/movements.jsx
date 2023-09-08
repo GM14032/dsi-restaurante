@@ -93,6 +93,7 @@ const Movements = ({
 				{inventaryData.inventary || inventary ? (
 					<InventaryComponent
 						{...inventaryData}
+						preTitle='Movimientos de inventario #'
 						config={config}
 						addNewIDetail={openModalHandler}
 						createInventaryFromZero={createInventaryFromZero}

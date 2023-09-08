@@ -7,26 +7,35 @@ import { getDollarFormat } from '@/utils/format';
 
 const InventaryTable = ({
 	inventaryDetails = [],
-	config: { lowStock = 1, canRemove = false, showLowStock = true },
+	config: {
+		lowStock = 1,
+		canRemove = false,
+		showLowStock = true,
+		showEntry = true,
+	},
 	removeItem = (row) => {},
 }) => {
+	const entry = showEntry
+		? [
+				{
+					name: <span className='font-weight-bold fs-13'>Tipo</span>,
+					selector: (row) => (
+						<span
+							className={`badge badge-soft-success fs-13`}
+							style={{
+								backgroundColor: row?.isEntry ? '#3cd188' : '#0ac7fb',
+								color: 'white',
+								fontWeight: 'bold',
+							}}
+						>
+							{row?.isEntry ? 'Entrada' : 'Salida'}
+						</span>
+					),
+					sortable: true,
+				},
+		  ]
+		: [];
 	const optional = [
-		{
-			name: <span className='font-weight-bold fs-13'>Tipo</span>,
-			selector: (row) => (
-				<span
-					className={`badge badge-soft-success fs-13`}
-					style={{
-						backgroundColor: row?.isEntry ? '#3cd188' : '#0ac7fb',
-						color: 'white',
-						fontWeight: 'bold',
-					}}
-				>
-					{row?.isEntry ? 'Entrada' : 'Salida'}
-				</span>
-			),
-			sortable: true,
-		},
 		{
 			name: <span className='font-weight-bold fs-13'>Acciones</span>,
 			selector: (row) => {
@@ -83,6 +92,7 @@ const InventaryTable = ({
 					getDollarFormat((row.price || 0) * (row.quantity || 0)),
 				sortable: true,
 			},
+			...entry,
 			...opColumns,
 		],
 		[]
