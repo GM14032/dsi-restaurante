@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import BreadCrumb from '@/Components/Common/BreadCrumb';
 import Layout from '@/Layouts';
 import { Container } from 'reactstrap';
@@ -8,58 +8,19 @@ import EmptyInventary from '@/Components/inventary/EmptyInventary';
 import InventaryComponent from '@/Components/inventary/InventaryComponent';
 import { getLowStock } from '@/utils/inventary';
 
-const Movements = ({
-	inventary,
-	inventaryDetails = [],
-	config,
-	errorMessage = '',
-}) => {
-	const [inventaryData, setInventaryData] = useState({
-		inventaryDetails: [],
-		inventary: null,
-		loading: true,
-	});
-
-	console.log(errorMessage);
-
-	useEffect(() => {
-		if (inventary) {
-			setInventaryData({ inventary, inventaryDetails, loading: false });
-		} else {
-			setInventaryData({
-				inventary: null,
-				inventaryDetails: [],
-				loading: false,
-			});
-		}
-	}, [inventary]);
-
-	const createInventaryFromZero = (inventary, inventaryDetails = []) => {
-		if (inventary) {
-			setInventaryData({
-				inventary,
-				inventaryDetails,
-				loading: false,
-			});
-		}
-	};
-
+const Inventary = ({ inventary, config, errorMessage = '', details }) => {
 	return (
 		<Layout title='Inventario'>
 			<Container fluid>
 				<BreadCrumb title='Inventario' pageTitle='Pages' />
-				{inventaryData.inventary || inventary ? (
+				{inventary ? (
 					<InventaryComponent
-						{...inventaryData}
+						inventary={inventary}
+						inventaryDetails={details}
 						config={config}
-						createInventaryFromZero={createInventaryFromZero}
 					/>
 				) : (
-					<EmptyInventary
-						createInventaryFromZero={createInventaryFromZero}
-						showBtn={false}
-						title={errorMessage}
-					/>
+					<EmptyInventary showBtn={false} title={errorMessage} />
 				)}
 			</Container>
 		</Layout>
@@ -72,15 +33,28 @@ export async function getServerSideProps() {
 			await getAll('inventory', '?active=true')
 		).json();
 
-		const inventaryDetails = await (
+		const details = await (
 			await getById(inventary.id, 'inventorydetails/total')
 		).json();
 
-		if (inventaryDetails.status === 404) {
+		if (details.status === 404) {
 			throw new Error('No se encontró el movimiento de inventario');
 		}
 
-		const ingredients = await (await getAll('ingredients')).json();
+		const summary = details.map((item) => {
+			const ingredient =
+				item.ingredientId && item.ingredientName
+					? {
+							id: item.ingredientId,
+							name: item.ingredientName,
+							isCountable: true,
+					  }
+					: {};
+			return {
+				...item,
+				ingredient,
+			};
+		});
 
 		const config = {
 			lowStock: getLowStock(),
@@ -91,9 +65,8 @@ export async function getServerSideProps() {
 		return {
 			props: {
 				inventary,
-				inventaryDetails,
 				config,
-				ingredients,
+				details: summary,
 			},
 		};
 	} catch (error) {
@@ -107,4 +80,4 @@ export async function getServerSideProps() {
 	}
 }
 
-export default dynamic(() => Promise.resolve(Movements), { ssr: false });
+export default dynamic(() => Promise.resolve(Inventary), { ssr: false });

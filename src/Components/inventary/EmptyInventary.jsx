@@ -4,7 +4,7 @@ import Image from 'next/image';
 import BtnCreateInventary from './BtnCreateInventary';
 
 const EmptyInventary = ({
-	createInventaryFromZero,
+	createInventaryFromZero = () => {},
 	showBtn = true,
 	title = 'No tienes un inventario activo, por favor crea uno presionando el siguiente botón',
 }) => {
