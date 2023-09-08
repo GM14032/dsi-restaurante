@@ -1,13 +1,13 @@
 import { getAll } from '@/api';
 import { useEffect, useState } from 'react';
 
-export const useTable = () => {
+export const useTable = (available = '?available=true') => {
 	const [tables, setTables] = useState([]);
 	const [currentTable, setCurrentTable] = useState(null);
 	const [tableError, setTableError] = useState('');
 
 	const fetchTables = async () => {
-		const response = await getAll('table', '?available=true');
+		const response = await getAll('table', available);
 		const data = await response.json();
 		setTables(data);
 	};

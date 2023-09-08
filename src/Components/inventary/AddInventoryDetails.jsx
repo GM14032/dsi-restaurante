@@ -84,7 +84,6 @@ export const AddInventoryDetails = ({
 			return false;
 		}
 		const { quantity, outStock } = getPriceAndQuantity(data?.ingredient?.id);
-		console.log(quantity, outStock, data.quantity);
 		if (!data.isEntry && +data.quantity > quantity - outStock) {
 			setError(
 				`No hay suficiente cantidad de ${data.ingredient.name}, existen ${
@@ -110,7 +109,6 @@ export const AddInventoryDetails = ({
 		let averagePrice = '';
 		if (!data.isEntry) {
 			const { price, quantity } = getPriceAndQuantity(e.target.value);
-			console.log(quantity);
 			averagePrice = price > 0 && quantity > 0 ? price / quantity : '';
 		}
 		setData({
@@ -129,7 +127,6 @@ export const AddInventoryDetails = ({
 			closeModalHandler();
 			initialValues();
 		} catch (e) {
-			console.log(e);
 			setError('Error al crear el detalle');
 		}
 	};

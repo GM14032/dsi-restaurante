@@ -31,7 +31,11 @@ const InventaryById = ({ inventary, inventaryDetails = [], config }) => {
 			<Container fluid>
 				<BreadCrumb title='Inventario' pageTitle='Pages' />
 				{inventaryData.inventary || inventary ? (
-					<InventaryComponent {...inventaryData} config={config} />
+					<InventaryComponent
+						{...inventaryData}
+						config={config}
+						preTitle='Movimiento de Inventario #'
+					/>
 				) : (
 					<></>
 				)}
@@ -50,6 +54,7 @@ export async function getServerSideProps({ params: { id } }) {
 
 		const config = {
 			lowStock: getLowStock(),
+			showEntry: true,
 		};
 		return {
 			props: {
