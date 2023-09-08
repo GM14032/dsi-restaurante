@@ -36,6 +36,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_LOGIN_URL: ${{ secrets.NEXT_PUBLIC_LOGIN_URL }}
+          NEXT_PUBLIC_WEBSOCKET_URL: ${{ secrets.NEXT_PUBLIC_WEBSOCKET_URL }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
