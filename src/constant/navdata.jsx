@@ -6,6 +6,13 @@ export const menuItems = [
 		link: '/',
 	},
 	{
+		separator: true,
+		isHeader: true,
+		id: 'Pages',
+		label: 'Pages',
+		icon: 'mdi mdi-account-cog',
+	},
+	{
 		id: 'usuarios',
 		label: 'Gestion de usuarios',
 		icon: 'mdi mdi-account-cog',

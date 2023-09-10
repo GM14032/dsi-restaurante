@@ -37,7 +37,6 @@ const getSubItems = (permissions, item) => {
 	//validamos que tenga subitems
 	if (item.subItems) {
 		item.subItems.forEach((subItem) => {
-		
 			if (isValidUrl(permissions, subItem.link)) {
 				// ingresamos el array de todas las rutas validas
 				subItems.push(subItem);
@@ -57,6 +56,11 @@ export const getMenu = () => {
 	const permissions = getPermissions();
 	const menu = [];
 	menuItems.forEach((item) => {
+		// verificamos si es un separador
+		if (item.separator) {
+			menu.push(item);
+			return;
+		}
 		// si tiene link y es valido lo mostraremos en el menu, caso contrario significa que podria tener subitems
 		if (item.link && isValidUrl(permissions, item.link)) {
 			menu.push(item);
