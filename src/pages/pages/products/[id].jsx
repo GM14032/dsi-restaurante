@@ -15,7 +15,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import dynamic from 'next/dynamic';
 import { getById } from '@/api';
 import Link from 'next/link';
-import TableIngredientesDetail from '@/Components/product/TableIngredientesDetail';
 import { getDollarFormat } from '@/utils/format';
 
 const MostrarProduct = ({ product }) => {
@@ -78,40 +77,44 @@ const MostrarProduct = ({ product }) => {
 												>
 													{getDollarFormat(product?.price)}
 												</div>
-											</div>
-											<h5 className="card-title mb-3">Ingrediente detalle</h5>
-											<div className="table-responsive">
-                                <Table className="table-striped table-nowrap align-middle mb-0">
-                                  {product && (
-                                    <tbody>
-                                      <tr>
-                                        <th className="ps-0" scope="row">
-                                          Cantidad :
-                                        </th>
-                                        <th className="ps-0" scope="row">
-                                          Ingredientes :
-                                        </th>
-                                      </tr>
-                                      {product?.ingredientDetails?.map(
-                                        (ingredientDetails) => (
-                                          <tr>
-                                            <td className="text-muted">
-                                              {ingredientDetails.quantity}
-                                            </td>
-                                            <td className="text-muted">
-                                              {ingredientDetails.ingredient.name}
-                                            </td>
-                                          </tr>
-                                        )
-                                      )}
-                                    </tbody>
-                                  )}
-                                </Table>
-                              </div>
-						
-									</CardBody>
+											</div>								
+										
+						 			</CardBody>
 								</Card>
-							</CardBody>
+						
+						<div className="table-responsive">
+											
+											<Table className="table-striped table-nowrap align-middle mb-0">
+											  {product && (
+												<tbody>
+													<th align='center'>
+												  <h3 className="card-title mb-3" align='center'>Ingredientes del producto</h3>
+														</th>
+												  <tr>										
+													<th className="ps-0" scope="row">
+													  Cantidad :
+													</th>
+													<th className="ps-0" scope="row">
+													  Ingredientes :
+													</th>
+												  </tr>
+												  {product?.ingredientDetails?.map(
+													(ingredientDetails) => (
+													  <tr>
+														<td className="text-muted">
+														  {ingredientDetails.quantity}
+														</td>
+														<td className="text-muted">
+														  {ingredientDetails.ingredient.name}
+														</td>
+													  </tr>
+													)
+												  )}
+												</tbody>
+											  )}
+											</Table>
+										  </div>
+										  	</CardBody>
 						</Card>
 					</Col>
 				</Row>
