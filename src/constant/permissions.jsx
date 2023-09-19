@@ -6,7 +6,9 @@ export const PERMISSIONS = {
 	READ_ORDER: ['/pages/orden', '/pages/orden/[id]', '/pages/orden/history'],
 	WRITE_ORDER: ['/pages/orden/crear', '/pages/orden/update/[id]'],
 	READ_TABLE: ['/pages/tables', '/pages/tables/[id]'],
-	WRITE_TABLE: ['/pages/tables/crear', '/pages/tables/actualizar/[id]'],
+	WRITE_TABLE: ['/pages/tables/crear', '/pages/tables/actualizar/[id]'],	
+	READ_PRODUCT: ['/pages/products', '/pages/products/[id]'],
+	WRITE_PRODUCT: ['/pages/products/crear', '/pages/products/update/[id]'],
 	READ_PERMISSION: ['/pages/permisos'],
 	WRITE_INVENTARY: [
 		'/pages/inventary',
@@ -15,5 +17,7 @@ export const PERMISSIONS = {
 		'/pages/inventary/history',
 		'/pages/inventary/movements',
 	],
+	
+
 };
 export const NO_PERMISSIONS = ['/login', '/register', '/'];

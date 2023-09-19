@@ -111,18 +111,6 @@ export const menuItems = [
 				link: '/pages/products/crear',
 				parentId: 'product',
 			},
-			{
-				id: 'ingredients-add',
-				label: 'Ver Ingredientes',
-				link: '/pages/ingredients',
-				parentId: 'ingredients',
-			},
-			{
-				id: 'ingredient-add',
-				label: 'Agregar Ingrediente',
-				link: '/pages/ingredient/crear',
-				parentId: 'ingredient',
-			},
 		],
 	},
 	,
