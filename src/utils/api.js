@@ -12,8 +12,6 @@ export const getAccessToken = () => {
 	}
 	return '';
 };
-.selectAnt
-		width: 50% !important;
 const getRequest = async (url) => {
 	const token = getAccessToken();
 	const response = await fetch(url, {
