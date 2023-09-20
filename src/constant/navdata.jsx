@@ -6,6 +6,10 @@ export const menuItems = [
 		link: '/',
 	},
 	{
+		label: 'Pages',
+		isHeader: true,
+	},
+	{
 		id: 'usuarios',
 		label: 'Gestion de usuarios',
 		icon: 'mdi mdi-account-cog',
@@ -49,6 +53,10 @@ export const menuItems = [
 		label: 'Permisos',
 		icon: 'mdi mdi-badge-account-horizontal',
 		link: '/pages/permisos',
+	},
+	{
+		label: 'Operaciones de Negocio',
+		isHeader: true,
 	},
 	{
 		id: 'Orden',
@@ -133,7 +141,7 @@ export const menuItems = [
 			},
 			{
 				id: 'inventary-history',
-				label: 'Historial Movimientos',
+				label: 'Historial de inventario',
 				link: '/pages/inventary/history',
 				parentId: 'Inventary',
 			},
