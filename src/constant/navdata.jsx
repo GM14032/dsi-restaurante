@@ -102,6 +102,25 @@ export const menuItems = [
 			},
 		],
 	},
+	{
+		id: 'Product',
+		label: 'Gestion de Productos',
+		icon: 'mdi mdi-truck-fast',
+		subItems: [
+			{
+				id: 'Product-display',
+				label: 'Ver Productos',
+				link: '/pages/products',
+				parentId: 'products',
+			},
+			{
+				id: 'Product-add',
+				label: 'Agregar Producto',
+				link: '/pages/products/crear',
+				parentId: 'product',
+			},
+		],
+	},
 	,
 	{
 		id: 'Inventary',
