@@ -119,7 +119,7 @@ const useUpdateOrder = (products = [], order, orderStates = []) => {
 						' actualizada, estado: ' +
 						orderJson.state.name,
 					redirect: `/pages/orden/${orderJson.id}`,
-					roles: ['Admin', 'Chef'],
+					roles: ['Admin', 'Mesero'],
 				},
 				'notifications'
 			);
@@ -133,7 +133,7 @@ const useUpdateOrder = (products = [], order, orderStates = []) => {
 						orderJson.numberOrder +
 						' actualizada, estado: ' +
 						orderJson.state.name,
-					roles: ['Admin', 'Chef'],
+					roles: ['Admin', 'Mesero'],
 					idNotification: notificationsResponse.id,
 					redirect: `/pages/orden/${orderJson.id}`,
 				}),
