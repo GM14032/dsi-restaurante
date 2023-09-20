@@ -12,7 +12,7 @@ const TableIngredientesDetail = ({ ingredieteDetails = [] }) => {
 			},
 			{
 				name: <span className='font-weight-bold fs-13'>Ingrediente</span>,
-				selector: (row) => row.ingredient.name,
+				selector: (row) => row.ingredientDetails.name,
 				sortable: true,
 			},
 			{

@@ -126,6 +126,23 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 									</Link>
 								</>
 							)}
+							 {hasPermission.deleteProduct && (
+                <>
+                  <Button
+                    color={row.enable ? "danger" : "warning"}
+                    className="btn-icon"
+                    title={row.enable ? "Inactivar Producto" : "Activar Producto"}
+                    onClick={() => {
+                      tog_standard();
+                      setSelectedProduct(row);
+                    }}
+                  >
+                    <i
+                      className={`bx bx-${row.enable ? "x" : "plus"}-circle`}
+                    />
+                  </Button>{" "}
+                </>
+              )}{" "}
 						</div>
 					);
 				},

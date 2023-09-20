@@ -59,7 +59,7 @@ function Product() {
           <Col lg={12}>
             <Card>
               <CardHeader className="d-flex justify-content-between align-items-center">
-                <h4 className="card-title mb-0 flex-grow-1">Mesa</h4>
+                <h4 className="card-title mb-0 flex-grow-1">Listado de productos</h4>
                 <div>
                 {hasPermission && (
                 <>

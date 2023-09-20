@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-const useFormOrder = (products = [], setTableError) => {
+const useFormOrder = (products = []) => {
 	const router = useRouter();
 	const [orderDetails, setOrderDetails] = useState([]);
 	const [orderData, setOrderData] = useState({

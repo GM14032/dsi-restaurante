@@ -13,93 +13,94 @@ import {
 import 'react-toastify/dist/ReactToastify.css';
 import { getAll } from '@/api';
 import dynamic from 'next/dynamic';
-import AddOrder from '@/Components/orden/AddOrder';
+import AddProduct from '@/Components/product/AddProduct';
 import Link from 'next/link';
-import useFormOrder from '@/hooks/useFormOrder';
-import OrderForm from '@/Components/orden/OrderForm';
+import useFormProduct from '@/hooks/useFormProduct';
+import ProductForm from '@/Components/product/ProductForm';
 import { RenderInput } from '@/Components/Common/RenderInput';
-import useTable from '@/hooks/useTable';
+import useIngrediente from '@/hooks/useIngrediente';
 import AddTable from '@/Components/orden/AddTable';
 
-const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
-	const { tables, currentTable, tableError, selectTable, setTableError } =
-		useTable();
+const createProduct = ({ ingredients = [], error = '' }) => {
+	const { ingredientes, currentIngrediente, ingredientError, selectIngredient, setIngredienteError } =
+	useIngrediente();
 	const {
-		addOrderDetail,
-		createOrder,
-		getProductsThatAreNotInOrderDetails,
+		addIngredientDetail,
+		createProduct,
+		getIngredientsThatAreNotInOrderDetails,
 		handleQuantity,
-		orderDetails,
+		ingredientDetails,
 		validation,
-		error: errorOrder,
-		removeOrderDetail,
+		error: errorProduct,
+		removeIngredientDetail,
 		handleChange,
-	} = useFormOrder(products, setTableError);
+	} = useFormProduct(ingredients, setIngredienteError);
 
 	return (
-		<Layout title='Nueva orden'>
+		<Layout title='Nueva producto'>
 			<Container fluid>
-				<BreadCrumb title='Orden' pageTitle='Pages' />
+				<BreadCrumb title='Productos' pageTitle='Pages' />
 				<Row>
 					<Col xs={12}>
 						<Card>
 							<CardHeader>
-								<h4 className='card-title mb-0'>Agregar Ordenes</h4>
+								<h4 className='card-title mb-0'>Agregar Productos</h4>
 							</CardHeader>
 							<CardBody className='card-body'>
 								<Card>
 									<CardBody>
-										<div className='order-data-form'>
-											<div className='order-form-group'>
+									<div className='order-form-group'>
 												<Label
 													htmlFor='description'
 													className='order-form-label'
 												>
-													Categoria:
+													Nombre de Producto:
 												</Label>
 												<div className='order-form-input'>
 													<RenderInput
 														type='text'
 														validation={validation}
-														fieldName='category'
-														placeholder='Ingrese la categoria'
+														fieldName='name'
+														placeholder='Ingrese el nombre del producto'
 														handleChange={handleChange}
 													/>
 												</div>
-											</div>
+											</div><br></br>
 											<div className='order-form-group'>
 												<Label
 													htmlFor='description'
 													className='order-form-label'
 												>
-													Descripcion:
+													Precio:
 												</Label>
 												<div className='order-form-input'>
 													<RenderInput
-														type='text'
+														type='number'
 														validation={validation}
-														fieldName='description'
-														placeholder='Ingrese la descripcion'
+														fieldName='price'
+														placeholder='Ingrese el precio'
 														handleChange={handleChange}
 													/>
 												</div>
-											</div>
-											<AddTable
-												tables={tables}
-												addValue={selectTable}
-												error={tableError}
-												value={currentTable}
-											/>
+											</div><br></br>		
+											<div className='order-form-group'>
+												<Label
+													htmlFor='description'
+													className='order-form-label'
+												>
+													Ingredientes:
+												</Label>
+												<div className='order-form-input'>
+												<AddProduct
+											ingredient={getIngredientsThatAreNotInOrderDetails()}
+											addValue={addIngredientDetail}
+											error={errorProduct}	/>
+												</div>											
 										</div>
-										<AddOrder
-											products={getProductsThatAreNotInOrderDetails()}
-											addValue={addOrderDetail}
-											error={errorOrder}
-										/>
-										<OrderForm
+										<ProductForm
 											handleQuantity={handleQuantity}
-											orderDetails={orderDetails}
-											removeOrderDetail={removeOrderDetail}
+											ingredientDetails={ingredientDetails}
+											removeIngredientDetail={removeIngredientDetail}
 											validation={validation}
 											handleChange={handleChange}
 										/>
@@ -108,14 +109,14 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 												<Link
 													type='button'
 													className='btn btn-light btn-lg'
-													href='/pages/orden'
+													href='/pages/products'
 												>
 													Cancelar
 												</Link>
 												<button
 													type='button'
 													className='btn btn-primary btn-lg '
-													onClick={() => createOrder(currentTable)}
+													onClick={() => createProduct(currentIngrediente)}
 												>
 													Guardar
 												</button>
@@ -134,19 +135,19 @@ const CreateOrder = ({ products = [], orderStates = [], error = '' }) => {
 
 export async function getServerSideProps() {
 	try {
-		const [products, orderStates] = await Promise.all([
-			await (await getAll('products')).json(),
-			await (await getAll('order_states')).json(),
+		const [ingredients, ingredientDetails] = await Promise.all([
+			await (await getAll('ingredients')).json(),
+			await (await getAll('ingredientDetails')).json(),
 		]);
 		return {
-			props: { products, orderStates },
+			props: { ingredients, ingredientDetails },
 		};
 	} catch (error) {
 		console.log(error);
 		return {
-			props: { error: 'Ocurrió un error al obtener los productos' },
+			props: { error: 'Ocurrió un error al obtener los ingredientes' },
 		};
 	}
 }
 
-export default dynamic(() => Promise.resolve(CreateOrder), { ssr: false });
+export default dynamic(() => Promise.resolve(createProduct), { ssr: false });
