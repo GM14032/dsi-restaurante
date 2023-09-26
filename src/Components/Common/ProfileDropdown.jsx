@@ -7,7 +7,7 @@ import {
 	DropdownMenu,
 	DropdownToggle,
 } from 'reactstrap';
-import avatar1 from '/../../assets/images/users/avatar-2.jpg';
+import avatar1 from '../../assets/images/users/avatar-2.jpg';
 import Image from 'next/image';
 
 const ProfileDropdown = () => {
