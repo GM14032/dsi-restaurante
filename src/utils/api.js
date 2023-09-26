@@ -12,7 +12,6 @@ export const getAccessToken = () => {
 	}
 	return '';
 };
-
 const getRequest = async (url) => {
 	const token = getAccessToken();
 	const response = await fetch(url, {

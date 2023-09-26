@@ -102,7 +102,7 @@ const Table_tables = () => {
               )}{" "}
              
               <Link href={`/pages/tables/${row.id}`}>
-                <Button color="info" className="btn-icon" title="Ver rol">
+                <Button color="info" className="btn-icon" title="Ver Mesa">
                   <i className="bx bxs-show" />
                 </Button>
               </Link>{" "}
@@ -112,7 +112,7 @@ const Table_tables = () => {
               <Button
                 color="success"
                 className="btn-icon"
-                title="Actualizar rol"
+                title="Actualizar mesa"
               >
                 {" "}
                 <i className=" bx bxs-edit" />{" "}

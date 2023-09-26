@@ -7,32 +7,32 @@ import decode from 'jwt-decode';
 import { putRequest, getAll } from '@/api';
 import { getDollarFormat } from '@/utils/format';
 
-const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
-	const [orders, setOrders] = useState([]);
-	const [orderFiltered, setOrderFiltered] = useState([]);
+const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
+	const [products, setProducts] = useState([]);
+	const [productFiltered, setProductFiltered] = useState([]);
 	const [dataLoaded, setDataLoaded] = useState(false);
-	const [selectedOrder, setSelectedOrder] = useState(null);
+	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [modal_standard, setmodal_standard] = useState(false);
 	const [decoded, setDecoded] = useState();
 	const [hasPermission, setHasPermission] = useState({
-		deleteOrder: false,
-		updateOrder: false,
+		deleteProduct: false,
+		updateProduct: false,
 	});
-	const fetchOrders = async () => {
+	const fetchProducts = async () => {
 		try {
 			setDataLoaded(false);
-			const responseOrders = await getAll('orders', `${startDate}${endDate}`);
-			const data = await responseOrders.json();
-			setOrders(data);
+			const responseProducts = await getAll('products', `${startDate}${endDate}`);
+			const data = await responseProducts.json();
+			setProducts(data);
 		} catch (error) {
-			setOrders([]);
+			setProducts([]);
 		} finally {
 			setDataLoaded(true);
 		}
 	};
 
 	useEffect(() => {
-		fetchOrders();
+		fetchProducts();
 	}, [startDate, endDate]);
 	useEffect(() => {
 		if (window && window.localStorage) {
@@ -47,80 +47,57 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 	}, []);
 	useEffect(() => {
 		if (decoded) {
-			const deleteOrder = decoded.permission.includes('DELETE_ORDER');
-			const updateOrder = decoded.permission.includes('WRITE_ORDER');
-			setHasPermission({ ...hasPermission, deleteOrder, updateOrder });
+			const deleteProduct = decoded.permission.includes('DELETE_PRODUCT');
+			const updateProduct = decoded.permission.includes('WRITE_PRODUCT');
+			setHasPermission({ ...hasPermission, deleteProduct, updateProduct });
 		}
 	}, [decoded]);
-	const handleInactivateOrder = async () => {
-		if (selectedOrder) {
+	const handleInactivateProduct = async () => {
+		if (selectedProduct) {
 			var enable = true;
-			const id = selectedOrder.id;
-			if (selectedOrder.enable) enable = false;
+			const id = selectedProduct.id;
+			if (selectedProduct.enable) enable = false;
 			const response = await putRequest(
 				id,
 				{
 					enable: enable,
 				},
-				'Orders'
+				'products'
 			);
 
 			if (response.ok) {
 				const body = response.json();
 				console.log(body);
 				setmodal_standard(false);
-				fetchOrders();
+				fetchProducts();
 			} else {
 				const errorBody = response.json();
 				console.log(errorBody);
 			}
 		}
 	};
-
-	useEffect(() => {
-		setOrderFiltered(
-			orders.filter(
-				(order) => order.state.id === stateSelected || !stateSelected
+    useEffect(() => {
+		setProductFiltered(
+			products.filter(
+				(product) => product.id === stateSelected || !stateSelected
 			)
 		);
-	}, [orders, stateSelected]);
-
+	}, [products, stateSelected]);
 	const columns = useMemo(
 		() => [
 			{
-				name: <span className='font-weight-bold fs-13'>Numero de Orden</span>,
-				selector: (row) => row.numberOrder,
+				name: <span className='font-weight-bold fs-13'>Id de Producto</span>,
+				selector: (row) => row.id,
 				sortable: true,
 			},
 			{
-				name: <span className='font-weight-bold fs-13'>Categoria</span>,
-				selector: (row) => row.category,
+				name: <span className='font-weight-bold fs-13'>Name</span>,
+				selector: (row) => row.name,
 				sortable: true,
 			},
 			{
-				name: <span className='font-weight-bold fs-13'># Mesa</span>,
-				selector: (row) => row.table?.id,
-				sortable: true,
-			},
-			{
-				name: <span className='font-weight-bold fs-13'>Total</span>,
-				selector: (row) => getDollarFormat(row.total),
-				sortable: true,
-			},
-			{
-				name: <span className='font-weight-bold fs-13'>Estado</span>,
-				selector: (row) => (
-					<span
-						className={`badge badge-soft-success fs-13`}
-						style={{
-							backgroundColor: row?.state?.colorHex,
-							color: 'white',
-							fontWeight: 'bold',
-						}}
-					>
-						{row?.state?.name}
-					</span>
-				),
+				name: <span className='font-weight-bold fs-13'>Precio</span>,
+				selector: (row) => getDollarFormat(row.price),
 				sortable: true,
 			},
 			{
@@ -128,27 +105,44 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 				selector: (row) => {
 					return (
 						<div>
-							{hasPermission.updateOrder && (
+							{hasPermission.updateProduct && (
 								<>
 									<Link
-										href={`/pages/orden/${row.id}`}
+										href={`/pages/products/${row.id}`}
 										style={{ marginRight: '8px' }}
 									>
-										<Button color='info' className='btn-icon' title='Ver orden'>
+										<Button color='info' className='btn-icon' title='Ver producto'>
 											<i className='bx bxs-show' />
 										</Button>
 									</Link>
-									<Link href={`/pages/orden/update/${row.id}`}>
+									<Link href={`/pages/products/update/${row.id}`}>
 										<Button
 											color='success'
 											className='btn-icon'
-											title='Actualizar orden'
+											title='Actualizar producto'
 										>
 											<i className=' bx bxs-edit' />{' '}
 										</Button>
 									</Link>
 								</>
 							)}
+							 {hasPermission.deleteProduct && (
+                <>
+                  <Button
+                    color={row.enable ? "danger" : "warning"}
+                    className="btn-icon"
+                    title={row.enable ? "Inactivar Producto" : "Activar Producto"}
+                    onClick={() => {
+                      tog_standard();
+                      setSelectedProduct(row);
+                    }}
+                  >
+                    <i
+                      className={`bx bx-${row.enable ? "x" : "plus"}-circle`}
+                    />
+                  </Button>{" "}
+                </>
+              )}{" "}
 						</div>
 					);
 				},
@@ -168,7 +162,7 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 			<div>
 				<DataTable
 					columns={columns}
-					data={orderFiltered}
+					data={productFiltered}
 					pagination
 					paginationPerPage={10}
 					paginationRowsPerPageOptions={[10, 15, 20]}
@@ -192,12 +186,12 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 							tog_standard();
 						}}
 					>
-						{selectedOrder?.enable ? 'Inactivar ' : 'Activar '}Orders
+						{selectedProduct?.enable ? 'Inactivar ' : 'Activar '}Orders
 					</ModalHeader>
 					<ModalBody>
 						<h5 className='fs-15'>
-							¿Desea {selectedOrder?.enable ? 'inactivar ' : 'activar '}el rol{' '}
-							<b>{selectedOrder?.name}</b>?
+							¿Desea {selectedProduct?.enable ? 'inactivar ' : 'activar '}el rol{' '}
+							<b>{selectedProduct?.name}</b>?
 						</h5>
 					</ModalBody>
 					<div className='modal-footer'>
@@ -209,7 +203,7 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 						>
 							Cancelar
 						</Button>
-						<Button color='primary' onClick={handleInactivateOrder}>
+						<Button color='primary' onClick={handleInactivateProduct}>
 							Aceptar
 						</Button>
 					</div>
@@ -219,4 +213,4 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 	);
 };
 
-export { TableOrders };
+export { TableProducts };

@@ -6,6 +6,10 @@ export const menuItems = [
 		link: '/',
 	},
 	{
+		label: 'Pages',
+		isHeader: true,
+	},
+	{
 		id: 'usuarios',
 		label: 'Gestion de usuarios',
 		icon: 'mdi mdi-account-cog',
@@ -51,6 +55,10 @@ export const menuItems = [
 		link: '/pages/permisos',
 	},
 	{
+		label: 'Operaciones de Negocio',
+		isHeader: true,
+	},
+	{
 		id: 'Orden',
 		label: 'Gestion de ordenes',
 		icon: 'mdi mdi-file-table-box-multiple',
@@ -94,6 +102,25 @@ export const menuItems = [
 			},
 		],
 	},
+	{
+		id: 'Product',
+		label: 'Gestion de Productos',
+		icon: 'mdi mdi-truck-fast',
+		subItems: [
+			{
+				id: 'Product-display',
+				label: 'Ver Productos',
+				link: '/pages/products',
+				parentId: 'products',
+			},
+			{
+				id: 'Product-add',
+				label: 'Agregar Producto',
+				link: '/pages/products/crear',
+				parentId: 'product',
+			},
+		],
+	},
 	,
 	{
 		id: 'Inventary',
@@ -114,7 +141,7 @@ export const menuItems = [
 			},
 			{
 				id: 'inventary-history',
-				label: 'Historial Movimientos',
+				label: 'Historial de inventario',
 				link: '/pages/inventary/history',
 				parentId: 'Inventary',
 			},

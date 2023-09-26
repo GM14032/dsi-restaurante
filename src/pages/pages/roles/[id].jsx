@@ -61,8 +61,7 @@ export async function getServerSideProps({ params }) {
                             <th className="ps-0" scope="row"  >
                               Nombre :
                             </th>
-                            <td className="text-muted pe-5">{data.name}</td>
-                            
+                            <td className="text-muted pe-5">{data.name}</td>                            
                           </tr>
                           
                           <tr>
