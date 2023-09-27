@@ -10,7 +10,7 @@ import {
 import Link from 'next/link';
 
 //import Images
-import avatar2 from '../../assets/images/users/avatar2.jpg';
+import avatar2 from '../../../public/avatar2.jpg';
 import avatar3 from '../../assets/images/users/avatar-3.jpg';
 import avatar4 from '../../assets/images/users/avatar-4.jpg';
 import avatar5 from '../../assets/images/users/avatar-5.jpg';

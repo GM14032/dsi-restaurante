@@ -38,6 +38,13 @@ const ValidationOrder = Yup.object({
 	category: Yup.string().required('Por favor ingrese una categoria'),
 });
 
+const ValidationProducto = Yup.object({
+	name: Yup.string().required('Por favor ingrese el nombre'),
+	price: Yup.number().required('Por favor ingrese el precio'),
+	ingredient: Yup.string().required('Por favor ingrese un ingrediente').min(1, 'Por favor seleccione un ingrediente'),
+
+});
+
 const ValidationOrderUpdate = Yup.object({
 	table: Yup.number().required('Por favor ingrese el numero de mesa'),
 	description: Yup.string(),
@@ -50,4 +57,5 @@ export {
 	ValidationOrder,
 	ValidationOrderUpdate,
 	ValidationTable,
+	ValidationProducto,
 };

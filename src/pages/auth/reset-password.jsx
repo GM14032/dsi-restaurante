@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import logoLight from "../../assets/images/logo-light.png";
+import logoLight from "../../../public/logo-light.png";
 import ParticlesAuth from "../../Components/AuthenticationInner/ParticlesAuth";
 export async function getServerSideProps(context) {
   const { query } = context;

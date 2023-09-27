@@ -21,7 +21,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 
 //import images
-import logoLight from '../../assets/images/logo-light.png';
+import logoLight from '../../../public/logo-light.png';
 import ParticlesAuth from '../../Components/AuthenticationInner/ParticlesAuth';
 import { useRouter } from 'next/router';
 

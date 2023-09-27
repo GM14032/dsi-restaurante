@@ -18,7 +18,7 @@ import ParticlesAuth from "../../Components/AuthenticationInner/ParticlesAuth";
 import Link from "next/link";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import logoLight from "../../assets/images/logo-light.png";
+import logoLight from "../../../public/logo-light.png";
 
 export default function login() {
   const router = useRouter();
