@@ -88,27 +88,7 @@ const useFormProduct = (ingredients = []) => {
 			return;
 		}
 		if (productResponse.ok) {
-			const productJson = await productResponse.json();
-			const response = await postRequest(
-				{
-					message:
-						'Se ha creado un nuevo producto con el número: # ',
-					redirect: `/pages/products`,
-				},
-				'notifications'
-			);
-			const notificationsResponse = await response.json();
-			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message/send`, {
-				method: 'POST',
-				body: JSON.stringify({
-					content:
-						'Se ha creado un nuevo producto  con el número: # ',
-					redirect: `/pages/products`,
-				}),
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
+			
 			router.push('/pages/products');
 		}
 	};
