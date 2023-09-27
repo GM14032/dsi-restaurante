@@ -11,7 +11,7 @@ const AddProduct = ({ ingredient = [], addValue = () => {}, error = '' }) => {
 
 	return (
 		
-		<div className='order-form-input'>			
+		<div className='autocomplete-order'>			
 			<Autocomplete 
 				disablePortal
 				id='ingredient'
