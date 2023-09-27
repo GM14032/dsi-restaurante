@@ -93,8 +93,7 @@ const useFormProduct = (ingredients = []) => {
 				{
 					message:
 						'Se ha creado un nuevo producto con el número: # ',
-					redirect: `/pages/products/${productJson.id}`,
-					roles: ['Admin', 'Chef'],
+					redirect: `/pages/products`,
 				},
 				'notifications'
 			);
@@ -104,9 +103,7 @@ const useFormProduct = (ingredients = []) => {
 				body: JSON.stringify({
 					content:
 						'Se ha creado un nuevo producto  con el número: # ',
-					roles: ['Admin', 'Chef'],
-					idNotification: notificationsResponse.id,
-					redirect: `/pages/products/${productJson.id}`,
+					redirect: `/pages/products`,
 				}),
 				headers: {
 					'Content-Type': 'application/json',
