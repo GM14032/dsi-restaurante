@@ -42,7 +42,9 @@ const ProfileDropdown = () => {
 					<span className='d-flex align-items-center'>
 						<Image
 							className='rounded-circle header-profile-user'
-							src={avatar1}
+							src='/avatar2.jpg'
+							width= '32'
+							height= '32'
 							alt='Header Avatar'
 						/>
 						<span className='text-start ms-xl-2'>
