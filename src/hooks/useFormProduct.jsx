@@ -1,5 +1,5 @@
 import { postRequest } from '@/api';
-import { ValidationOrder } from '@/constant/validations';
+import { ValidationProducto } from '@/constant/validations';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ const useFormProduct = (ingredients = []) => {
 
 	const validation = useFormik({
 		enableReinitialize: true,
-		validationSchema: ValidationOrder,
+		validationSchema: ValidationProducto,
 		initialValues: productData,
 	});
 
@@ -51,7 +51,13 @@ const useFormProduct = (ingredients = []) => {
 
 	const createProduct = async (currentTable) => {
 		const isValid = await validation.validateForm();
-		if (isValid.description) {
+		if (isValid.name) {
+			// show errors
+			validation.setFieldTouched('name', true);
+			return;
+		}
+
+		if (isValid.price) {
 			// show errors
 			validation.setFieldTouched('price', true);
 			return;
