@@ -4,7 +4,7 @@ import { Carousel } from 'react-responsive-carousel';
 import Link from 'next/link';
 
 // Import Images
-import logoLight from '../../assets/images/logo-light.png';
+import logoLight from '../../../public/logo-light.png';
 
 const AuthSlider = () => {
 	return (

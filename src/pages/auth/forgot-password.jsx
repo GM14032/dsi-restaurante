@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import logoLight from "../../assets/images/logo-light.png";
+import logoLight from "../../../public/logo-light.png";
 import ParticlesAuth from "../../Components/AuthenticationInner/ParticlesAuth";
 
 const ForgetPasswordPage = (props) => {
