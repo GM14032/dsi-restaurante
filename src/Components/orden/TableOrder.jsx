@@ -108,6 +108,11 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 				sortable: true,
 			},
 			{
+				name: <span className='font-weight-bold fs-13'>Fecha</span>,
+				selector: (row) => row.create_at,
+				sortable: true,
+			},
+			{
 				name: <span className='font-weight-bold fs-13'>Estado</span>,
 				selector: (row) => (
 					<span

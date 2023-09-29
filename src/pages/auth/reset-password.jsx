@@ -17,6 +17,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import logoLight from "../../../public/logo-light.png";
 import ParticlesAuth from "../../Components/AuthenticationInner/ParticlesAuth";
+import {postRequest} from "@/api";
 export async function getServerSideProps(context) {
   const { query } = context;
   var isValidToken= false;
@@ -66,7 +67,7 @@ const ResetPasswordPage = (isValidToken) => {
   });
   const handleSubmit = async (password) => {
     const response = await fetch(
-      "http://localhost:8082/api/reset-password/confirm",
+        `${process.env.NEXT_PUBLIC_API_URL}/reset-password/confirm`,
       {
         method: "POST",
         headers: {

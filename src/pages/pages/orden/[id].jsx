@@ -85,6 +85,20 @@ const ShowOrder = ({ order }) => {
 												</div>
 											)}
 										</div>
+										<div className='order-form-group'>
+											<Label
+												htmlFor='create_at'
+												className='order-form-label'
+											>
+												Fecha:
+											</Label>
+											<div
+												className='order-form-input'
+												style={{ textTransform: 'uppercase' }}
+											>
+												{order?.create_at}
+											</div>
+										</div>
 										<div className='order-form'>
 											<TableOrderDetail orderDetails={order?.orderDetails} />
 										</div>
