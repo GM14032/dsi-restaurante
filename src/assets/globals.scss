@@ -309,3 +309,75 @@ here your global styles
 		justify-content: space-between;
 	}
 }
+
+.ticket-class {
+	border: 2px solid #2a3266;
+	display: flex;
+	flex-direction: column;
+	min-height: 700px;
+	width: 500px;
+	padding: 16px;
+	.title-ticket {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-weight: bold;
+		h1 {
+			font-size: 1.5rem;
+		}
+		p {
+			margin: 0px;
+		}
+		.logo-bg {
+			background: linear-gradient(90deg, #2a3266 0%, #6577e8 100%);
+			padding: 15px;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 150px;
+			height: 150px;
+			color: white;
+			box-shadow: drop-shadow(-3px -3px 1px rgba(255, 255, 255, 0.3))
+				drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.2))
+				drop-shadow(15px 15px 15px rgba(0, 0, 0, 0.2));
+			img {
+				filter: drop-shadow(-3px -3px 1px rgba(255, 255, 255, 0.3))
+					drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.2))
+					drop-shadow(15px 15px 15px rgba(0, 0, 0, 0.2));
+			}
+		}
+	}
+	.info-ticket {
+		font-weight: bold;
+		p {
+			margin: 0px;
+		}
+	}
+	.ticket-table {
+		margin-top: 16px;
+	}
+	.text-total-column {
+		text-align: end;
+		padding-right: 16px;
+		text-transform: uppercase;
+	}
+	.total-ticket {
+		border-top: 2px solid #2a3266;
+	}
+	.total-column {
+		display: flex;
+		justify-content: end;
+		align-items: center;
+		font-weight: bold;
+	}
+	.header-columns {
+		border-top: 2px solid #2a3266;
+		border-bottom: 2px solid #2a3266;
+		text-transform: uppercase;
+		box-sizing: border-box;
+		.header-ticket {
+			padding: 5px 0px;
+		}
+	}
+}

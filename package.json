@@ -25,6 +25,8 @@
 		"filepond-plugin-image-preview": "^4.6.11",
 		"formik": "^2.2.9",
 		"gridjs-react": "^6.0.1",
+		"html2canvas": "^1.4.1",
+		"jspdf": "^2.5.1",
 		"jwt-decode": "^3.1.2",
 		"list.js": "^2.3.1",
 		"lord-icon-element": "^4.1.1",
