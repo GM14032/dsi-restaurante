@@ -31,7 +31,6 @@ const CreateOrder = ({
 		order,
 		orderStates
 	);
-
 	return (
 		<Layout title='Nueva orden'>
 			<Container fluid>
@@ -136,6 +135,7 @@ const CreateOrder = ({
 														}
 														onChange={handleChange}
 														label='Order State'
+														disabled={order?.state?.name === 'Pagado'}
 													>
 														{orderStates.map((orderState) => (
 															<MenuItem

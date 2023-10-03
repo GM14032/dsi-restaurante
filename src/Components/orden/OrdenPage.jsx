@@ -34,7 +34,7 @@ export function OrderPage(props) {
 							</CardHeader>
 							<CardBody>
 								<div id='table-gridjs'>
-									<TableOrders {...res} />
+									<TableOrders {...res} orderStates={states} />
 								</div>
 							</CardBody>
 						</Card>
@@ -46,5 +46,3 @@ export function OrderPage(props) {
 }
 
 export default OrderPage;
-
-

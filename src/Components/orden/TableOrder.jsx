@@ -8,7 +8,12 @@ import { getAll } from '@/api';
 import { getDollarFormat } from '@/utils/format';
 import Ticket from '../ticket/Ticket';
 
-const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
+const TableOrders = ({
+	stateSelected = 0,
+	startDate = '',
+	endDate = '',
+	orderStates = [],
+}) => {
 	const [orders, setOrders] = useState([]);
 	const [orderFiltered, setOrderFiltered] = useState([]);
 	const [dataLoaded, setDataLoaded] = useState(false);
@@ -54,11 +59,15 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 		}
 	}, [decoded]);
 
-	const sendEmail = async () => {
-		if (selectedOrder) {
-			console.log(selectedOrder);
-		}
-		setmodal_standard(false);
+	const updateStateOrder = (id, state) => {
+		const orders = orderFiltered.map((order) => {
+			if (order.id === id) {
+				return { ...order, state };
+			}
+			return order;
+		});
+		setOrderFiltered(orders);
+		tog_standard();
 	};
 
 	const printer = (data) => {
@@ -132,26 +141,32 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 											<i className='bx bxs-show' />
 										</Button>
 									</Link>
-									<Link href={`/pages/orden/update/${row.id}`}>
-										<Button
-											color='success'
-											className='btn-icon'
-											title='Actualizar orden'
-										>
-											<i className=' bx bxs-edit' />
-										</Button>
-									</Link>
-									<Button
-										color='success'
-										className='btn-icon'
-										title='Actualizar orden'
-										style={{ marginLeft: '8px' }}
-										onClick={() => {
-											printer(row);
-										}}
-									>
-										<i className='bx bxs-printer' />
-									</Button>
+									{row.state.name !== 'Pagado' && (
+										<>
+											<Link href={`/pages/orden/update/${row.id}`}>
+												<Button
+													color='success'
+													className='btn-icon'
+													title='Actualizar orden'
+												>
+													<i className=' bx bxs-edit' />
+												</Button>
+											</Link>
+											{orderStates.length > 0 && (
+												<Button
+													color='success'
+													className='btn-icon'
+													title='Actualizar orden'
+													style={{ marginLeft: '8px' }}
+													onClick={() => {
+														printer(row);
+													}}
+												>
+													<i className='bx bxs-printer' />
+												</Button>
+											)}
+										</>
+									)}
 								</>
 							)}
 						</div>
@@ -201,7 +216,12 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 						Factura
 					</ModalHeader>
 					<ModalBody>
-						<Ticket order={selectedOrder} />
+						<Ticket
+							order={selectedOrder}
+							isModalOpen={modal_standard}
+							orderStates={orderStates}
+							updateStateOrder={updateStateOrder}
+						/>
 					</ModalBody>
 				</Modal>
 			</div>
