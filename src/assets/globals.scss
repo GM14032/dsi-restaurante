@@ -432,3 +432,15 @@ here your global styles
 		}
 	}
 }
+
+@media (max-width: 700px) {
+	.state-summary {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 400px) {
+	.state-summary {
+		grid-template-columns: 1fr;
+	}
+}

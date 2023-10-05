@@ -3,38 +3,27 @@ import { Col, Container, Row } from 'reactstrap';
 import BreadCrumb from '../Components/Common/BreadCrumb';
 import dynamic from 'next/dynamic';
 import Layout from '@/Layouts';
+import {
+	Chart as ChartJS,
+	ArcElement,
+	Tooltip,
+	Legend,
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+} from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-export const data = {
-	labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-	datasets: [
-		{
-			label: '# of Votes',
-			data: [12, 19, 3, 5, 2, 3],
-			backgroundColor: [
-				'rgba(255, 99, 132, 0.2)',
-				'rgba(54, 162, 235, 0.2)',
-				'rgba(255, 206, 86, 0.2)',
-				'rgba(75, 192, 192, 0.2)',
-				'rgba(153, 102, 255, 0.2)',
-				'rgba(255, 159, 64, 0.2)',
-			],
-			borderColor: [
-				'rgba(255, 99, 132, 1)',
-				'rgba(54, 162, 235, 1)',
-				'rgba(255, 206, 86, 1)',
-				'rgba(75, 192, 192, 1)',
-				'rgba(153, 102, 255, 1)',
-				'rgba(255, 159, 64, 1)',
-			],
-			borderWidth: 1,
-		},
-	],
-};
+ChartJS.register(
+	ArcElement,
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend
+);
 
 const getPercentage = (quantity, total) => {
 	if (total < 1) return '0%';
@@ -43,7 +32,56 @@ const getPercentage = (quantity, total) => {
 	return `${Math.round((quantity / total) * 100)}%`;
 };
 
+export const optionsBar = {
+	responsive: true,
+	plugins: {
+		legend: {
+			position: 'top',
+		},
+		title: {
+			display: true,
+			text: 'Chart.js Bar Chart',
+		},
+	},
+};
+
+const labelsBar = [
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
+	'July',
+];
+
+export const dataBar = {
+	labels: labelsBar,
+	datasets: [
+		{
+			label: 'Dataset 1',
+			data: labelsBar.map(() => Math.random() * 1000),
+			backgroundColor: 'rgba(255, 99, 132, 0.5)',
+		},
+		{
+			label: 'Dataset 2',
+			data: labelsBar.map(() => Math.random() * 1000),
+			backgroundColor: 'rgba(53, 162, 235, 0.5)',
+		},
+	],
+};
+
 const Starter = ({ summary, total }) => {
+	const data = {
+		labels: summary.map((s) => s.name),
+		datasets: [
+			{
+				label: '',
+				data: summary.map((s) => s.quantity),
+				backgroundColor: summary.map((s) => `${s.colorHex}50`),
+			},
+		],
+	};
 	return (
 		<Layout title='DSI Restaurant'>
 			<Container fluid>
@@ -67,6 +105,45 @@ const Starter = ({ summary, total }) => {
 									</div>
 								);
 							})}
+						</div>
+						<div
+							style={{
+								width: '100%',
+								marginTop: '2rem',
+								display: 'flex',
+								gap: '1rem',
+							}}
+						>
+							<div
+								style={{
+									width: '40%',
+									backgroundColor: 'white',
+									padding: '1rem',
+									borderRadius: '1rem',
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '1rem',
+									alignItems: 'center',
+								}}
+							>
+								<h5 style={{ fontWeight: 'bold' }}>Resumen ordenes del dia</h5>
+								<Pie data={data} />
+							</div>
+							<div
+								style={{
+									width: '60%',
+									backgroundColor: 'white',
+									padding: '1rem',
+									borderRadius: '1rem',
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '1rem',
+									alignItems: 'center',
+								}}
+							>
+								<h5 style={{ fontWeight: 'bold' }}>Resumen de algo al mes</h5>
+								<Bar options={optionsBar} data={dataBar} />;
+							</div>
 						</div>
 					</Col>
 				</Row>
