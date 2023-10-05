@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logoLight from '../../../public/logo-light.png';
 import Image from 'next/image';
-import { getDollarFormat } from '@/utils/format';
+import { formatDate, getDollarFormat } from '@/utils/format';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Button, Input, Label } from 'reactstrap';
@@ -29,6 +29,8 @@ const Ticket = ({
 		(acc, item) => acc + item.quantity * item.product.price,
 		0
 	);
+
+	console.log('order', order);
 
 	useEffect(() => {
 		!isModalOpen &&
@@ -160,7 +162,7 @@ const Ticket = ({
 						className=''
 						style={{
 							display: 'flex',
-							justifyContent: 'flex-end',
+							justifyContent: 'center',
 							gap: '1rem',
 						}}
 					>
@@ -169,14 +171,23 @@ const Ticket = ({
 							className='btn-icon'
 							onClick={savePDF}
 							disabled={disabledSend}
+							style={{
+								width: '100%',
+								textTransform: 'uppercase',
+								fontWeight: 'bold',
+								display: 'flex',
+								gap: '0.5rem',
+							}}
 						>
+							Pagar factura
 							<i className='bx bxs-send' />
 						</Button>
 					</div>
 					<div className='ticket-class' ref={ticketRef}>
 						<div className='title-ticket'>
 							<div>
-								<h1>Factura</h1>
+								<p>{formatDate(order.create_at)}</p>
+								<h1>Factura #{order.numberOrder}</h1>
 								<p>DSI Restaurant</p>
 								<p>Ciudad Universitaria</p>
 							</div>
