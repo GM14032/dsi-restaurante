@@ -180,6 +180,7 @@ const Ticket = ({
 							}}
 						>
 							Pagar
+							<i className='bx bxs-send' />
 						</Button>
 					</div>
 					<div className='ticket-class' ref={ticketRef}>
