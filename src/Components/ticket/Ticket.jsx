@@ -162,25 +162,24 @@ const Ticket = ({
 						className=''
 						style={{
 							display: 'flex',
-							justifyContent: 'center',
+							justifyContent: 'flex-end',
 							gap: '1rem',
 						}}
 					>
 						<Button
-							color='success'
+							color='btn btn-primary'
 							className='btn-icon'
 							onClick={savePDF}
 							disabled={disabledSend}
 							style={{
-								width: '100%',
+								width: '40%',
 								textTransform: 'uppercase',
 								fontWeight: 'bold',
 								display: 'flex',
 								gap: '0.5rem',
 							}}
 						>
-							Pagar factura
-							<i className='bx bxs-send' />
+							Pagar
 						</Button>
 					</div>
 					<div className='ticket-class' ref={ticketRef}>

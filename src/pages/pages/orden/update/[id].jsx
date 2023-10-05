@@ -1,5 +1,5 @@
 import Layout from '@/Layouts';
-import React from 'react';
+import React, { useState } from 'react';
 import BreadCrumb from '@/Components/Common/BreadCrumb';
 import {
 	Card,
@@ -9,6 +9,9 @@ import {
 	Container,
 	FormFeedback,
 	Label,
+	Modal,
+	ModalBody,
+	ModalHeader,
 	Row,
 } from 'reactstrap';
 import 'react-toastify/dist/ReactToastify.css';
@@ -19,6 +22,7 @@ import { RenderInput } from '@/Components/Common/RenderInput';
 import useUpdateOrder from '@/hooks/useUpdateOrder';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import TableOrderDetail from '@/Components/orden/TableOrderDetail';
+import Ticket from '@/Components/ticket/Ticket';
 
 const CreateOrder = ({
 	products = [],
@@ -31,6 +35,36 @@ const CreateOrder = ({
 		order,
 		orderStates
 	);
+	const [modal_standard, setmodal_standard] = useState(false);
+
+	const updateStateOrder = () => {
+		createOrder();
+		tog_standard();
+	};
+
+	function tog_standard() {
+		if (!modal_standard) {
+			const state = orderStates.find((s) => s.name === 'Pagado');
+			if (state) {
+				const fieldName = {
+					target: {
+						name: 'order_state',
+						value: state.id,
+					},
+				};
+				handleChange(fieldName);
+			}
+		} else {
+			const fieldName = {
+				target: {
+					name: 'order_state',
+					value: order.state.id,
+				},
+			};
+			handleChange(fieldName);
+		}
+		setmodal_standard(!modal_standard);
+	}
 	return (
 		<Layout title='Nueva orden'>
 			<Container fluid>
@@ -161,11 +195,23 @@ const CreateOrder = ({
 												</Link>
 												<button
 													type='button'
-													className='btn btn-primary btn-lg '
+													className='btn btn-primary btn-lg'
 													onClick={createOrder}
 												>
 													Guardar
 												</button>
+												{order?.state?.name !== 'Pagado' && (
+													<button
+														type='button'
+														className='btn btn-primary btn-lg ml-2'
+														onClick={tog_standard}
+														style={{
+															marginLeft: '10px',
+														}}
+													>
+														Pagar
+													</button>
+												)}
 											</div>
 										</Col>
 									</CardBody>
@@ -174,6 +220,32 @@ const CreateOrder = ({
 						</Card>
 					</Col>
 				</Row>
+				<Modal
+					id='myModal'
+					isOpen={modal_standard}
+					toggle={() => {
+						tog_standard();
+					}}
+					style={{ maxWidth: '535px' }}
+				>
+					<ModalHeader
+						className='modal-title'
+						id='myModalLabel'
+						toggle={() => {
+							tog_standard();
+						}}
+					>
+						Factura
+					</ModalHeader>
+					<ModalBody>
+						<Ticket
+							order={order}
+							isModalOpen={modal_standard}
+							orderStates={orderStates}
+							updateStateOrder={updateStateOrder}
+						/>
+					</ModalBody>
+				</Modal>
 			</Container>
 		</Layout>
 	);
