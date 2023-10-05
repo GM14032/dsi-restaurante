@@ -381,3 +381,54 @@ here your global styles
 		}
 	}
 }
+
+.state-summary {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 1rem;
+	.state-summary-item {
+		background-color: #fff;
+		border-radius: 8px;
+		padding: 8px 20px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		.summary-quantity {
+			font-size: 2rem;
+			position: relative;
+			font-weight: bold;
+			text-align: center;
+			width: 100px;
+			height: 100px;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: conic-gradient(
+				from 0deg,
+				var(--clr) 0%,
+				var(--clr) 0% var(--i),
+				#fff var(--i),
+				#fff 100%
+			);
+			h1 {
+				position: relative;
+			}
+		}
+
+		.summary-quantity::before {
+			content: '';
+			position: absolute;
+			inset: 10px;
+			background: #fff;
+			border-radius: 50%;
+		}
+
+		h5 {
+			text-align: center;
+		}
+	}
+}

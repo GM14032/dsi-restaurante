@@ -73,7 +73,27 @@ const CreateOrder = ({
 					<Col xs={12}>
 						<Card>
 							<CardHeader>
-								<h4 className='card-title mb-0'>Agregar Ordenes</h4>
+								<div
+									style={{
+										display: 'flex',
+										justifyContent: 'space-between',
+										alignItems: 'center',
+									}}
+								>
+									<h4 className='card-title mb-0'>Agregar Ordenes</h4>
+									{order?.state?.name !== 'Pagado' && (
+										<button
+											type='button'
+											className='btn btn-primary btn-lg ml-2'
+											onClick={tog_standard}
+											style={{
+												marginLeft: '10px',
+											}}
+										>
+											Pagar
+										</button>
+									)}
+								</div>
 							</CardHeader>
 							<CardBody className='card-body'>
 								<Card>
@@ -200,18 +220,6 @@ const CreateOrder = ({
 												>
 													Guardar
 												</button>
-												{order?.state?.name !== 'Pagado' && (
-													<button
-														type='button'
-														className='btn btn-primary btn-lg ml-2'
-														onClick={tog_standard}
-														style={{
-															marginLeft: '10px',
-														}}
-													>
-														Pagar
-													</button>
-												)}
 											</div>
 										</Col>
 									</CardBody>
