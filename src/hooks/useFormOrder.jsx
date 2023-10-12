@@ -4,12 +4,11 @@ import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-const useFormOrder = (products = [],  setTableError) =>{
+const useFormOrder = (setTableError = () => {}) => {
 	const router = useRouter();
-	const [orderDetails, setOrderDetails] = useState([]);
+	const [orderDetails, setOrderDetails] = useState({});
 	const [orderData, setOrderData] = useState({
 		description: '',
-		category: '',
 	});
 	const [error, setError] = useState('');
 
@@ -29,43 +28,58 @@ const useFormOrder = (products = [],  setTableError) =>{
 		});
 	};
 
-	const getProductsThatAreNotInOrderDetails = () => {
-		const ids = orderDetails.map((od) => od.id);
-		return products.filter((p) => !ids.includes(p.id));
-	};
-
 	const addOrderDetail = (orderDetail) => {
-		const exists = orderDetails.find((od) => od.id === orderDetail.id);
-		if (exists) {
+		if (orderDetails[orderDetail.id]) {
+			setOrderDetails({
+				...orderDetails,
+				[orderDetail.id]: {
+					...orderDetails[orderDetail.id],
+					quantity: orderDetails[orderDetail.id].quantity + 1,
+				},
+			});
 			return;
 		}
-		setOrderDetails([...orderDetails, orderDetail]);
+		setOrderDetails({
+			...orderDetails,
+			[orderDetail.id]: {
+				...orderDetail,
+				quantity: 1,
+			},
+		});
 	};
 
 	const removeOrderDetail = (orderDetail) => {
-		const newOrderDetails = orderDetails.filter(
-			(od) => od.id !== orderDetail.id
-		);
-		setOrderDetails(newOrderDetails);
+		if (orderDetails[orderDetail.id].quantity > 1) {
+			setOrderDetails({
+				...orderDetails,
+				[orderDetail.id]: {
+					...orderDetails[orderDetail.id],
+					quantity: orderDetails[orderDetail.id].quantity - 1,
+				},
+			});
+			return;
+		}
+		const { [orderDetail.id]: orderDetailToRemove, ...rest } = orderDetails;
+		setOrderDetails(rest);
 	};
 
 	const createOrder = async (currentTable) => {
 		const isValid = await validation.validateForm();
 		if (isValid.description) {
 			// show errors
-			validation.setFieldTouched('category', true);
+			validation.setFieldTouched('description', true);
 			return;
 		}
 		if (!currentTable) {
 			setTableError('Debe seleccionar una mesa');
 			return;
 		}
-		if (orderDetails.length === 0) {
+		if (Object.keys(orderDetails).length === 0) {
 			setError('Debe agregar al menos un producto');
 			return;
 		}
 		const order = {
-			orderDetails: orderDetails.map((od) => ({
+			orderDetails: Object.values(orderDetails).map((od) => ({
 				product: {
 					id: od.id,
 				},
@@ -75,11 +89,9 @@ const useFormOrder = (products = [],  setTableError) =>{
 			state: {
 				id: 1, // start with state pending
 			},
-			//tableNumber: 1,
-			description: orderData.description,
 			table: currentTable,
-			category: orderData.category,
-			total: orderDetails.reduce((acc, od) => acc + od.total, 0),
+			description: orderData.description,
+			total: Object.values(orderDetails).reduce((acc, od) => acc + od.total, 0),
 		};
 		const orderResponse = await postRequest(order, 'orders');
 		if (orderResponse.error) {
@@ -117,29 +129,13 @@ const useFormOrder = (products = [],  setTableError) =>{
 		}
 	};
 
-	const handleQuantity = (orderDetail, quantity) => {
-		const newOrderDetails = orderDetails.map((od) => {
-			if (od.id === orderDetail.id) {
-				return {
-					...od,
-					quantity,
-					total: od.price * quantity,
-				};
-			}
-			return od;
-		});
-		setOrderDetails(newOrderDetails);
-	};
-
 	return {
 		orderDetails,
 		validation,
 		error,
-		getProductsThatAreNotInOrderDetails,
 		addOrderDetail,
 		removeOrderDetail,
 		createOrder,
-		handleQuantity,
 		handleChange,
 	};
 };

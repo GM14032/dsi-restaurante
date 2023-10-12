@@ -11,8 +11,6 @@ const Step2 = ({
 	removeOrderDetail,
 	addOrderDetail,
 	orderDetails,
-	currentTable,
-	createOrder,
 	categories = [],
 }) => {
 	const [productsFiltered, setProductsFiltered] = useState(() => products);

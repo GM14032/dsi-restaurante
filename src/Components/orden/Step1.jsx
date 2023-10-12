@@ -22,7 +22,7 @@ const Step1 = ({ tables, selectTable, tableError, currentTable }) => {
 					<div className='tables-step-1 custom-scrollbar'>
 						{tables.map((table) => (
 							<button
-								className='table-item'
+								className={`table-item ${!table.available && 'disabled-table'}`}
 								key={table.id}
 								onClick={() => {
 									selectTable(table);

@@ -45,11 +45,13 @@ const AddTable = ({
 					value={value?.id || ''}
 					onChange={onChange}
 				>
-					{tables.map((table) => (
-						<MenuItem key={table.id} value={table.id}>
-							{`Mesa #${table.id}: ${table.capacity} asientos`}
-						</MenuItem>
-					))}
+					{tables
+						.filter((table) => table.available)
+						.map((table) => (
+							<MenuItem key={table.id} value={table.id}>
+								{`Mesa #${table.id}: ${table.capacity} asientos`}
+							</MenuItem>
+						))}
 				</Select>
 			</FormControl>
 		</div>

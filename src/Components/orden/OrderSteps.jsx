@@ -18,13 +18,14 @@ import useFormOrder from '@/hooks/useFormOrder';
 import useTable from '@/hooks/useTable';
 import Step1 from './Step1';
 import Step2 from './Step2';
+import Step3 from './Step3';
 
 const OrderSteps = ({ products, orderStates, categories }) => {
 	const [activeTab, setactiveTab] = useState(1);
 	const [progressbarvalue, setprogressbarvalue] = useState(0);
 	const [passedSteps, setPassedSteps] = useState([1]);
 	const { tables, currentTable, tableError, selectTable, setTableError } =
-		useTable();
+		useTable('');
 	const [error, setError] = useState('');
 	const {
 		addOrderDetail,
@@ -46,7 +47,6 @@ const OrderSteps = ({ products, orderStates, categories }) => {
 		}
 		setprogressbarvalue(value);
 	}
-	console.log({ currentTable });
 
 	return (
 		<div>
@@ -122,7 +122,14 @@ const OrderSteps = ({ products, orderStates, categories }) => {
 													'rounded-pill'
 												)}
 												onClick={() => {
-													toggleTab(3, 100);
+													if (Object.keys(orderDetails).length === 0) {
+														setError(
+															'Debe agregar al menos un producto para continuar'
+														);
+													} else {
+														setError('');
+														toggleTab(3, 100);
+													}
 												}}
 												tag='button'
 											>
@@ -177,6 +184,9 @@ const OrderSteps = ({ products, orderStates, categories }) => {
 
 									<TabPane tabId={2}>
 										<div>
+											<div className='text-center'>
+												<span className='text-danger'>{error}</span>
+											</div>
 											<Step2
 												{...{
 													products,
@@ -184,7 +194,6 @@ const OrderSteps = ({ products, orderStates, categories }) => {
 													addOrderDetail,
 													orderDetails,
 													currentTable,
-													createOrder,
 													categories,
 												}}
 											/>
@@ -204,7 +213,14 @@ const OrderSteps = ({ products, orderStates, categories }) => {
 												type='button'
 												className='btn btn-success btn-label right ms-auto nexttab nexttab'
 												onClick={() => {
-													toggleTab(activeTab + 1, 100);
+													if (Object.keys(orderDetails).length === 0) {
+														setError(
+															'Debe agregar al menos un producto para continuar'
+														);
+													} else {
+														setError('');
+														toggleTab(activeTab + 1, 100);
+													}
 												}}
 											>
 												<i className='ri-arrow-right-line label-icon align-middle fs-16 ms-2'></i>
@@ -224,10 +240,19 @@ const OrderSteps = ({ products, orderStates, categories }) => {
 														style={{ width: '120px', height: '120px' }}
 													></lord-icon>
 												</div>
-												<h5>Well Done !</h5>
+												<h5>Bien hecho!</h5>
 												<p className='text-muted'>
-													You have Successfully Signed Up
+													Deseas agregar un comentario?
 												</p>
+												<Step3
+													{...{
+														currentTable,
+														createOrder,
+														orderDetails,
+														handleChange,
+														validation,
+													}}
+												/>
 											</div>
 										</div>
 									</TabPane>
