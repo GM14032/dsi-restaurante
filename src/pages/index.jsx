@@ -13,7 +13,11 @@ import {
 	BarElement,
 	Title,
 } from 'chart.js';
-import { Pie, Bar } from 'react-chartjs-2';
+const ReactApexChart = dynamic(() => import('react-apexcharts'), {
+	ssr: false,
+});
+import { Bar } from 'react-chartjs-2';
+import Widgets from '@/Components/Common/Widgets';
 
 ChartJS.register(
 	ArcElement,
@@ -24,13 +28,6 @@ ChartJS.register(
 	Tooltip,
 	Legend
 );
-
-const getPercentage = (quantity, total) => {
-	if (total < 1) return '0%';
-	if (quantity < 1) return '0%';
-	if (quantity > total) return '100%';
-	return `${Math.round((quantity / total) * 100)}%`;
-};
 
 export const optionsBar = {
 	responsive: true,
@@ -71,41 +68,37 @@ export const dataBar = {
 	],
 };
 
-const Starter = ({ summary, total }) => {
-	const data = {
+const Starter = ({ summary, total, totalEarned }) => {
+	const series = summary.map((s) => s.quantity);
+	const options = {
 		labels: summary.map((s) => s.name),
-		datasets: [
-			{
-				label: '',
-				data: summary.map((s) => s.quantity),
-				backgroundColor: summary.map((s) => `${s.colorHex}50`),
+		chart: {
+			height: 333,
+			type: 'donut',
+		},
+		legend: {
+			position: 'bottom',
+		},
+		stroke: {
+			show: false,
+		},
+		dataLabels: {
+			dropShadow: {
+				enabled: false,
 			},
-		],
+		},
+		colors: ['#687cfe', '#3cd188', '#ffc107', '#ff6b72', '#00acc1', '#f7666e'],
 	};
+
 	return (
 		<Layout title='DSI Restaurant'>
 			<Container fluid>
 				<BreadCrumb title='Dashboards' pageTitle='Pages' />
 				<Row>
 					<Col xs={12}>
-						<div className='state-summary'>
-							{summary.map((s) => {
-								return (
-									<div className='state-summary-item' key={s.id}>
-										<h5>{s.name}</h5>
-										<div
-											className='summary-quantity'
-											style={{
-												'--i': getPercentage(s.quantity, total),
-												'--clr': s.colorHex,
-											}}
-										>
-											<h1>{s.quantity}</h1>
-										</div>
-									</div>
-								);
-							})}
-						</div>
+						<Row>
+							<Widgets orderTotal={total} totalEarned={totalEarned} />
+						</Row>
 						<div
 							style={{
 								width: '100%',
@@ -127,7 +120,14 @@ const Starter = ({ summary, total }) => {
 								}}
 							>
 								<h5 style={{ fontWeight: 'bold' }}>Resumen ordenes del dia</h5>
-								<Pie data={data} />
+								<ReactApexChart
+									dir='ltr'
+									options={options}
+									series={series}
+									type='donut'
+									height='333'
+									className='apex-charts'
+								/>
 							</div>
 							<div
 								style={{
@@ -167,6 +167,13 @@ export async function getServerSideProps() {
 				`${process.env.NEXT_PUBLIC_API_URL}/orders/?startDate=${dateNow}`
 			)
 		).json();
+		const totalEarned = orders.reduce((accOrder, order) => {
+			return (
+				accOrder +
+				order.orderDetails.reduce((acc, detail) => acc + detail.total, 0)
+			);
+		}, 0);
+
 		const summaryOrders = orders.reduce((acc, order) => {
 			const stateName = order.state.name;
 			if (acc[stateName]) {
@@ -202,6 +209,7 @@ export async function getServerSideProps() {
 					...states,
 				],
 				summaryOrders,
+				totalEarned,
 				summary,
 				total,
 			},

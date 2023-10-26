@@ -91,11 +91,6 @@ const TableOrders = ({
 				sortable: true,
 			},
 			{
-				name: <span className='font-weight-bold fs-13'>Categoria</span>,
-				selector: (row) => row.category,
-				sortable: true,
-			},
-			{
 				name: <span className='font-weight-bold fs-13'># Mesa</span>,
 				selector: (row) => row.table?.id,
 				sortable: true,
