@@ -37,7 +37,6 @@ const Layout = ({ children, title = 'Dashboard', content = '' }) => {
 			router.push('/auth/login');
 			return;
 		}
-		console.log('tenemos token!!!!', token);
 		setIsMounted(true);
 		const needPermission = NO_PERMISSIONS.includes(router.pathname);
 		if (needPermission) {
