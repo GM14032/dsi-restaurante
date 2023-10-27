@@ -104,23 +104,6 @@ const CreateOrder = ({
 													htmlFor='description'
 													className='order-form-label'
 												>
-													Categoria:
-												</Label>
-												<div className='order-form-input'>
-													<RenderInput
-														type='text'
-														validation={validation}
-														fieldName='category'
-														placeholder='Ingrese la categoria'
-														handleChange={handleChange}
-													/>
-												</div>
-											</div>
-											<div className='order-form-group'>
-												<Label
-													htmlFor='description'
-													className='order-form-label'
-												>
 													Descripcion:
 												</Label>
 												<div className='order-form-input'>

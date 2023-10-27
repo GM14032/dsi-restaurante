@@ -78,20 +78,22 @@ const useFormOrder = (setTableError = () => {}) => {
 			setError('Debe agregar al menos un producto');
 			return;
 		}
+		const od = Object.values(orderDetails).map((od) => ({
+			product: {
+				id: od.id,
+			},
+			quantity: od.quantity,
+			total: od.quantity * od.price,
+		}));
 		const order = {
-			orderDetails: Object.values(orderDetails).map((od) => ({
-				product: {
-					id: od.id,
-				},
-				quantity: od.quantity,
-				total: od.quantity * od.price,
-			})),
+			orderDetails: od,
 			state: {
 				id: 1, // start with state pending
 			},
 			table: currentTable,
 			description: orderData.description,
-			total: Object.values(orderDetails).reduce((acc, od) => acc + od.total, 0),
+			total: od.reduce((acc, od) => acc + od.total, 0),
+			quantity: od.reduce((acc, od) => acc + od.quantity, 0),
 		};
 		const orderResponse = await postRequest(order, 'orders');
 		if (orderResponse.error) {

@@ -80,19 +80,20 @@ const useUpdateOrder = (products = [], order, orderStates = []) => {
 			setError('Debe agregar al menos un producto');
 			return;
 		}
+		const od = orderDetails.map((od) => {
+			const id = Number.isInteger(+od.id) ? od.id : undefined;
+			return {
+				...od,
+				id,
+				quantity: od.quantity,
+				total: od.quantity * od.product.price,
+				order: {
+					id: order.id,
+				},
+			};
+		});
 		const newOrders = {
-			orderDetails: orderDetails.map((od) => {
-				const id = Number.isInteger(+od.id) ? od.id : undefined;
-				return {
-					...od,
-					id,
-					quantity: od.quantity,
-					total: od.quantity * od.product.price,
-					order: {
-						id: order.id,
-					},
-				};
-			}),
+			orderDetails: od,
 			state: {
 				...orderStates.find((os) => os.id === orderData.order_state),
 				id: orderData.order_state, // start with state pending
@@ -102,7 +103,8 @@ const useUpdateOrder = (products = [], order, orderStates = []) => {
 			description: orderData.description,
 			tableNumber: orderData.table,
 			category: orderData.category,
-			total: orderDetails.reduce((acc, od) => acc + od.total, 0),
+			total: od.reduce((acc, od) => acc + od.total, 0),
+			quantity: od.reduce((acc, od) => acc + od.quantity, 0),
 		};
 		const orderResponse = await putRequest(order.id, newOrders, 'orders');
 		if (orderResponse.error) {
