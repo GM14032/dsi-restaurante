@@ -18,6 +18,7 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), {
 });
 import { Bar } from 'react-chartjs-2';
 import Widgets from '@/Components/Common/Widgets';
+import { ENGLISH_MONTHS } from '@/constant/months';
 
 ChartJS.register(
 	ArcElement,
@@ -29,46 +30,13 @@ ChartJS.register(
 	Legend
 );
 
-export const optionsBar = {
-	responsive: true,
-	plugins: {
-		legend: {
-			position: 'top',
-		},
-		title: {
-			display: true,
-			text: 'Chart.js Bar Chart',
-		},
-	},
-};
-
-const labelsBar = [
-	'January',
-	'February',
-	'March',
-	'April',
-	'May',
-	'June',
-	'July',
-];
-
-export const dataBar = {
-	labels: labelsBar,
-	datasets: [
-		{
-			label: 'Dataset 1',
-			data: labelsBar.map(() => Math.random() * 1000),
-			backgroundColor: 'rgba(255, 99, 132, 0.5)',
-		},
-		{
-			label: 'Dataset 2',
-			data: labelsBar.map(() => Math.random() * 1000),
-			backgroundColor: 'rgba(53, 162, 235, 0.5)',
-		},
-	],
-};
-
-const Starter = ({ summary, total, totalEarned }) => {
+const Starter = ({
+	summary,
+	total,
+	totalEarned,
+	ordersPerMonths = [],
+	totalLastMonth = 0.0,
+}) => {
 	const series = summary.map((s) => s.quantity);
 	const options = {
 		labels: summary.map((s) => s.name),
@@ -89,6 +57,46 @@ const Starter = ({ summary, total, totalEarned }) => {
 		},
 		colors: ['#687cfe', '#3cd188', '#ffc107', '#ff6b72', '#00acc1', '#f7666e'],
 	};
+	const orderText =
+		ordersPerMonths.length > 2
+			? `Ordenes de ${
+					ENGLISH_MONTHS[ordersPerMonths[0].month] || ordersPerMonths[0].month
+			  } a ${
+					ENGLISH_MONTHS[ordersPerMonths[ordersPerMonths.length - 1].month] ||
+					ordersPerMonths[ordersPerMonths.length - 1].month
+			  }`
+			: 'Ordenes del mes';
+	const labelsBar = ordersPerMonths.map(
+		(om) => ENGLISH_MONTHS[om.month] || om.month
+	);
+	const optionsBar = {
+		responsive: true,
+		plugins: {
+			legend: {
+				position: 'top',
+			},
+			title: {
+				display: true,
+				text: orderText,
+			},
+		},
+	};
+
+	const dataBar = {
+		labels: labelsBar,
+		datasets: [
+			{
+				label: 'Cantidad',
+				data: ordersPerMonths.map((om) => om.quantity),
+				backgroundColor: '#687cfe',
+			},
+			{
+				label: 'Ganancias',
+				data: ordersPerMonths.map((om) => om.total),
+				backgroundColor: '#3cd188',
+			},
+		],
+	};
 
 	return (
 		<Layout title='DSI Restaurant'>
@@ -97,7 +105,11 @@ const Starter = ({ summary, total, totalEarned }) => {
 				<Row>
 					<Col xs={12}>
 						<Row>
-							<Widgets orderTotal={total} totalEarned={totalEarned} />
+							<Widgets
+								orderTotal={total}
+								totalEarned={totalEarned}
+								totalLastMonth={totalLastMonth}
+							/>
 						</Row>
 						<div
 							style={{
@@ -141,8 +153,10 @@ const Starter = ({ summary, total, totalEarned }) => {
 									alignItems: 'center',
 								}}
 							>
-								<h5 style={{ fontWeight: 'bold' }}>Resumen de algo al mes</h5>
-								<Bar options={optionsBar} data={dataBar} />;
+								<h5 style={{ fontWeight: 'bold' }}>
+									Resumen de ordenes por mes
+								</h5>
+								<Bar options={optionsBar} data={dataBar} />
 							</div>
 						</div>
 					</Col>
@@ -167,12 +181,22 @@ export async function getServerSideProps() {
 				`${process.env.NEXT_PUBLIC_API_URL}/orders/?startDate=${dateNow}`
 			)
 		).json();
+
+		const ordersPerMonths = await (
+			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/orders-by-month`)
+		).json();
+
 		const totalEarned = orders.reduce((accOrder, order) => {
 			return (
 				accOrder +
 				order.orderDetails.reduce((acc, detail) => acc + detail.total, 0)
 			);
 		}, 0);
+
+		const totalLastMonth =
+			ordersPerMonths.length > 0
+				? ordersPerMonths[ordersPerMonths.length - 1].total
+				: 0.0;
 
 		const summaryOrders = orders.reduce((acc, order) => {
 			const stateName = order.state.name;
@@ -212,6 +236,8 @@ export async function getServerSideProps() {
 				totalEarned,
 				summary,
 				total,
+				ordersPerMonths,
+				totalLastMonth,
 			},
 		};
 	} catch (e) {

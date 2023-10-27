@@ -12,7 +12,7 @@ const getPercentage = (total, available) => {
 	return (available * 100) / total;
 };
 
-const Widgets = ({ orderTotal, totalEarned }) => {
+const Widgets = ({ orderTotal = 0, totalEarned = 0, totalLastMonth = 0 }) => {
 	const { tables } = useTable('');
 	const availables = tables.filter((table) => table.available);
 	const ecomWidgets = [
@@ -54,13 +54,13 @@ const Widgets = ({ orderTotal, totalEarned }) => {
 			badge: 'ri-arrow-right-up-line',
 			badgeClass: 'success',
 			percentage: '',
-			counter: '183.35',
+			counter: totalLastMonth,
 			link: 'ver todas las ordenes',
 			bgcolor: 'success',
 			icon: 'bx bx-dollar-circle',
 			decimals: 2,
-			prefix: '',
-			suffix: 'k',
+			prefix: '$',
+			suffix: '',
 			to: '/pages/orden',
 		},
 		{
