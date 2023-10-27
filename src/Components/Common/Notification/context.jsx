@@ -6,6 +6,7 @@ export const NotificationContext = createContext({
 	...notificationsStateInitial,
 	toggleNotificationDropdown: () => {},
 	toggleTab: () => {},
+	markAsReadWithoutRedirect: () => {},
 	markAsRead: () => {},
 });
 

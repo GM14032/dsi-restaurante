@@ -5,7 +5,14 @@ import { NotificationContext } from '../context';
 import ItemNotification from './ItemNotification';
 
 const TabContentAll = () => {
-	const { data, markAsRead } = useContext(NotificationContext);
+	const { data, markAsRead, markAsReadWithoutRedirect } =
+		useContext(NotificationContext);
+	const markAllAsRead = () => {
+		data.forEach((notification) => {
+			markAsReadWithoutRedirect(notification);
+		});
+	};
+
 	return (
 		<TabPane tabId='1' className='py-2 ps-2'>
 			<SimpleBar style={{ maxHeight: '300px' }} className='pe-2'>
@@ -20,6 +27,7 @@ const TabContentAll = () => {
 					<button
 						type='button'
 						className='btn btn-soft-success waves-effect waves-light'
+						onClick={markAllAsRead}
 					>
 						View All Notifications
 						<i className='ri-arrow-right-line align-middle'></i>
