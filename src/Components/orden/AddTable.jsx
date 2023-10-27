@@ -10,7 +10,13 @@ import {
 } from '@mui/material';
 import { Label } from 'reactstrap';
 
-const AddTable = ({ tables = [], value, addValue = () => {}, error = '' }) => {
+const AddTable = ({
+	tables = [],
+	value,
+	addValue = () => {},
+	error = '',
+	showLabel = false,
+}) => {
 	const onChange = ({ target: { value } }) => {
 		const table = tables.find((table) => table.id === value);
 		addValue(table);
@@ -21,11 +27,14 @@ const AddTable = ({ tables = [], value, addValue = () => {}, error = '' }) => {
 			className='order-form-group order-form-select'
 			style={{
 				alignItems: 'end',
+				width: '100%',
 			}}
 		>
-			<Label htmlFor='table' className='order-form-label'>
-				Mesa:
-			</Label>
+			{showLabel && (
+				<Label htmlFor='table' className='order-form-label'>
+					Mesa:
+				</Label>
+			)}
 			<FormControl variant='standard' sx={{ m: 1, minWidth: 120 }}>
 				<InputLabel id='order_state'>Mesa</InputLabel>
 				<Select
@@ -36,11 +45,13 @@ const AddTable = ({ tables = [], value, addValue = () => {}, error = '' }) => {
 					value={value?.id || ''}
 					onChange={onChange}
 				>
-					{tables.map((table) => (
-						<MenuItem key={table.id} value={table.id}>
-							{`Mesa #${table.id}: ${table.capacity} asientos`}
-						</MenuItem>
-					))}
+					{tables
+						.filter((table) => table.available)
+						.map((table) => (
+							<MenuItem key={table.id} value={table.id}>
+								{`Mesa #${table.id}: ${table.capacity} asientos`}
+							</MenuItem>
+						))}
 				</Select>
 			</FormControl>
 		</div>

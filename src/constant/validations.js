@@ -33,16 +33,18 @@ const ValidationRole = Yup.object({
 });
 
 const ValidationOrder = Yup.object({
-	table: Yup.string().required('Por favor ingrese el numero de mesa').min(1, 'Por favor seleccione una mesa'),
+	table: Yup.string()
+		.required('Por favor ingrese el numero de mesa')
+		.min(1, 'Por favor seleccione una mesa'),
 	description: Yup.string(),
-	category: Yup.string().required('Por favor ingrese una categoria'),
 });
 
 const ValidationProducto = Yup.object({
 	name: Yup.string().required('Por favor ingrese el nombre'),
 	price: Yup.number().required('Por favor ingrese el precio'),
-	ingredient: Yup.string().required('Por favor ingrese un ingrediente').min(1, 'Por favor seleccione un ingrediente'),
-
+	ingredient: Yup.string()
+		.required('Por favor ingrese un ingrediente')
+		.min(1, 'Por favor seleccione un ingrediente'),
 });
 
 const ValidationOrderUpdate = Yup.object({

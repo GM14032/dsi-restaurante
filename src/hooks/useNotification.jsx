@@ -129,6 +129,24 @@ export const useNotification = () => {
 		}
 	};
 
+	const markAsReadWithoutRedirect = async (notification) => {
+		// if the notification is already read, then we don't need to do anything
+		if (!notification || notification.status) {
+			return;
+		}
+		const notificationResponse = await markAsReadRequest(notification);
+		if (notificationResponse.redirect) {
+			setNotificationState((prevState) => ({
+				...prevState,
+				data: prevState.data.map((n) => {
+					if (n.id === notification.id) return { ...n, status: 1 };
+					return n;
+				}),
+				unseenNotifications: Math.max(prevState.unseenNotifications - 1, 0),
+			}));
+		}
+	};
+
 	const markAsRead = async (notification) => {
 		// if the notification is already read, then we don't need to do anything just redirect
 		if (!notification || notification.status) {
@@ -153,6 +171,7 @@ export const useNotification = () => {
 		toggleNotificationDropdown,
 		toggleTab,
 		markAsRead,
+		markAsReadWithoutRedirect,
 		...notificationState,
 	};
 };

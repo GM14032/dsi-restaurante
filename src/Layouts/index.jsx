@@ -14,6 +14,7 @@ const Layout = ({ children, title = 'Dashboard', content = '' }) => {
 			content: 'content-margin',
 		},
 	});
+	const [isMounted, setIsMounted] = useState(false);
 	const toggleSidebar = () => {
 		setIsOpenSidebar(() => ({
 			...isOpenSidebar,
@@ -31,26 +32,23 @@ const Layout = ({ children, title = 'Dashboard', content = '' }) => {
 	};
 	const router = useRouter();
 	useEffect(() => {
-		const needPermission = NO_PERMISSIONS.includes(router.pathname);
-		if (needPermission) {
-			return;
-		}
 		const token = localStorage.getItem('token');
 		if (!token) {
 			router.push('/auth/login');
 			return;
 		}
+		setIsMounted(true);
+		const needPermission = NO_PERMISSIONS.includes(router.pathname);
+		if (needPermission) {
+			return;
+		}
 		const decoded = decode(token);
-		//console.log(decoded.permission)
-		//console.log(PERMISSIONS)
 		const hasPermission = decoded.permission.some(
 			(permission) =>
 				PERMISSIONS[permission] &&
 				PERMISSIONS[permission].includes(router.pathname)
 		);
-		//console.log({ hasPermission });
 		if (!hasPermission) {
-			console.log({ hasPermission });
 			router.push('/');
 			return;
 		}
@@ -64,21 +62,24 @@ const Layout = ({ children, title = 'Dashboard', content = '' }) => {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<div id='layout-wrapper'>
-				<Header
-					toggleSidebar={toggleSidebar}
-					headerClass={`topbar-shadow ${isOpenSidebar.className.content}`}
-				/>
-
-				<Sidebar
-					toggleSidebar={toggleSidebar}
-					className={isOpenSidebar.className.sidebar}
-				/>
-				<div className={`main-content ${isOpenSidebar.className.content}`}>
-					<div className='page-content' style={{ marginBottom: '20px' }}>
-						{children}
-					</div>
-					<Footer className={isOpenSidebar.className.content} />
-				</div>
+				{isMounted && (
+					<>
+						<Header
+							toggleSidebar={toggleSidebar}
+							headerClass={`topbar-shadow ${isOpenSidebar.className.content}`}
+						/>
+						<Sidebar
+							toggleSidebar={toggleSidebar}
+							className={isOpenSidebar.className.sidebar}
+						/>
+						<div className={`main-content ${isOpenSidebar.className.content}`}>
+							<div className='page-content' style={{ marginBottom: '20px' }}>
+								{children}
+							</div>
+							<Footer className={isOpenSidebar.className.content} />
+						</div>
+					</>
+				)}
 			</div>
 		</>
 	);
