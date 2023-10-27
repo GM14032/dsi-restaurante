@@ -50,7 +50,7 @@ const Widgets = ({ orderTotal = 0, totalEarned = 0, totalLastMonth = 0 }) => {
 		{
 			id: 3,
 			cardColor: 'success',
-			label: 'Total mensual',
+			label: 'Ultimo mes',
 			badge: 'ri-arrow-right-up-line',
 			badgeClass: 'success',
 			percentage: '',

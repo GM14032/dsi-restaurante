@@ -26,8 +26,7 @@ ChartJS.register(
 	LinearScale,
 	BarElement,
 	Title,
-	Tooltip,
-	Legend
+	Tooltip
 );
 
 const Starter = ({
@@ -85,11 +84,13 @@ const Starter = ({
 	const dataBar = {
 		labels: labelsBar,
 		datasets: [
+			/**
 			{
 				label: 'Cantidad',
 				data: ordersPerMonths.map((om) => om.quantity),
 				backgroundColor: '#687cfe',
 			},
+			 */
 			{
 				label: 'Ganancias',
 				data: ordersPerMonths.map((om) => om.total),
