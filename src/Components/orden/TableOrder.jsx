@@ -4,10 +4,16 @@ import { Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { DefaultModalExample } from '@/Components/ui-common/UiModalCode';
 import Link from 'next/link';
 import decode from 'jwt-decode';
-import { putRequest, getAll } from '@/api';
+import { getAll } from '@/api';
 import { getDollarFormat } from '@/utils/format';
+import Ticket from '../ticket/Ticket';
 
-const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
+const TableOrders = ({
+	stateSelected = 0,
+	startDate = '',
+	endDate = '',
+	orderStates = [],
+}) => {
 	const [orders, setOrders] = useState([]);
 	const [orderFiltered, setOrderFiltered] = useState([]);
 	const [dataLoaded, setDataLoaded] = useState(false);
@@ -52,29 +58,21 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 			setHasPermission({ ...hasPermission, deleteOrder, updateOrder });
 		}
 	}, [decoded]);
-	const handleInactivateOrder = async () => {
-		if (selectedOrder) {
-			var enable = true;
-			const id = selectedOrder.id;
-			if (selectedOrder.enable) enable = false;
-			const response = await putRequest(
-				id,
-				{
-					enable: enable,
-				},
-				'Orders'
-			);
 
-			if (response.ok) {
-				const body = response.json();
-				console.log(body);
-				setmodal_standard(false);
-				fetchOrders();
-			} else {
-				const errorBody = response.json();
-				console.log(errorBody);
+	const updateStateOrder = (id, state) => {
+		const orders = orderFiltered.map((order) => {
+			if (order.id === id) {
+				return { ...order, state };
 			}
-		}
+			return order;
+		});
+		setOrderFiltered(orders);
+		tog_standard();
+	};
+
+	const printer = (data) => {
+		setSelectedOrder(data);
+		tog_standard();
 	};
 
 	useEffect(() => {
@@ -90,11 +88,6 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 			{
 				name: <span className='font-weight-bold fs-13'>Numero de Orden</span>,
 				selector: (row) => row.numberOrder,
-				sortable: true,
-			},
-			{
-				name: <span className='font-weight-bold fs-13'>Categoria</span>,
-				selector: (row) => row.category,
 				sortable: true,
 			},
 			{
@@ -143,15 +136,32 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 											<i className='bx bxs-show' />
 										</Button>
 									</Link>
-									<Link href={`/pages/orden/update/${row.id}`}>
-										<Button
-											color='success'
-											className='btn-icon'
-											title='Actualizar orden'
-										>
-											<i className=' bx bxs-edit' />{' '}
-										</Button>
-									</Link>
+									{row.state.name !== 'Pagado' && (
+										<>
+											<Link href={`/pages/orden/update/${row.id}`}>
+												<Button
+													color='success'
+													className='btn-icon'
+													title='Actualizar orden'
+												>
+													<i className=' bx bxs-edit' />
+												</Button>
+											</Link>
+											{orderStates.length > 0 && (
+												<Button
+													color='success'
+													className='btn-icon'
+													title='Actualizar orden'
+													style={{ marginLeft: '8px' }}
+													onClick={() => {
+														printer(row);
+													}}
+												>
+													<i className='bx bxs-printer' />
+												</Button>
+											)}
+										</>
+									)}
 								</>
 							)}
 						</div>
@@ -189,6 +199,7 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 					toggle={() => {
 						tog_standard();
 					}}
+					style={{ maxWidth: '535px' }}
 				>
 					<ModalHeader
 						className='modal-title'
@@ -197,27 +208,16 @@ const TableOrders = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 							tog_standard();
 						}}
 					>
-						{selectedOrder?.enable ? 'Inactivar ' : 'Activar '}Orders
+						Factura
 					</ModalHeader>
 					<ModalBody>
-						<h5 className='fs-15'>
-							¿Desea {selectedOrder?.enable ? 'inactivar ' : 'activar '}el rol{' '}
-							<b>{selectedOrder?.name}</b>?
-						</h5>
+						<Ticket
+							order={selectedOrder}
+							isModalOpen={modal_standard}
+							orderStates={orderStates}
+							updateStateOrder={updateStateOrder}
+						/>
 					</ModalBody>
-					<div className='modal-footer'>
-						<Button
-							color='light'
-							onClick={() => {
-								tog_standard();
-							}}
-						>
-							Cancelar
-						</Button>
-						<Button color='primary' onClick={handleInactivateOrder}>
-							Aceptar
-						</Button>
-					</div>
 				</Modal>
 			</div>
 		)
