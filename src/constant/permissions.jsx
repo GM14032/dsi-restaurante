@@ -9,6 +9,8 @@ export const PERMISSIONS = {
 	WRITE_TABLE: ['/pages/tables/crear', '/pages/tables/actualizar/[id]'],	
 	READ_PRODUCT: ['/pages/products', '/pages/products/[id]'],
 	WRITE_PRODUCT: ['/pages/products/crear', '/pages/products/update/[id]'],
+	READ_INGREDIENT: ['/pages/ingredient', '/pages/ingredient/[id]'],
+	WRITE_INGREDIENT: ['/pages/ingredient/crear', '/pages/ingredient/actualizar/[id]'],
 	READ_PERMISSION: ['/pages/permisos'],
 	WRITE_INVENTARY: [
 		'/pages/inventary',

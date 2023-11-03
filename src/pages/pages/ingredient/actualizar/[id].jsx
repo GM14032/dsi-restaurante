@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/Layouts";
 import { ToastEffect } from "../../../../Components/Common/ToastEffect";
 import "react-toastify/dist/ReactToastify.css";
 import InputMask from "react-input-mask";
-import { ValidationUser } from "../../../../constant/validations";
+import { ValidationIngredient } from "../../../../constant/validations";
 import { RenderInput } from "../../../../Components/Common/RenderInput";
 import {
   Col,
@@ -26,10 +25,10 @@ import dynamic from "next/dynamic";
 
 export async function getServerSideProps({ params }) {
   const { id } = params;
-  let mesa = null;
+  let ingre = null;
   let errors = {};
 
-  const responseUsuario = await getById(id,"tables");
+  const responseUsuario = await getById(id,"ingredients");
   if (!responseUsuario.ok) {
 	return {
 		props: {},
@@ -40,9 +39,9 @@ export async function getServerSideProps({ params }) {
   const roles = await responseRoles.json();
  
   if (responseUsuario.ok) {
-    mesa = await responseUsuario.json("roles");
+    ingre = await responseUsuario.json("roles");
   }  else {
-    errors.mesa = "Error al cargar el usuario";
+    errors.ingre = "Error al cargar el usuario";
   }
 
   if (!roles) {
@@ -50,22 +49,19 @@ export async function getServerSideProps({ params }) {
   }
 
   return {
-    props: { roles, mesa, id, errors },
+    props: { roles, ingre, id, errors },
   };
 }
 
-const Actualizar = ({ roles, mesa, id ,errors }) => {
- const [isChecked, setIsChecked] = useState(usuario?.enable ? true : false);
+const updateingre = ({ roles, ingre, id ,errors }) => {
+ const [isChecked, setIsChecked] = useState(roles?.enable ? true : false);
   const router = useRouter();
   const [mensaje, setMensaje] = useState("");
   const initialState = {
-    capacity: "",
-    description: "",
-    
+    capacity: "",    
     isUpdate: true,
   };
   const [values, setValues] = useState(initialState);
-  const [rol, setSelectedRole] = useState(usuario?.role?.id);
   const [errorCreate, setError] = useState(false);
   const [submitClicked, setSubmitClicked] = useState(false);
   function handleCheckboxChange(event) {
@@ -74,27 +70,26 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
 
   const handleSubmit = async () => {
     if (!validation.isValid) return;
-    const role = roles.filter((item) => item.id === parseInt(rol))[0];
-
+    console.log(isChecked)
     const response = await putRequest(id, {
-      capacity: values.capacity,
-          description: values.description,
-        },"tables");
+      name: values.name,
+    },"ingredients");
     if (response.ok) {
       router.push({
-        pathname: '/pages/tab les',
-        query: { mensaje: 'Usuario actualizado con éxito!!!' }
+        pathname: '/pages/ingredient',
+        query: { mensaje: 'Rol actualizado con éxito!!!' }
       });
     } else {
       const errorBody = await response.json();
       console.log(errorBody);
-     setMensaje("Error al actualizar el usuario: " + errorBody.message);
+      setError(true);
+      setSubmitClicked(true);
+     setMensaje("Error al actualizar el rol: " + errorBody.message);
     }
   };
   useEffect(() => {
     const initialValues = {
-      capacity: mesa?.capacity,
-      description: mesa?.description,
+      name: ingre?.name,
    
       isUpdate: true,
     };
@@ -103,7 +98,7 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
   }, []);
   const validation = useFormik({
     enableReinitialize: true,
-    validationSchema: ValidationTable,
+    validationSchema: ValidationIngredient,
     initialValues: values,
   });
  
@@ -122,7 +117,7 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
       const errorMessage = Object.values(errors).join(", ");
       setMensaje(errorMessage);
       setTimeout(() => {
-        router.push("/pages/tables");
+        router.push("/pages/ingredient");
       }, 2000);
     }
   }, [errors]);
@@ -157,41 +152,22 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
                             setSubmitClicked={setSubmitClicked}
                             className="warning"
                           />
+                          
                           <Row className="mb-3">
                             <Col lg={2}>
                               <Label
-                                htmlFor="capacity"
+                                htmlFor="name"
                                 className="form-label"
                                 style={{ marginLeft: "80px" }}
                               >
-                                capacidad
-                              </Label>
-                            </Col>
-                            <Col lg={9}>
-                            <RenderInput
-                                type="long"
-                                validation={validation}
-                                fieldName="capacity"
-                                placeholder="Ingrese el capacidad"
-                                handleChange={handleChange}
-                              />
-                            </Col>
-                          </Row>
-                          <Row className="mb-3">
-                            <Col lg={2}>
-                              <Label
-                                htmlFor="description"
-                                className="form-label"
-                                style={{ marginLeft: "80px" }}
-                              >
-                                Descripcion
+                                Nombre
                               </Label>
                             </Col>
                             <Col lg={9}>
                             <RenderInput
                                 type="text"
                                 validation={validation}
-                                fieldName="description"
+                                fieldName="name"
                                 placeholder="Ingrese el apellido"
                                 handleChange={handleChange}
                               />
@@ -204,7 +180,7 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
                                 type="button"
                                 className="btn btn-light btn-lg"
                                 onClick={() =>
-                                  (window.location.href = "/pages/tables")
+                                  (window.location.href = "/pages/ingredient")
                                 }
                               >
                                 Cancelar
@@ -230,4 +206,4 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
     </Layout>
   );
 };
-export default dynamic(() => Promise.resolve(Actualizar), { ssr: false });
+export default dynamic(() => Promise.resolve(updateingre), { ssr: false });
