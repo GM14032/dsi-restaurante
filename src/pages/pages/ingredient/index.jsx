@@ -53,7 +53,7 @@ function Ingredient() {
       </>
     ) : null}
       <Container fluid>
-        <BreadCrumb title="Producto" pageTitle="Pages" />
+        <BreadCrumb title="Ingrediente" pageTitle="Pages" />
 
         <Row>
           <Col lg={12}>

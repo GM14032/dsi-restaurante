@@ -58,7 +58,9 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
   const router = useRouter();
   const [mensaje, setMensaje] = useState("");
   const initialState = {
-    capacity: "",    
+    name: "",    
+    description:"",
+    unit:"",
     isUpdate: true,
   };
   const [values, setValues] = useState(initialState);
@@ -73,23 +75,27 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
     console.log(isChecked)
     const response = await putRequest(id, {
       name: values.name,
+      description: values.description,
+      unit: values.unit,
     },"ingredients");
     if (response.ok) {
       router.push({
         pathname: '/pages/ingredient',
-        query: { mensaje: 'Rol actualizado con éxito!!!' }
+        query: { mensaje: 'Ingrediente actualizado con éxito!!!' }
       });
     } else {
       const errorBody = await response.json();
       console.log(errorBody);
       setError(true);
       setSubmitClicked(true);
-     setMensaje("Error al actualizar el rol: " + errorBody.message);
+     setMensaje("Error al actualizar el ingrediente: " + errorBody.message);
     }
   };
   useEffect(() => {
     const initialValues = {
       name: ingre?.name,
+      description: ingre?.description,
+      unit: ingre?.unit,
    
       isUpdate: true,
     };
@@ -122,14 +128,14 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
     }
   }, [errors]);
   return (
-    <Layout title="Actualizar MEsa">
+    <Layout title="Actualizar Ingrediente">
       <Container fluid>
         <BreadCrumb title="Actualizar" pageTitle="Pages" />
         <Row>
           <Col xs={12}>
             <Card>
               <CardHeader>
-                <h4 className="card-title mb-0">Actualizar MEsa</h4>
+                <h4 className="card-title mb-0">Actualizar Ingrediente</h4>
               </CardHeader>
               <CardBody className="card-body">
                 <Card>
@@ -173,7 +179,46 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
                               />
                             </Col>
                           </Row>
-                          
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="description"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Descripcion
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                            <RenderInput
+                                type="text"
+                                validation={validation}
+                                fieldName="description"
+                                placeholder="Ingrese la descripcion"
+                                handleChange={handleChange}
+                              />
+                            </Col>
+                          </Row>
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="unit"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Unidad
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                            <RenderInput
+                                type="text"
+                                validation={validation}
+                                fieldName="unit"
+                                placeholder="Ingrese la unidad"
+                                handleChange={handleChange}
+                              />
+                            </Col>
+                          </Row>
                           <Col lg={11}>
                             <div className="text-end">
                               <button

@@ -95,6 +95,16 @@ const TableIngredients = ({ stateSelected = 0, startDate = '', endDate = '' }) =
 				selector: (row) => row.name,
 				sortable: true,
 			},
+            {
+				name: <span className='font-weight-bold fs-13'>Descripcion</span>,
+				selector: (row) => row.description,
+				sortable: true,
+			},
+            {
+				name: <span className='font-weight-bold fs-13'>Unidad</span>,
+				selector: (row) => row.unit,
+				sortable: true,
+			},
 			{
 				name: <span className='font-weight-bold fs-13'>Acciones</span>,
 				selector: (row) => {

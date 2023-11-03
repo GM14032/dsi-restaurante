@@ -23,7 +23,9 @@ import { postRequest } from "@/api";
 const CrearIngrediente = ({ error }) => {
   const router = useRouter();
   const initialState = {
-    name: ""
+    name: "",    
+    description:"",
+    unit:"",
   };
 
   const [formState, setFormState] = useState(initialState);
@@ -37,19 +39,21 @@ const CrearIngrediente = ({ error }) => {
       return;
     }
     const response = await postRequest( {
-      name: formState.name,
+        name: formState.name,
+        description: formState.description,
+        unit: formState.unit,
     },"ingredients");
     if (response.ok) {
       router.push({
         pathname: "/pages/ingredient",
-        query: { mensaje: "MESA creada con éxito!!!" },
+        query: { mensaje: "Ingrediente creado con éxito!!!" },
       });
     } else {
       const errorBody = await response.json();
       console.log(errorBody);
       setError(true);
       setSubmitClicked(true);
-      setMensaje("Error al crear la MESA: " + errorBody.message);
+      setMensaje("Error al crear el ingrediente: " + errorBody.message);
     }
   };
   const handleChange = (event) => {
@@ -75,7 +79,7 @@ const CrearIngrediente = ({ error }) => {
           <Col xs={12}>
             <Card>
               <CardHeader>
-                <h4 className="card-title mb-0">Agregar Mesa</h4>
+                <h4 className="card-title mb-0">Agregar Ingrediente</h4>
               </CardHeader>
               <CardBody className="card-body">
                 <Card>
@@ -127,7 +131,46 @@ const CrearIngrediente = ({ error }) => {
                               />
                             </Col>
                           </Row>
-                          
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="description"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Descripcion
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                              <RenderInput
+                                type="text"
+                                validation={validation}
+                                fieldName="description"
+                                placeholder="Ingrese la description"
+                                handleChange={handleChange}
+                              />
+                            </Col>
+                          </Row>
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="unit"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Unidad
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                              <RenderInput
+                                type="text"
+                                validation={validation}
+                                fieldName="unit"
+                                placeholder="Ingrese la nombre"
+                                handleChange={handleChange}
+                              />
+                            </Col>
+                          </Row>
 
                           <Col lg={11}>
                             <div className="text-end">

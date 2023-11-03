@@ -71,10 +71,10 @@ export async function getServerSideProps({ params }) {
                             </th>
                             <td className="text-muted">{data.description}</td>
                             <th className="ps-0" scope="row">
-                              Estado :
+                              Unidad :
                             </th>
                             <td className="text-muted">
-                              {data.enable ? "Activo" : "Inactivo"}
+                              {data.unit}
                             </td>
                           </tr>
                           <tr>
