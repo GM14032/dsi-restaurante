@@ -82,7 +82,7 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
         },"tables");
     if (response.ok) {
       router.push({
-        pathname: '/pages/tab les',
+        pathname: '/pages/tables',
         query: { mensaje: 'Usuario actualizado con éxito!!!' }
       });
     } else {

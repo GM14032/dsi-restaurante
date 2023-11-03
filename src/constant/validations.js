@@ -30,7 +30,8 @@ const ValidationTable = Yup.object({
 const ValidationIngredient = Yup.object({
 	name: Yup.string().required('Por favor ingrese el nombre'),
 	description: Yup.string().required('Por favor ingrese la descripcion'),
-	unit: Yup.string().required('Por favor ingrese la unidad'),
+	unit: Yup.string().required('Por favor ingrese la unidad'),	
+	minStock: Yup.number().required('Por favor ingrese cantidad'),
 
 });
 const ValidationRole = Yup.object({

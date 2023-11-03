@@ -26,6 +26,7 @@ const CrearIngrediente = ({ error }) => {
     name: "",    
     description:"",
     unit:"",
+    minStock: "",
   };
 
   const [formState, setFormState] = useState(initialState);
@@ -42,6 +43,7 @@ const CrearIngrediente = ({ error }) => {
         name: formState.name,
         description: formState.description,
         unit: formState.unit,
+        minStock: formState.minStock,
     },"ingredients");
     if (response.ok) {
       router.push({
@@ -72,9 +74,9 @@ const CrearIngrediente = ({ error }) => {
   });
 
   return (
-    <Layout title="Crear Mesas">
+    <Layout title="Crear Ingredientes">
       <Container fluid>
-        <BreadCrumb title="Mesas" pageTitle="Pages" />
+        <BreadCrumb title="Ingrediente" pageTitle="Pages" />
         <Row>
           <Col xs={12}>
             <Card>
@@ -166,7 +168,27 @@ const CrearIngrediente = ({ error }) => {
                                 type="text"
                                 validation={validation}
                                 fieldName="unit"
-                                placeholder="Ingrese la nombre"
+                                placeholder="Ingrese la unidad"
+                                handleChange={handleChange}
+                              />
+                            </Col>
+                          </Row>
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="minStock"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Stock
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                              <RenderInput
+                                type="text"
+                                validation={validation}
+                                fieldName="minStock"
+                                placeholder="Ingrese la cantidad"
                                 handleChange={handleChange}
                               />
                             </Col>
