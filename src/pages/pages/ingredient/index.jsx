@@ -64,7 +64,7 @@ function Ingredient() {
                 {hasPermission && (
                 <>
                   <Link
-                    href="/pages/products/crear"
+                    href="/pages/ingredient/crear"
                     className="btn btn-primary"
                   >
                     <i className="ri-add-box-line align-bottom"></i> Agregar
