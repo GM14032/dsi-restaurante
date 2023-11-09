@@ -121,6 +121,25 @@ export const menuItems = [
 			},
 		],
 	},
+	{
+		id: 'Ingredient',
+		label: 'Gestion de ingredientes',
+		icon: 'mdi mdi-file-table-box-multiple',
+		subItems: [
+			{
+				id: 'Orden-display',
+				label: 'Ver Ingredientes',
+				link: '/pages/ingredient',
+				parentId: 'Ingredient',
+			},
+			{
+				id: 'Orden-add',
+				label: 'Agregar Ingrediente',
+				link: '/pages/ingredient/crear',
+				parentId: 'Ingredient',
+			},
+		],
+	}
 	,
 	{
 		id: 'Inventary',
