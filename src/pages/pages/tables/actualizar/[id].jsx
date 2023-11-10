@@ -5,7 +5,7 @@ import Layout from "@/Layouts";
 import { ToastEffect } from "../../../../Components/Common/ToastEffect";
 import "react-toastify/dist/ReactToastify.css";
 import InputMask from "react-input-mask";
-import { ValidationUser } from "../../../../constant/validations";
+import { ValidationTable } from "../../../../constant/validations";
 import { RenderInput } from "../../../../Components/Common/RenderInput";
 import {
   Col,
@@ -29,7 +29,7 @@ export async function getServerSideProps({ params }) {
   let mesa = null;
   let errors = {};
 
-  const responseUsuario = await getById(id,"tables");
+  const responseUsuario = await getById(id,"table");
   if (!responseUsuario.ok) {
 	return {
 		props: {},
@@ -55,7 +55,7 @@ export async function getServerSideProps({ params }) {
 }
 
 const Actualizar = ({ roles, mesa, id ,errors }) => {
- const [isChecked, setIsChecked] = useState(usuario?.enable ? true : false);
+ const [isChecked, setIsChecked] = useState(mesa?.enable ? true : false);
   const router = useRouter();
   const [mensaje, setMensaje] = useState("");
   const initialState = {
@@ -65,7 +65,6 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
     isUpdate: true,
   };
   const [values, setValues] = useState(initialState);
-  const [rol, setSelectedRole] = useState(usuario?.role?.id);
   const [errorCreate, setError] = useState(false);
   const [submitClicked, setSubmitClicked] = useState(false);
   function handleCheckboxChange(event) {
@@ -79,7 +78,7 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
     const response = await putRequest(id, {
       capacity: values.capacity,
           description: values.description,
-        },"tables");
+        },"table");
     if (response.ok) {
       router.push({
         pathname: '/pages/tables',

@@ -115,15 +115,7 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 											<i className='bx bxs-show' />
 										</Button>
 									</Link>
-									<Link href={`/pages/products/update/${row.id}`}>
-										<Button
-											color='success'
-											className='btn-icon'
-											title='Actualizar producto'
-										>
-											<i className=' bx bxs-edit' />{' '}
-										</Button>
-									</Link>
+									
 								</>
 							)}
 							 {hasPermission.deleteProduct && (

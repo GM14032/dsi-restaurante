@@ -61,6 +61,7 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
     name: "",    
     description:"",
     unit:"",
+    minStock:"",
     isUpdate: true,
   };
   const [values, setValues] = useState(initialState);
@@ -77,6 +78,7 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
       name: values.name,
       description: values.description,
       unit: values.unit,
+      minStock: values.minStock,
     },"ingredients");
     if (response.ok) {
       router.push({
@@ -96,6 +98,7 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
       name: ingre?.name,
       description: ingre?.description,
       unit: ingre?.unit,
+      minStock:ingre?.minStock,
    
       isUpdate: true,
     };
@@ -214,6 +217,26 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
                                 type="text"
                                 validation={validation}
                                 fieldName="unit"
+                                placeholder="Ingrese la unidad"
+                                handleChange={handleChange}
+                              />
+                            </Col>
+                          </Row>
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="minStock"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Stock
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                            <RenderInput
+                                type="text"
+                                validation={validation}
+                                fieldName="miniStock"
                                 placeholder="Ingrese la unidad"
                                 handleChange={handleChange}
                               />
