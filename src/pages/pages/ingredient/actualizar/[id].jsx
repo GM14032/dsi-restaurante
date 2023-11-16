@@ -98,7 +98,7 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
       name: ingre?.name,
       description: ingre?.description,
       unit: ingre?.unit,
-      minStock:ingre?.minStock,
+      minStock: ingre?.minStock,
    
       isUpdate: true,
     };
@@ -236,7 +236,7 @@ const updateingre = ({ roles, ingre, id ,errors }) => {
                             <RenderInput
                                 type="text"
                                 validation={validation}
-                                fieldName="miniStock"
+                                fieldName="minStock"
                                 placeholder="Ingrese la unidad"
                                 handleChange={handleChange}
                               />
