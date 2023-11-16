@@ -7,32 +7,32 @@ import decode from 'jwt-decode';
 import { putRequest, getAll } from '@/api';
 import { getDollarFormat } from '@/utils/format';
 
-const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
-	const [products, setProducts] = useState([]);
-	const [productFiltered, setProductFiltered] = useState([]);
+const TableIngredients = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
+	const [ingredients, setIngredients] = useState([]);
+	const [ingredientFiltered, setIngredientFiltered] = useState([]);
 	const [dataLoaded, setDataLoaded] = useState(false);
-	const [selectedProduct, setSelectedProduct] = useState(null);
+	const [selectedIngredient, setSelectedIngredient] = useState(null);
 	const [modal_standard, setmodal_standard] = useState(false);
 	const [decoded, setDecoded] = useState();
 	const [hasPermission, setHasPermission] = useState({
-		deleteProduct: false,
-		updateProduct: false,
+		deleteIngredient: false,
+		updateIngredient: false,
 	});
-	const fetchProducts = async () => {
+	const fetchIngredients = async () => {
 		try {
 			setDataLoaded(false);
-			const responseProducts = await getAll('products', `${startDate}${endDate}`);
-			const data = await responseProducts.json();
-			setProducts(data);
+			const responseIngredients = await getAll('ingredients', `${startDate}${endDate}`);
+			const data = await responseIngredients.json();
+			setIngredients(data);
 		} catch (error) {
-			setProducts([]);
+			setIngredients([]);
 		} finally {
 			setDataLoaded(true);
 		}
 	};
 
 	useEffect(() => {
-		fetchProducts();
+		fetchIngredients();
 	}, [startDate, endDate]);
 	useEffect(() => {
 		if (window && window.localStorage) {
@@ -47,29 +47,29 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 	}, []);
 	useEffect(() => {
 		if (decoded) {
-			const deleteProduct = decoded.permission.includes('DELETE_PRODUCT');
-			const updateProduct = decoded.permission.includes('WRITE_PRODUCT');
-			setHasPermission({ ...hasPermission, deleteProduct, updateProduct });
+			const deleteIngredient = decoded.permission.includes('DELETE_INGREDIENT');
+			const updateIngredient = decoded.permission.includes('WRITE_INGREDIENT');
+			setHasPermission({ ...hasPermission, deleteIngredient, updateIngredient });
 		}
 	}, [decoded]);
-	const handleInactivateProduct = async () => {
-		if (selectedProduct) {
+	const handleInactivateIngredient = async () => {
+		if (selectedIngredient) {
 			var enable = true;
-			const id = selectedProduct.id;
-			if (selectedProduct.enable) enable = false;
+			const id = selectedIngredient.id;
+			if (selectedIngredient.enable) enable = false;
 			const response = await putRequest(
 				id,
 				{
 					enable: enable,
 				},
-				'products'
+				'ingredients'
 			);
 
 			if (response.ok) {
 				const body = response.json();
 				console.log(body);
 				setmodal_standard(false);
-				fetchProducts();
+				fetchIngredients();
 			} else {
 				const errorBody = response.json();
 				console.log(errorBody);
@@ -77,16 +77,16 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 		}
 	};
     useEffect(() => {
-		setProductFiltered(
-			products.filter(
-				(product) => product.id === stateSelected || !stateSelected
+		setIngredientFiltered(
+			ingredients.filter(
+				(ingredient) => ingredient.id === stateSelected || !stateSelected
 			)
 		);
-	}, [products, stateSelected]);
+	}, [ingredients, stateSelected]);
 	const columns = useMemo(
 		() => [
 			{
-				name: <span className='font-weight-bold fs-13'>Id de Producto</span>,
+				name: <span className='font-weight-bold fs-13'>Id de ingrediente</span>,
 				selector: (row) => row.id,
 				sortable: true,
 			},
@@ -95,9 +95,14 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 				selector: (row) => row.name,
 				sortable: true,
 			},
-			{
-				name: <span className='font-weight-bold fs-13'>Precio</span>,
-				selector: (row) => getDollarFormat(row.price),
+            {
+				name: <span className='font-weight-bold fs-13'>Descripcion</span>,
+				selector: (row) => row.description,
+				sortable: true,
+			},
+            {
+				name: <span className='font-weight-bold fs-13'>Unidad</span>,
+				selector: (row) => row.unit,
 				sortable: true,
 			},
 			{
@@ -105,20 +110,28 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 				selector: (row) => {
 					return (
 						<div>
-							{hasPermission.updateProduct && (
+							{hasPermission.updateIngredient && (
 								<>
 									<Link
-										href={`/pages/products/${row.id}`}
+										href={`/pages/ingredient/${row.id}`}
 										style={{ marginRight: '8px' }}
 									>
 										<Button color='info' className='btn-icon' title='Ver producto'>
 											<i className='bx bxs-show' />
 										</Button>
 									</Link>
-									
+									<Link href={`/pages/ingredient/actualizar/${row.id}`}>
+										<Button
+											color='success'
+											className='btn-icon'
+											title='Actualizar ingrediente'
+										>
+											<i className=' bx bxs-edit' />{' '}
+										</Button>
+									</Link>
 								</>
 							)}
-							 {hasPermission.deleteProduct && (
+							 {hasPermission.deleteIngredient && (
                 <>
                   <Button
                     color={row.enable ? "danger" : "warning"}
@@ -126,7 +139,7 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
                     title={row.enable ? "Inactivar Producto" : "Activar Producto"}
                     onClick={() => {
                       tog_standard();
-                      setSelectedProduct(row);
+                      setSelectedIngredient(row);
                     }}
                   >
                     <i
@@ -154,7 +167,7 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 			<div>
 				<DataTable
 					columns={columns}
-					data={productFiltered}
+					data={ingredientFiltered}
 					pagination
 					paginationPerPage={10}
 					paginationRowsPerPageOptions={[10, 15, 20]}
@@ -178,12 +191,12 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 							tog_standard();
 						}}
 					>
-						{selectedProduct?.enable ? 'Inactivar ' : 'Activar '}Orders
+						{selectedIngredient?.enable ? 'Inactivar ' : 'Activar '}Orders
 					</ModalHeader>
 					<ModalBody>
 						<h5 className='fs-15'>
-							¿Desea {selectedProduct?.enable ? 'inactivar ' : 'activar '}el rol{' '}
-							<b>{selectedProduct?.name}</b>?
+							¿Desea {selectedIngredient?.enable ? 'inactivar ' : 'activar '}el rol{' '}
+							<b>{selectedIngredient?.name}</b>?
 						</h5>
 					</ModalBody>
 					<div className='modal-footer'>
@@ -195,7 +208,7 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 						>
 							Cancelar
 						</Button>
-						<Button color='primary' onClick={handleInactivateProduct}>
+						<Button color='primary' onClick={handleInactivateIngredient}>
 							Aceptar
 						</Button>
 					</div>
@@ -205,4 +218,4 @@ const TableProducts = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
 	);
 };
 
-export { TableProducts };
+export { TableIngredients };

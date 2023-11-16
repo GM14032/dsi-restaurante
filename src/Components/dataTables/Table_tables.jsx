@@ -5,8 +5,9 @@ import { DefaultModalExample } from "../ui-common/UiModalCode";
 import Link from 'next/link';
 import decode from "jwt-decode";
 import { putRequest,getAll } from "@/api";
-const Table_tables = () => {
+const Table_tables = ({ stateSelected = 0, startDate = '', endDate = '' }) => {
   const [tables, setTables] = useState([]);
+  const [tableFiltered, setTableFiltered] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [selectedRole, setSelectedTable] = useState(null);
   const [modal_standard, setmodal_standard] = useState(false);
@@ -14,19 +15,21 @@ const Table_tables = () => {
   const [hasPermission, setHasPermission] = useState({deleteTable: false, updateTable: false});
   const fetchTables = async () => {
     try {
-      const responseRoles = await getAll("table");
+      setDataLoaded(false);
+      const responseRoles = await getAll("table",`${startDate}${endDate}`);
   const data = await responseRoles.json();
      setTables(data);
     } catch (error) {
-      console.log(error)
-    }
+			setTables([]);
+		} finally {
+			setDataLoaded(true);
+		}
    
   };
 
   useEffect(() => {
     fetchTables();
-    setDataLoaded(true);
-  }, []);
+  }, [startDate, endDate]);
   useEffect(() => {
     if (window && window.localStorage) {
       const token = localStorage.getItem("token");
@@ -52,7 +55,7 @@ const Table_tables = () => {
       if (selectedTable.enable) enable = false;
       const response = await putRequest(id, {
         enable: enable,
-      },"tables");
+      },'tables');
     
       if (response.ok) {
         const body = response.json();
@@ -65,7 +68,13 @@ const Table_tables = () => {
       }
     }
   };
-
+  useEffect(() => {
+		setTableFiltered(
+			tables.filter(
+				(table) => table.id === stateSelected || !stateSelected
+			)
+		);
+	}, [tables, stateSelected]);
   const columns = useMemo(
     () => [
       {
@@ -136,7 +145,7 @@ const Table_tables = () => {
       <div>
         <DataTable
           columns={columns}
-          data={tables}
+          data={tableFiltered}
           pagination
           paginationPerPage={10}
           paginationRowsPerPageOptions={[10, 15, 20]}

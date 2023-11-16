@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/Layouts";
 import { ToastEffect } from "../../../../Components/Common/ToastEffect";
 import "react-toastify/dist/ReactToastify.css";
 import InputMask from "react-input-mask";
-import { ValidationTable } from "../../../../constant/validations";
+import { ValidationIngredient } from "../../../../constant/validations";
 import { RenderInput } from "../../../../Components/Common/RenderInput";
 import {
   Col,
@@ -26,10 +25,10 @@ import dynamic from "next/dynamic";
 
 export async function getServerSideProps({ params }) {
   const { id } = params;
-  let mesa = null;
+  let ingre = null;
   let errors = {};
 
-  const responseUsuario = await getById(id,"table");
+  const responseUsuario = await getById(id,"ingredients");
   if (!responseUsuario.ok) {
 	return {
 		props: {},
@@ -40,9 +39,9 @@ export async function getServerSideProps({ params }) {
   const roles = await responseRoles.json();
  
   if (responseUsuario.ok) {
-    mesa = await responseUsuario.json("roles");
+    ingre = await responseUsuario.json("roles");
   }  else {
-    errors.mesa = "Error al cargar el usuario";
+    errors.ingre = "Error al cargar el usuario";
   }
 
   if (!roles) {
@@ -50,18 +49,19 @@ export async function getServerSideProps({ params }) {
   }
 
   return {
-    props: { roles, mesa, id, errors },
+    props: { roles, ingre, id, errors },
   };
 }
 
-const Actualizar = ({ roles, mesa, id ,errors }) => {
- const [isChecked, setIsChecked] = useState(mesa?.enable ? true : false);
+const updateingre = ({ roles, ingre, id ,errors }) => {
+ const [isChecked, setIsChecked] = useState(roles?.enable ? true : false);
   const router = useRouter();
   const [mensaje, setMensaje] = useState("");
   const initialState = {
-    capacity: "",
-    description: "",
-    
+    name: "",    
+    description:"",
+    unit:"",
+    minStock:"",
     isUpdate: true,
   };
   const [values, setValues] = useState(initialState);
@@ -73,27 +73,32 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
 
   const handleSubmit = async () => {
     if (!validation.isValid) return;
-    const role = roles.filter((item) => item.id === parseInt(rol))[0];
-
+    console.log(isChecked)
     const response = await putRequest(id, {
-      capacity: values.capacity,
-          description: values.description,
-        },"table");
+      name: values.name,
+      description: values.description,
+      unit: values.unit,
+      minStock: values.minStock,
+    },"ingredients");
     if (response.ok) {
       router.push({
-        pathname: '/pages/tables',
-        query: { mensaje: 'Usuario actualizado con éxito!!!' }
+        pathname: '/pages/ingredient',
+        query: { mensaje: 'Ingrediente actualizado con éxito!!!' }
       });
     } else {
       const errorBody = await response.json();
       console.log(errorBody);
-     setMensaje("Error al actualizar el usuario: " + errorBody.message);
+      setError(true);
+      setSubmitClicked(true);
+     setMensaje("Error al actualizar el ingrediente: " + errorBody.message);
     }
   };
   useEffect(() => {
     const initialValues = {
-      capacity: mesa?.capacity,
-      description: mesa?.description,
+      name: ingre?.name,
+      description: ingre?.description,
+      unit: ingre?.unit,
+      minStock:ingre?.minStock,
    
       isUpdate: true,
     };
@@ -102,7 +107,7 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
   }, []);
   const validation = useFormik({
     enableReinitialize: true,
-    validationSchema: ValidationTable,
+    validationSchema: ValidationIngredient,
     initialValues: values,
   });
  
@@ -121,19 +126,19 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
       const errorMessage = Object.values(errors).join(", ");
       setMensaje(errorMessage);
       setTimeout(() => {
-        router.push("/pages/tables");
+        router.push("/pages/ingredient");
       }, 2000);
     }
   }, [errors]);
   return (
-    <Layout title="Actualizar MEsa">
+    <Layout title="Actualizar Ingrediente">
       <Container fluid>
         <BreadCrumb title="Actualizar" pageTitle="Pages" />
         <Row>
           <Col xs={12}>
             <Card>
               <CardHeader>
-                <h4 className="card-title mb-0">Actualizar MEsa</h4>
+                <h4 className="card-title mb-0">Actualizar Ingrediente</h4>
               </CardHeader>
               <CardBody className="card-body">
                 <Card>
@@ -156,22 +161,23 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
                             setSubmitClicked={setSubmitClicked}
                             className="warning"
                           />
+                          
                           <Row className="mb-3">
                             <Col lg={2}>
                               <Label
-                                htmlFor="capacity"
+                                htmlFor="name"
                                 className="form-label"
                                 style={{ marginLeft: "80px" }}
                               >
-                                capacidad
+                                Nombre
                               </Label>
                             </Col>
                             <Col lg={9}>
                             <RenderInput
-                                type="long"
+                                type="text"
                                 validation={validation}
-                                fieldName="capacity"
-                                placeholder="Ingrese el capacidad"
+                                fieldName="name"
+                                placeholder="Ingrese el apellido"
                                 handleChange={handleChange}
                               />
                             </Col>
@@ -191,19 +197,58 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
                                 type="text"
                                 validation={validation}
                                 fieldName="description"
-                                placeholder="Ingrese el apellido"
+                                placeholder="Ingrese la descripcion"
                                 handleChange={handleChange}
                               />
                             </Col>
                           </Row>
-                          
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="unit"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Unidad
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                            <RenderInput
+                                type="text"
+                                validation={validation}
+                                fieldName="unit"
+                                placeholder="Ingrese la unidad"
+                                handleChange={handleChange}
+                              />
+                            </Col>
+                          </Row>
+                          <Row className="mb-3">
+                            <Col lg={2}>
+                              <Label
+                                htmlFor="minStock"
+                                className="form-label"
+                                style={{ marginLeft: "80px" }}
+                              >
+                                Stock
+                              </Label>
+                            </Col>
+                            <Col lg={9}>
+                            <RenderInput
+                                type="text"
+                                validation={validation}
+                                fieldName="miniStock"
+                                placeholder="Ingrese la unidad"
+                                handleChange={handleChange}
+                              />
+                            </Col>
+                          </Row>
                           <Col lg={11}>
                             <div className="text-end">
                               <button
                                 type="button"
                                 className="btn btn-light btn-lg"
                                 onClick={() =>
-                                  (window.location.href = "/pages/tables")
+                                  (window.location.href = "/pages/ingredient")
                                 }
                               >
                                 Cancelar
@@ -229,4 +274,4 @@ const Actualizar = ({ roles, mesa, id ,errors }) => {
     </Layout>
   );
 };
-export default dynamic(() => Promise.resolve(Actualizar), { ssr: false });
+export default dynamic(() => Promise.resolve(updateingre), { ssr: false });
